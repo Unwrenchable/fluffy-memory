@@ -357,24 +357,25 @@
                 try {
                     const credential = await navigator.credentials.get({
                         password: true,
-                        mediation: 'optional' // 'optional' allows silent auto-login, 'required' shows UI
+                        mediation: 'silent' // 'silent' auto-login only if user previously opted in
                     });
                     
                     if (credential && credential.type === 'password') {
-                        // Auto-fill the login form
-                        document.getElementById('login-email').value = credential.id;
-                        document.getElementById('login-password').value = credential.password;
-                        
-                        // Attempt auto-login
+                        // Attempt auto-login without filling form fields
                         const result = window.authSystem.login(credential.id, credential.password);
                         
                         if (result.success) {
-                            // Redirect to main app
+                            // Redirect to main app immediately
                             window.location.href = 'index.html';
+                        } else {
+                            // Auto-login failed, fill the form for user to see and retry
+                            document.getElementById('login-email').value = credential.id;
+                            console.log('Auto-login failed. Please check your credentials.');
                         }
                     }
                 } catch (err) {
-                    console.log('Credential retrieval failed or was cancelled:', err);
+                    // Silently fail - user will see normal login form
+                    console.log('Credential retrieval not available:', err);
                 }
             }
         }
