@@ -52,15 +52,33 @@
             <div class="container">
                 <h1 class="logo">🏥 Medical Assistance Helper</h1>
                 <ul class="nav-menu">
-                    <li><a href="#ai-guide">AI Guide</a></li>
-                    <li><a href="#insurance">Insurance Search</a></li>
-                    <li><a href="#paperwork">Paperwork Guide</a></li>
-                    <li><a href="#disability">Disability Support</a></li>
-                    <li><a href="#doctors">Find Doctors</a></li>
+                    <li><a href="#universal-help">Get Help</a></li>
+                    <li><a href="#location-services">Find Care</a></li>
+                    <li><a href="#documents">Documents</a></li>
                     <li><a href="#ai-tools">AI Tools</a></li>
                 </ul>
             </div>
         </nav>
+        
+        <!-- Universal Smart Search Bar -->
+        <div class="smart-search-container">
+            <div class="container">
+                <div class="search-hero">
+                    <h2>What do you need help with?</h2>
+                    <p>Type anything - we'll figure out what you need</p>
+                </div>
+                <div class="smart-search-box">
+                    <input type="text" 
+                           id="smart-search-input" 
+                           placeholder='Try: "I was denied" or "I need free dental care" or "I\'m confused"' 
+                           onkeyup="handleSmartSearch(event)"
+                           autocomplete="off">
+                    <button onclick="executeSmartSearch()" class="btn-search">🔍 Search</button>
+                </div>
+                <div id="search-suggestions" class="search-suggestions"></div>
+                <div id="search-results-container" style="display: none;"></div>
+            </div>
+        </div>
     </header>
 
     <main>
