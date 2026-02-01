@@ -31,3 +31,14 @@ cat > icon-512.svg << 'SVGEOF'
 SVGEOF
 
 echo "SVG icons created"
+
+# Convert SVG to PNG if rsvg-convert is available
+if command -v rsvg-convert &> /dev/null; then
+    echo "Converting SVG to PNG..."
+    rsvg-convert icon-192.svg -w 192 -h 192 -o icon-192.png
+    rsvg-convert icon-512.svg -w 512 -h 512 -o icon-512.png
+    echo "PNG icons created: icon-192.png, icon-512.png"
+else
+    echo "rsvg-convert not found. Install with: sudo apt-get install librsvg2-bin"
+    echo "PNG icons not created - please convert manually or use online tools"
+fi
