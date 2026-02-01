@@ -1360,6 +1360,7 @@ function addTypingIndicator() {
     const indicator = document.createElement('div');
     indicator.className = 'ai-message assistant typing-indicator';
     indicator.id = 'typing-indicator';
+    indicator.setAttribute('aria-label', 'AI is typing');
     indicator.innerHTML = '<span>●</span><span>●</span><span>●</span>';
     messagesDiv.appendChild(indicator);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;

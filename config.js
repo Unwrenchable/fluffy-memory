@@ -137,6 +137,8 @@ class AppConfig {
             return { valid: false, error: 'API key is required' };
         }
         
+        const MIN_API_KEY_LENGTH = 20; // Minimum secure key length
+        
         if (service === 'xai') {
             // X.AI keys typically start with 'xai-'
             if (!key.startsWith('xai-')) {
@@ -145,7 +147,7 @@ class AppConfig {
                     error: 'X.AI API keys should start with "xai-"' 
                 };
             }
-            if (key.length < 20) {
+            if (key.length < MIN_API_KEY_LENGTH) {
                 return { 
                     valid: false, 
                     error: 'X.AI API key appears too short' 
@@ -159,7 +161,7 @@ class AppConfig {
                     error: 'HuggingFace API keys should start with "hf_"' 
                 };
             }
-            if (key.length < 20) {
+            if (key.length < MIN_API_KEY_LENGTH) {
                 return { 
                     valid: false, 
                     error: 'HuggingFace API key appears too short' 

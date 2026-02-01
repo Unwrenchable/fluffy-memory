@@ -192,9 +192,11 @@ Be empathetic, patient, and thorough. Many users are frustrated, confused, or ha
             }
         ];
 
-        // Add conversation history (last 5 exchanges)
+        // Add recent conversation history (last 10 messages = 5 exchanges)
         const recentHistory = this.conversationHistory.slice(-10);
-        messages.push(...recentHistory);
+        if (recentHistory.length > 0) {
+            messages.push(...recentHistory);
+        }
 
         // Add current query
         messages.push({

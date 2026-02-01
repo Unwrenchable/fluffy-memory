@@ -757,16 +757,20 @@
         // ============================================
         
         // Initialize AI configuration system
-        let appConfig = null;
-        let aiTeam = null;
+        window.appConfig = new AppConfig();
+        window.aiTeam = new DualAIMedicalTeam();
         
         function initAIConfig() {
-            // Initialize configuration and AI team
-            appConfig = new AppConfig();
-            aiTeam = new DualAIMedicalTeam();
+            // Ensure global access for script.js
+            if (!window.appConfig) {
+                window.appConfig = new AppConfig();
+            }
+            if (!window.aiTeam) {
+                window.aiTeam = new DualAIMedicalTeam();
+            }
             
             // Load saved configuration
-            const config = appConfig.getConfig();
+            const config = window.appConfig.getConfig();
             
             // Update UI based on saved settings
             document.getElementById('xai-enabled').checked = config.xai.enabled;
@@ -806,7 +810,7 @@
             
             // Validate X.AI key if provided
             if (xaiKey) {
-                const validation = appConfig.validateApiKey('xai', xaiKey);
+                const validation = window.appConfig.validateApiKey('xai', xaiKey);
                 if (!validation.valid) {
                     hasError = true;
                     errorMessage += `X.AI: ${validation.error}\n`;
@@ -815,7 +819,7 @@
             
             // Validate HuggingFace key if provided
             if (hfKey) {
-                const validation = appConfig.validateApiKey('huggingface', hfKey);
+                const validation = window.appConfig.validateApiKey('huggingface', hfKey);
                 if (!validation.valid) {
                     hasError = true;
                     errorMessage += `HuggingFace: ${validation.error}\n`;
@@ -834,20 +838,20 @@
             }
             
             // Save API keys (in memory only)
-            appConfig.setApiKeys(xaiKey || null, hfKey || null);
+            window.appConfig.setApiKeys(xaiKey || null, hfKey || null);
             
             // Save preferences (without keys)
-            appConfig.setTeamMode(teamMode);
-            appConfig.config.xai.enabled = xaiEnabled;
-            appConfig.config.huggingface.enabled = hfEnabled;
-            appConfig.saveConfig();
+            window.appConfig.setTeamMode(teamMode);
+            window.appConfig.config.xai.enabled = xaiEnabled;
+            window.appConfig.config.huggingface.enabled = hfEnabled;
+            window.appConfig.saveConfig();
             
             // Configure AI team
-            aiTeam.setApiKeys(
+            window.aiTeam.setApiKeys(
                 xaiKey || null,
                 hfKey || null
             );
-            aiTeam.setTeamMode(teamMode);
+            window.aiTeam.setTeamMode(teamMode);
             
             // Update window.aiAssistant to use the new dual AI system
             if (window.aiAssistant) {
@@ -863,12 +867,12 @@
         
         // Test AI configuration
         async function testAIConfig() {
-            if (!aiTeam) {
+            if (!window.aiTeam) {
                 showConfigMessage('Please configure your AI first.', 'warning');
                 return;
             }
             
-            const status = aiTeam.getStatus();
+            const status = window.aiTeam.getStatus();
             
             if (!status.xaiConfigured && !status.huggingFaceConfigured) {
                 showConfigMessage('Please configure at least one API key first.', 'warning');
@@ -879,7 +883,7 @@
             
             try {
                 const testQuery = 'Hello, this is a test. Please respond briefly.';
-                const response = await aiTeam.getTeamResponse(testQuery);
+                const response = await window.aiTeam.getTeamResponse(testQuery);
                 
                 if (response && !response.error) {
                     showConfigMessage(`✅ Test successful!\n\nSource: ${response.source}\nResponse: ${response.response.substring(0, 100)}...`, 'success');
@@ -897,12 +901,12 @@
                 document.getElementById('xai-api-key').value = '';
                 document.getElementById('hf-api-key').value = '';
                 
-                if (appConfig) {
-                    appConfig.clearApiKeys();
+                if (window.appConfig) {
+                    window.appConfig.clearApiKeys();
                 }
                 
-                if (aiTeam) {
-                    aiTeam.clearHistory();
+                if (window.aiTeam) {
+                    window.aiTeam.clearHistory();
                 }
                 
                 updateConfigStatus();
@@ -915,9 +919,9 @@
             const xaiStatus = document.getElementById('xai-status');
             const hfStatus = document.getElementById('hf-status');
             
-            if (appConfig) {
+            if (window.appConfig) {
                 // X.AI status
-                if (appConfig.isConfigured('xai')) {
+                if (window.appConfig.isConfigured('xai')) {
                     xaiStatus.innerHTML = '✅ Configured and ready';
                     xaiStatus.style.background = '#d4edda';
                     xaiStatus.style.color = '#155724';
@@ -928,7 +932,7 @@
                 }
                 
                 // HuggingFace status
-                if (appConfig.isConfigured('huggingface')) {
+                if (window.appConfig.isConfigured('huggingface')) {
                     hfStatus.innerHTML = '✅ Configured and ready';
                     hfStatus.style.background = '#d4edda';
                     hfStatus.style.color = '#155724';
