@@ -765,7 +765,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Close modal when clicking outside of it
     const modal = document.getElementById('ai-tool-modal');
     window.onclick = function(event) {
-        if (event.target == modal) {
+        if (event.target === modal) {
             modal.style.display = 'none';
         }
     };
