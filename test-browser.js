@@ -231,7 +231,7 @@ async function checkServer() {
     });
     
     req.setTimeout(5000, () => {
-      req.abort();
+      req.destroy();
       reject(new Error('Server check timeout'));
     });
   });

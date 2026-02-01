@@ -56,7 +56,7 @@ test_endpoint() {
     
     echo -n "Testing $description... "
     
-    if curl -s -o /dev/null -w "%{http_code}" "$url" | grep -q "200\|301\|302"; then
+    if curl -s -o /dev/null -w "%{http_code}" "$url" | grep -q "200"; then
         echo -e "${GREEN}✓ PASSED${NC}"
         return 0
     else
@@ -69,7 +69,7 @@ test_endpoint() {
 cleanup() {
     echo ""
     echo "Cleaning up..."
-    if [ ! -z "$SERVER_PID" ] && ps -p $SERVER_PID > /dev/null; then
+    if [ -n "$SERVER_PID" ] && ps -p $SERVER_PID > /dev/null; then
         kill $SERVER_PID 2>/dev/null || true
     fi
     # Kill any remaining processes on port 8080
