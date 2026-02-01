@@ -36,6 +36,14 @@ Six advanced AI tools to help with every step:
 5. **Appeal Letter Generator** - Generate professional appeal letters
 6. **Appointment Coordinator** - Manage medical appointments
 
+### 🔐 User Authentication & Progress Tracking
+**NEW:** Create an account to save your progress and access your documents:
+- **Save Your Place** - Your progress is automatically saved and persists across sessions
+- **Document Library** - Store and manage all your completed forms and documents
+- **Email Documents** - Send documents to yourself via email with one click
+- **Secure Sessions** - Your data is stored securely in your browser's local storage
+- **Auto-Save** - Progress is automatically saved every 2 minutes
+
 ## How to Use
 
 ### Option 1: Open Directly in Browser
