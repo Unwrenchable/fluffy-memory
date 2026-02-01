@@ -180,15 +180,15 @@
                 
                 <div id="login-error" class="error-message" style="display: none;"></div>
                 
-                <form onsubmit="handleLogin(event)">
+                <form onsubmit="handleLogin(event)" id="login-form-element">
                     <div class="form-group">
                         <label for="login-email">Email Address</label>
-                        <input type="email" id="login-email" required placeholder="your@email.com">
+                        <input type="email" id="login-email" name="email" autocomplete="username email" required placeholder="your@email.com">
                     </div>
                     
                     <div class="form-group">
                         <label for="login-password">Password</label>
-                        <input type="password" id="login-password" required placeholder="Enter your password">
+                        <input type="password" id="login-password" name="password" autocomplete="current-password" required placeholder="Enter your password">
                     </div>
                     
                     <button type="submit" class="btn-auth">Login</button>
@@ -208,20 +208,20 @@
                 
                 <div id="signup-error" class="error-message" style="display: none;"></div>
                 
-                <form onsubmit="handleSignup(event)">
+                <form onsubmit="handleSignup(event)" id="signup-form-element">
                     <div class="form-group">
                         <label for="signup-name">Full Name</label>
-                        <input type="text" id="signup-name" required placeholder="John Doe">
+                        <input type="text" id="signup-name" name="name" autocomplete="name" required placeholder="John Doe">
                     </div>
                     
                     <div class="form-group">
                         <label for="signup-email">Email Address</label>
-                        <input type="email" id="signup-email" required placeholder="your@email.com">
+                        <input type="email" id="signup-email" name="email" autocomplete="username email" required placeholder="your@email.com">
                     </div>
                     
                     <div class="form-group">
                         <label for="signup-password">Password</label>
-                        <input type="password" id="signup-password" required minlength="6" placeholder="At least 6 characters">
+                        <input type="password" id="signup-password" name="password" autocomplete="new-password" required minlength="6" placeholder="At least 6 characters">
                     </div>
                     
                     <button type="submit" class="btn-auth">Create Account</button>
@@ -265,8 +265,8 @@
             }
         }
         
-        // Handle login
-        function handleLogin(event) {
+        // Handle login with Credential Management API
+        async function handleLogin(event) {
             event.preventDefault();
             clearError('login-error');
             
@@ -276,6 +276,20 @@
             const result = window.authSystem.login(email, password);
             
             if (result.success) {
+                // Store credential in browser if Credential Management API is available
+                if (window.PasswordCredential && navigator.credentials) {
+                    try {
+                        const credential = new PasswordCredential({
+                            id: email,
+                            password: password,
+                            name: result.user.name || email
+                        });
+                        await navigator.credentials.store(credential);
+                    } catch (err) {
+                        console.log('Failed to store credential:', err);
+                    }
+                }
+                
                 // Redirect to main app
                 window.location.href = 'index.html';
             } else {
@@ -283,8 +297,8 @@
             }
         }
         
-        // Handle signup
-        function handleSignup(event) {
+        // Handle signup with Credential Management API
+        async function handleSignup(event) {
             event.preventDefault();
             clearError('signup-error');
             
@@ -295,6 +309,20 @@
             const result = window.authSystem.signup(email, password, name);
             
             if (result.success) {
+                // Store credential in browser if Credential Management API is available
+                if (window.PasswordCredential && navigator.credentials) {
+                    try {
+                        const credential = new PasswordCredential({
+                            id: email,
+                            password: password,
+                            name: name
+                        });
+                        await navigator.credentials.store(credential);
+                    } catch (err) {
+                        console.log('Failed to store credential:', err);
+                    }
+                }
+                
                 // Redirect to main app
                 window.location.href = 'index.html';
             } else {
@@ -315,11 +343,47 @@
             errorElement.style.display = 'none';
         }
         
-        // Check if user is already logged in
-        if (window.authSystem.isLoggedIn()) {
-            // Redirect to main app if already logged in
-            window.location.href = 'index.html';
+        // Auto-login with stored credentials if available
+        async function tryAutoLogin() {
+            // Check if user is already logged in
+            if (window.authSystem.isLoggedIn()) {
+                // Redirect to main app if already logged in
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Try to get stored credentials from browser
+            if (window.PasswordCredential && navigator.credentials && navigator.credentials.get) {
+                try {
+                    const credential = await navigator.credentials.get({
+                        password: true,
+                        mediation: 'silent' // 'silent' auto-login only if user previously opted in
+                    });
+                    
+                    if (credential && credential.type === 'password') {
+                        // Attempt auto-login without filling form fields
+                        const result = window.authSystem.login(credential.id, credential.password);
+                        
+                        if (result.success) {
+                            // Redirect to main app immediately
+                            window.location.href = 'index.html';
+                        } else {
+                            // Auto-login failed, fill the form for user to see and retry
+                            document.getElementById('login-email').value = credential.id;
+                            console.log('Auto-login failed. Please check your credentials.');
+                        }
+                    }
+                } catch (err) {
+                    // Silently fail - user will see normal login form
+                    console.log('Credential retrieval not available:', err);
+                }
+            }
         }
+        
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            tryAutoLogin();
+        });
     </script>
 </body>
 </html>
