@@ -20,10 +20,11 @@ python3 -m http.server 8080
 ### Option 2: Using Node.js
 
 ```bash
-# Install http-server globally (one-time)
+# Option A: Install http-server globally (one-time)
 npm install -g http-server
+http-server -p 8080
 
-# Start the server
+# Option B: Use npx (no installation needed)
 npx http-server -p 8080
 
 # Open your browser to:

@@ -223,6 +223,7 @@ async function checkServer() {
   
   return new Promise((resolve, reject) => {
     const req = http.get('http://localhost:8080/', (res) => {
+      res.resume(); // Consume response data to prevent memory leaks
       resolve(res.statusCode === 200);
     });
     
