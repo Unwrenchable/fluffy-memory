@@ -74,12 +74,39 @@ Six advanced AI tools to help with every step:
 - **Secure Sessions** - Your data is stored securely in your browser's local storage
 - **Auto-Save** - Progress is automatically saved every 2 minutes
 
-## How to Use
+## Quick Start
+
+### 🚀 Get Started in 2 Minutes
+
+1. **Clone or download** this repository
+2. **Run a local server**:
+   ```bash
+   # Using Python 3 (recommended)
+   python3 -m http.server 8080
+   ```
+3. **Open** http://localhost:8080 in your browser
+4. **Start using** the app - no setup required!
+
+### 📱 Install as PWA (Progressive Web App)
+
+1. Click the "📱 Install App" button in the navigation
+2. The app will install like a native app on your device
+3. Use it offline and access it from your home screen
+
+### 🤖 Enable AI Features (Optional)
+
+1. Get API keys from [X.AI](https://console.x.ai/) and/or [HuggingFace](https://huggingface.co/settings/tokens)
+2. Scroll to "⚙️ AI Configuration" section
+3. Enter your keys and click "Save Configuration"
+
+**Need help?** See our [**Complete Setup Guide**](SETUP_GUIDE.md) for detailed installation instructions, troubleshooting, and deployment options.
+
+## Detailed Installation
 
 ### Option 1: Open Directly in Browser
-Simply open `index.html` in your web browser.
+Simply open `index.html` in your web browser. Most features work, but AI features require a local server.
 
-### Option 2: Run with Local Server (Recommended for AI features)
+### Option 2: Run with Local Server (Recommended)
 ```bash
 # Using Python 3
 python3 -m http.server 8080
@@ -116,6 +143,21 @@ Works on all modern browsers:
 - Firefox (latest)
 - Safari (latest)
 - Mobile browsers
+
+## Troubleshooting
+
+### PWA Not Installing?
+- Ensure you're running via a local server (not opening files directly)
+- PNG icons should exist - run `./create-icons.sh` if missing
+- Clear browser cache and reload
+
+### AI Features Not Working?
+- Verify you're using a local server (http://localhost:8080)
+- Check API keys are entered correctly in AI Configuration section
+- Use the "🧪 Test AI Connection" button to verify
+
+### Need More Help?
+See the [**Complete Setup Guide**](SETUP_GUIDE.md) for detailed troubleshooting, installation options, and configuration help.
 
 ## Disclaimer
 
