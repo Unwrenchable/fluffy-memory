@@ -452,6 +452,8 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = MultiPaymentSystem;
 }
 
+// Crypto Payment System - Specialized crypto handling
+class CryptoPaymentSystem {
     constructor() {
         // Supported cryptocurrencies
         this.supportedCrypto = {
