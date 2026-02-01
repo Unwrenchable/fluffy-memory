@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Medical Assistance Helper - Donations & Premium Services</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Support free medical assistance services. Donate or get premium help with expert consultations and document preparation.">
+    <meta name="theme-color" content="#8b5cf6">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="/icon-192.svg">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <h1>🏥 Medical Assistance Helper</h1>
+            <ul class="nav-links">
+                <li><a href="index.html">← Back to App</a></li>
+                <li><a href="index.html#universal-help">Get Help</a></li>
+                <li><a href="index.html#ai-tools">AI Tools</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 80px 20px; text-align: center; color: white;">
+        <div class="container">
+            <h1 style="font-size: 3em; margin-bottom: 20px;">💝 Support Our Mission</h1>
+            <p style="font-size: 1.5em; margin-bottom: 20px;">Help Keep Medical Assistance FREE for Everyone</p>
+            <p style="font-size: 1.2em; max-width: 800px; margin: 0 auto;">
+                This service is 100% FREE for all users. Your support helps us keep it that way and reach even more people who need help navigating the medical system.
+            </p>
+        </div>
+    </section>
+
+    <main class="container" style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+        
+        <!-- Why Donate Section -->
+        <section style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 40px;">
+            <h2 style="color: #8b5cf6; font-size: 2.5em; margin-bottom: 20px; text-align: center;">Why Support Us?</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 40px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">🆓</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">100% FREE Access</h3>
+                    <p>All core features remain free for everyone, forever. No paywalls, no barriers to care.</p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">🤝</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">Help More People</h3>
+                    <p>Your donation helps us reach people who are confused, denied, or ready to give up.</p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">🚀</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">Improve Services</h3>
+                    <p>Support development of better AI tools, more resources, and enhanced features.</p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">💪</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">Stay Independent</h3>
+                    <p>Community support keeps us focused on helping people, not profits.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Donation Tiers -->
+        <section style="margin-bottom: 60px;">
+            <h2 style="color: #8b5cf6; font-size: 2.5em; margin-bottom: 30px; text-align: center;">Make a Donation</h2>
+            <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px; color: #666;">
+                Every contribution helps keep this service free for those who need it most
+            </p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+                <!-- Coffee Tier -->
+                <div style="background: white; border: 2px solid #e0e0e0; border-radius: 10px; padding: 30px; text-align: center; transition: transform 0.3s;">
+                    <div style="font-size: 3em; margin-bottom: 15px;">☕</div>
+                    <h3 style="color: #333; font-size: 1.8em; margin-bottom: 10px;">Coffee</h3>
+                    <div style="font-size: 2.5em; color: #8b5cf6; margin-bottom: 15px; font-weight: bold;">$5</div>
+                    <p style="color: #666; margin-bottom: 20px;">Buy us a coffee and support basic operations</p>
+                    <button onclick="selectDonation(5)" style="background: #8b5cf6; color: white; border: none; padding: 15px 30px; border-radius: 5px; font-size: 1.1em; cursor: pointer; width: 100%;">
+                        Donate $5
+                    </button>
+                </div>
+
+                <!-- Supporter Tier -->
+                <div style="background: white; border: 3px solid #8b5cf6; border-radius: 10px; padding: 30px; text-align: center; transform: scale(1.05); box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2);">
+                    <div style="background: #8b5cf6; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; margin-bottom: 10px; font-size: 0.9em;">MOST POPULAR</div>
+                    <div style="font-size: 3em; margin-bottom: 15px;">🌟</div>
+                    <h3 style="color: #333; font-size: 1.8em; margin-bottom: 10px;">Supporter</h3>
+                    <div style="font-size: 2.5em; color: #8b5cf6; margin-bottom: 15px; font-weight: bold;">$25</div>
+                    <p style="color: #666; margin-bottom: 20px;">Help multiple users get the assistance they need</p>
+                    <button onclick="selectDonation(25)" style="background: #8b5cf6; color: white; border: none; padding: 15px 30px; border-radius: 5px; font-size: 1.1em; cursor: pointer; width: 100%;">
+                        Donate $25
+                    </button>
+                </div>
+
+                <!-- Champion Tier -->
+                <div style="background: white; border: 2px solid #e0e0e0; border-radius: 10px; padding: 30px; text-align: center; transition: transform 0.3s;">
+                    <div style="font-size: 3em; margin-bottom: 15px;">🏆</div>
+                    <h3 style="color: #333; font-size: 1.8em; margin-bottom: 10px;">Champion</h3>
+                    <div style="font-size: 2.5em; color: #8b5cf6; margin-bottom: 15px; font-weight: bold;">$100</div>
+                    <p style="color: #666; margin-bottom: 20px;">Make a major impact on our mission</p>
+                    <button onclick="selectDonation(100)" style="background: #8b5cf6; color: white; border: none; padding: 15px 30px; border-radius: 5px; font-size: 1.1em; cursor: pointer; width: 100%;">
+                        Donate $100
+                    </button>
+                </div>
+
+                <!-- Custom Amount -->
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; padding: 30px; text-align: center; color: white; grid-column: span 1;">
+                    <div style="font-size: 3em; margin-bottom: 15px;">💎</div>
+                    <h3 style="font-size: 1.8em; margin-bottom: 10px;">Custom Amount</h3>
+                    <p style="margin-bottom: 20px; opacity: 0.9;">Choose your own contribution level</p>
+                    <input type="number" id="customAmount" placeholder="Enter amount" min="1" style="width: 100%; padding: 15px; border: none; border-radius: 5px; font-size: 1.1em; margin-bottom: 15px; text-align: center;">
+                    <button onclick="selectCustomDonation()" style="background: white; color: #764ba2; border: none; padding: 15px 30px; border-radius: 5px; font-size: 1.1em; cursor: pointer; width: 100%; font-weight: bold;">
+                        Donate Custom Amount
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Optional Premium Services -->
+        <section style="background: #f8f9fa; padding: 40px; border-radius: 10px; margin-bottom: 40px;">
+            <h2 style="color: #8b5cf6; font-size: 2.5em; margin-bottom: 20px; text-align: center;">Optional Premium Services</h2>
+            <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px; color: #666;">
+                Want extra help? We offer optional premium services (not required to use the free app)
+            </p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <!-- Expert Consultation -->
+                <div style="background: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <span style="font-size: 2.5em; margin-right: 15px;">🎯</span>
+                        <div>
+                            <h3 style="color: #333; font-size: 1.5em; margin: 0;">Expert Consultation</h3>
+                            <div style="color: #8b5cf6; font-size: 1.8em; font-weight: bold;">$49</div>
+                        </div>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ 1-hour video call</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ Personalized strategy session</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ Expert guidance on your case</li>
+                        <li style="padding: 8px 0;">✓ Follow-up email summary</li>
+                    </ul>
+                    <button onclick="selectService('consultation', 49)" style="background: #8b5cf6; color: white; border: none; padding: 15px; border-radius: 5px; font-size: 1.1em; cursor: pointer; width: 100%;">
+                        Book Consultation
+                    </button>
+                </div>
+
+                <!-- Document Prep -->
+                <div style="background: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <span style="font-size: 2.5em; margin-right: 15px;">📋</span>
+                        <div>
+                            <h3 style="color: #333; font-size: 1.5em; margin: 0;">Document Prep</h3>
+                            <div style="color: #8b5cf6; font-size: 1.8em; font-weight: bold;">$99</div>
+                        </div>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ Professional document review</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ Complete form preparation</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ Error checking & optimization</li>
+                        <li style="padding: 8px 0;">✓ Submission guidance</li>
+                    </ul>
+                    <button onclick="selectService('docprep', 99)" style="background: #8b5cf6; color: white; border: none; padding: 15px; border-radius: 5px; font-size: 1.1em; cursor: pointer; width: 100%;">
+                        Get Document Help
+                    </button>
+                </div>
+
+                <!-- Complete Package -->
+                <div style="background: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border: 2px solid #ffc107;">
+                    <div style="background: #ffc107; color: #333; padding: 5px 15px; border-radius: 20px; display: inline-block; margin-bottom: 10px; font-size: 0.9em; font-weight: bold;">BEST VALUE</div>
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <span style="font-size: 2.5em; margin-right: 15px;">🚀</span>
+                        <div>
+                            <h3 style="color: #333; font-size: 1.5em; margin: 0;">Complete Package</h3>
+                            <div style="color: #8b5cf6; font-size: 1.8em; font-weight: bold;">$299</div>
+                        </div>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ Everything above PLUS:</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ End-to-end application support</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ Multiple consultations</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">✓ Direct email support</li>
+                        <li style="padding: 8px 0;">✓ Appeal assistance included</li>
+                    </ul>
+                    <button onclick="selectService('complete', 299)" style="background: #8b5cf6; color: white; border: none; padding: 15px; border-radius: 5px; font-size: 1.1em; cursor: pointer; width: 100%;">
+                        Get Complete Help
+                    </button>
+                </div>
+            </div>
+
+            <p style="text-align: center; margin-top: 30px; color: #666; font-style: italic;">
+                ✓ All premium services include a 30-day money-back guarantee
+            </p>
+        </section>
+
+        <!-- Payment Methods -->
+        <section id="payment-section" style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 40px; display: none;">
+            <h2 style="color: #8b5cf6; font-size: 2em; margin-bottom: 30px; text-align: center;">Choose Your Payment Method</h2>
+            <div id="selected-amount" style="text-align: center; font-size: 1.5em; margin-bottom: 30px; color: #333;"></div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <!-- Cryptocurrency -->
+                <div class="payment-method-card" onclick="selectPaymentMethod('crypto', event)" style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 25px; cursor: pointer; text-align: center; transition: all 0.3s;">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">₿</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">Cryptocurrency</h3>
+                    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Bitcoin, Ethereum, USDC, USDT, Litecoin, Dogecoin</p>
+                    <span style="background: #28a745; color: white; padding: 3px 10px; border-radius: 15px; font-size: 0.8em;">INSTANT</span>
+                </div>
+
+                <!-- Credit/Debit Cards -->
+                <div class="payment-method-card" onclick="selectPaymentMethod('cards', event)" style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 25px; cursor: pointer; text-align: center; transition: all 0.3s;">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">💳</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">Credit/Debit Cards</h3>
+                    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Visa, Mastercard, Amex, Discover, JCB, Diners</p>
+                    <span style="background: #28a745; color: white; padding: 3px 10px; border-radius: 15px; font-size: 0.8em;">INSTANT</span>
+                </div>
+
+                <!-- Digital Wallets -->
+                <div class="payment-method-card" onclick="selectPaymentMethod('wallets', event)" style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 25px; cursor: pointer; text-align: center; transition: all 0.3s;">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">📱</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">Digital Wallets</h3>
+                    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Apple Pay, Google Pay, PayPal, Venmo, Cash App, Zelle</p>
+                    <span style="background: #28a745; color: white; padding: 3px 10px; border-radius: 15px; font-size: 0.8em;">INSTANT</span>
+                </div>
+
+                <!-- Buy Now Pay Later -->
+                <div class="payment-method-card" onclick="selectPaymentMethod('bnpl', event)" style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 25px; cursor: pointer; text-align: center; transition: all 0.3s;">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">⏱️</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">Pay Over Time</h3>
+                    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Affirm, Klarna, Afterpay, Sezzle (4 payments)</p>
+                    <span style="background: #007bff; color: white; padding: 3px 10px; border-radius: 15px; font-size: 0.8em;">0% INTEREST</span>
+                </div>
+
+                <!-- Bank Transfer -->
+                <div class="payment-method-card" onclick="selectPaymentMethod('bank', event)" style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 25px; cursor: pointer; text-align: center; transition: all 0.3s;">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">🏦</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">Bank Transfer</h3>
+                    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Instant Transfer, ACH, Wire</p>
+                    <span style="background: #6c757d; color: white; padding: 3px 10px; border-radius: 15px; font-size: 0.8em;">1-3 DAYS</span>
+                </div>
+
+                <!-- International -->
+                <div class="payment-method-card" onclick="selectPaymentMethod('international', event)" style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 25px; cursor: pointer; text-align: center; transition: all 0.3s;">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">🌍</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">International</h3>
+                    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Wise, Payoneer, Western Union</p>
+                    <span style="background: #6c757d; color: white; padding: 3px 10px; border-radius: 15px; font-size: 0.8em;">1-5 DAYS</span>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <p style="color: #666; font-size: 0.9em;">🔒 Secure encrypted checkout • No hidden fees • Cancel anytime</p>
+            </div>
+        </section>
+
+        <!-- Impact Statement -->
+        <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; border-radius: 10px; color: white; text-align: center; margin-bottom: 40px;">
+            <h2 style="font-size: 2em; margin-bottom: 20px;">Your Impact Matters</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-top: 30px;">
+                <div>
+                    <div style="font-size: 3em; font-weight: bold; margin-bottom: 10px;">5,000+</div>
+                    <p>People helped monthly</p>
+                </div>
+                <div>
+                    <div style="font-size: 3em; font-weight: bold; margin-bottom: 10px;">85%</div>
+                    <p>Success rate with guidance</p>
+                </div>
+                <div>
+                    <div style="font-size: 3em; font-weight: bold; margin-bottom: 10px;">100%</div>
+                    <p>Free for all users</p>
+                </div>
+            </div>
+            <p style="margin-top: 30px; font-size: 1.1em; opacity: 0.9;">
+                Every donation helps someone who's confused, denied, or ready to give up get the medical help they desperately need.
+            </p>
+        </section>
+
+        <!-- FAQ -->
+        <section style="margin-bottom: 40px;">
+            <h2 style="color: #8b5cf6; font-size: 2em; margin-bottom: 30px; text-align: center;">Frequently Asked Questions</h2>
+            
+            <div style="background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+                <div style="padding: 20px; border-bottom: 1px solid #eee;">
+                    <h3 style="color: #333; margin-bottom: 10px;">Is the basic service really free?</h3>
+                    <p style="color: #666;">Yes! 100% of our core features are completely free and always will be. Donations and premium services help us keep it that way.</p>
+                </div>
+                <div style="padding: 20px; border-bottom: 1px solid #eee;">
+                    <h3 style="color: #333; margin-bottom: 10px;">Do I need to donate to use the app?</h3>
+                    <p style="color: #666;">No! You can use everything without donating. Donations just help us continue providing free services to more people.</p>
+                </div>
+                <div style="padding: 20px; border-bottom: 1px solid #eee;">
+                    <h3 style="color: #333; margin-bottom: 10px;">Is my donation tax deductible?</h3>
+                    <p style="color: #666;">We're working on 501(c)(3) status. Once approved, all donations will be tax deductible. We'll send receipts for your records.</p>
+                </div>
+                <div style="padding: 20px; border-bottom: 1px solid #eee;">
+                    <h3 style="color: #333; margin-bottom: 10px;">What payment methods do you accept?</h3>
+                    <p style="color: #666;">We accept ALL forms of payment including crypto, cards, digital wallets, buy now pay later, bank transfers, and international payments.</p>
+                </div>
+                <div style="padding: 20px;">
+                    <h3 style="color: #333; margin-bottom: 10px;">Can I get a refund on premium services?</h3>
+                    <p style="color: #666;">Yes! All premium services come with a 30-day money-back guarantee. If you're not satisfied, we'll refund you in full.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer style="background: #333; color: white; padding: 40px 20px; text-align: center;">
+        <div class="container">
+            <p style="margin-bottom: 10px;">© 2026 Medical Assistance Helper</p>
+            <p style="opacity: 0.8;">Helping people navigate medical assistance - one person at a time.</p>
+            <p style="margin-top: 20px;">
+                <a href="index.html" style="color: #8b5cf6; text-decoration: none;">← Return to Main App</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="crypto-payment.js"></script>
+    <script>
+        let selectedAmount = 0;
+        let selectedType = 'donation';
+
+        function selectDonation(amount) {
+            selectedAmount = amount;
+            selectedType = 'donation';
+            showPaymentSection();
+        }
+
+        function selectCustomDonation() {
+            const amount = document.getElementById('customAmount').value;
+            if (amount && amount > 0) {
+                selectedAmount = parseFloat(amount);
+                selectedType = 'donation';
+                showPaymentSection();
+            } else {
+                alert('Please enter a valid amount');
+            }
+        }
+
+        function selectService(service, amount) {
+            selectedAmount = amount;
+            selectedType = service;
+            showPaymentSection();
+        }
+
+        function showPaymentSection() {
+            const section = document.getElementById('payment-section');
+            const amountDisplay = document.getElementById('selected-amount');
+            
+            let typeText = selectedType === 'donation' ? 'Donation' : 'Premium Service';
+            amountDisplay.innerHTML = `<strong>Selected:</strong> ${typeText} - $${selectedAmount}`;
+            
+            section.style.display = 'block';
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function selectPaymentMethod(method, event) {
+            // Remove previous selection
+            document.querySelectorAll('.payment-method-card').forEach(card => {
+                card.style.borderColor = '#e0e0e0';
+                card.style.background = 'white';
+            });
+            
+            // Highlight selected
+            event.currentTarget.style.borderColor = '#8b5cf6';
+            event.currentTarget.style.background = '#f8f4ff';
+            
+            // Show confirmation
+            setTimeout(() => {
+                alert(`Processing payment of $${selectedAmount} via ${method}...\n\nThis is a demo. In production, you would be redirected to the secure payment processor.\n\nThank you for supporting our mission! 💝`);
+            }, 300);
+        }
+
+        // Hover effects
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.payment-method-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    if (this.style.borderColor !== 'rgb(139, 92, 246)') {
+                        this.style.borderColor = '#8b5cf6';
+                        this.style.transform = 'translateY(-5px)';
+                    }
+                });
+                card.addEventListener('mouseleave', function() {
+                    if (this.style.borderColor !== 'rgb(139, 92, 246)' || this.style.background !== 'rgb(248, 244, 255)') {
+                        this.style.borderColor = '#e0e0e0';
+                        this.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
