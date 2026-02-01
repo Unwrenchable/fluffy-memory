@@ -478,6 +478,22 @@ class ComprehensiveIntakeSystem {
     processSection(answers) {
         const sectionId = this.intakeSections[this.currentSection].id;
         this.userProfile[sectionId] = answers;
+        
+        // Map old section IDs to new structure for UserDataManager
+        const sectionMapping = {
+            'intro': 'personalInfo',
+            'medical_situation': 'medicalInfo',
+            'doctors_treatment': 'doctorsInfo',
+            'daily_functioning': 'functioningInfo',
+            'previous_attempts': 'previousAttempts',
+            'goals_urgency': 'goalsInfo',
+            'support_resources': 'supportInfo'
+        };
+        
+        // Save to new structure for document filling
+        const mappedId = sectionMapping[sectionId] || sectionId;
+        this.userProfile[mappedId] = answers;
+        
         this.currentSection++;
         
         if (this.currentSection >= this.intakeSections.length) {
@@ -490,6 +506,14 @@ class ComprehensiveIntakeSystem {
     // Complete intake and generate personalized plan
     completeIntake() {
         this.userProfile.complete = true;
+        this.userProfile.completedAt = new Date().toISOString();
+        
+        // Save to localStorage via UserDataManager if available
+        if (typeof UserDataManager !== 'undefined') {
+            const userDataManager = new UserDataManager();
+            userDataManager.saveProfile(this.userProfile);
+            console.log('Intake data saved to localStorage for auto-fill');
+        }
         
         // Analyze all responses to create comprehensive profile
         const analysis = this.analyzeUserProfile();

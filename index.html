@@ -450,8 +450,66 @@
             </div>
         </section>
 
+        <!-- Auto-Fill Documents Section -->
+        <section id="auto-fill-documents" class="section bg-light">
+            <div class="container">
+                <h2>📄 Smart Document Auto-Fill</h2>
+                <p class="section-description">Your questionnaire answers can automatically fill out documents for you!</p>
+                
+                <!-- Profile Status Card -->
+                <div id="profile-status-card" class="card" style="margin-bottom: 2rem;">
+                    <div id="profile-status-content">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Document Actions -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                    <div class="card">
+                        <h3>📝 Generate Appeal Letter</h3>
+                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                            Auto-fill appeal letter with your questionnaire data
+                        </p>
+                        <button onclick="generateAutoFilledDocument('appeal-letter')" class="btn-primary" style="width: 100%;">
+                            Generate Letter
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <h3>👨‍⚕️ Doctor Request Letter</h3>
+                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                            Request letter with your information pre-filled
+                        </p>
+                        <button onclick="generateAutoFilledDocument('doctor-request')" class="btn-primary" style="width: 100%;">
+                            Generate Letter
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <h3>📋 RFC Request Letter</h3>
+                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                            RFC form request with your details
+                        </p>
+                        <button onclick="generateAutoFilledDocument('rfc-request')" class="btn-primary" style="width: 100%;">
+                            Generate Letter
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <h3>🏥 Medical Records Request</h3>
+                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                            Records request with your information
+                        </p>
+                        <button onclick="generateAutoFilledDocument('medical-records-request')" class="btn-primary" style="width: 100%;">
+                            Generate Request
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- AI Configuration Section -->
-        <section id="ai-config" class="section bg-light">
+        <section id="ai-config" class="section">
             <div class="container">
                 <h2>⚙️ AI Configuration</h2>
                 <p class="section-description">Configure your AI assistants (X.AI + HuggingFace) to get advanced help</p>
@@ -625,6 +683,7 @@
     <script src="email-system.js"></script>
     <script src="location-services.js"></script>
     <script src="comprehensive-intake.js"></script>
+    <script src="user-data-manager.js"></script>
     <script src="condition-categorizer.js"></script>
     <script src="config.js"></script>
     <script src="xai-huggingface-integration.js"></script>
@@ -982,9 +1041,217 @@
             }
         }
         
+        // ============================================
+        // Auto-Fill Documents Functions
+        // ============================================
+        
+        // Initialize UserDataManager
+        let userDataManager = null;
+        
+        function initAutoFillSystem() {
+            userDataManager = new UserDataManager();
+            updateProfileStatusDisplay();
+        }
+        
+        // Update profile status display
+        function updateProfileStatusDisplay() {
+            const statusContent = document.getElementById('profile-status-content');
+            if (!statusContent) return;
+            
+            if (userDataManager && userDataManager.hasProfile()) {
+                const summary = userDataManager.getProfileSummary();
+                statusContent.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 3rem;">✅</div>
+                        <div style="flex: 1;">
+                            <h3 style="margin: 0 0 0.5rem 0; color: #155724;">Profile Complete!</h3>
+                            <p style="margin: 0; color: #155724;">
+                                <strong>Name:</strong> ${summary.name} | 
+                                <strong>State:</strong> ${summary.state} | 
+                                <strong>Condition:</strong> ${summary.primaryCondition}
+                            </p>
+                            <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #666;">
+                                Your documents will be automatically filled with information from your questionnaire.
+                            </p>
+                        </div>
+                        <button onclick="clearProfile()" class="btn-secondary" style="white-space: nowrap;">
+                            Clear Profile
+                        </button>
+                    </div>
+                `;
+            } else {
+                statusContent.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 3rem;">⚠️</div>
+                        <div style="flex: 1;">
+                            <h3 style="margin: 0 0 0.5rem 0; color: #856404;">No Profile Found</h3>
+                            <p style="margin: 0; color: #856404;">
+                                Complete the comprehensive questionnaire to enable auto-fill.
+                            </p>
+                            <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #666;">
+                                The 7-section questionnaire takes 5-10 minutes and saves all your information for automatic document filling.
+                            </p>
+                        </div>
+                        <button onclick="startComprehensiveIntake()" class="btn-primary" style="white-space: nowrap;">
+                            Start Questionnaire
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Generate auto-filled document
+        function generateAutoFilledDocument(templateId) {
+            if (!userDataManager || !userDataManager.hasProfile()) {
+                alert('Please complete the comprehensive questionnaire first to enable auto-fill.');
+                startComprehensiveIntake();
+                return;
+            }
+            
+            // Get document library
+            const docLib = new DocumentLibrary();
+            
+            // Fill template with user data
+            const filledDocument = docLib.fillTemplate(templateId, null); // null = use stored data
+            
+            if (!filledDocument) {
+                alert('Error: Document template not found.');
+                return;
+            }
+            
+            // Display the filled document
+            showFilledDocument(templateId, filledDocument);
+        }
+        
+        // Show filled document in a modal
+        function showFilledDocument(templateId, content) {
+            const templateNames = {
+                'appeal-letter': 'Appeal Letter',
+                'doctor-request': 'Doctor Request Letter',
+                'rfc-request': 'RFC Request Letter',
+                'medical-records-request': 'Medical Records Request'
+            };
+            
+            const modalHtml = `
+                <div id="document-modal" class="modal" style="display: block;">
+                    <div class="modal-content" style="max-width: 800px; max-height: 80vh; overflow: auto;">
+                        <span class="close" onclick="closeDocumentModal()">&times;</span>
+                        <h2>📄 ${templateNames[templateId] || 'Document'}</h2>
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">
+                                ✨ This document has been auto-filled with your questionnaire data. 
+                                Review and edit as needed before copying or printing.
+                            </p>
+                        </div>
+                        <textarea id="filled-document-content" 
+                                  style="width: 100%; min-height: 400px; padding: 1rem; 
+                                         font-family: monospace; border: 1px solid #ddd; 
+                                         border-radius: 4px; resize: vertical;">${content}</textarea>
+                        <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <button onclick="copyDocumentToClipboard()" class="btn-primary">
+                                📋 Copy to Clipboard
+                            </button>
+                            <button onclick="downloadDocument('${templateId}')" class="btn-secondary">
+                                💾 Download as TXT
+                            </button>
+                            <button onclick="printDocument()" class="btn-secondary">
+                                🖨️ Print
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add modal to page
+            const existingModal = document.getElementById('document-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+        
+        // Close document modal
+        function closeDocumentModal() {
+            const modal = document.getElementById('document-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        // Copy document to clipboard
+        function copyDocumentToClipboard() {
+            const textarea = document.getElementById('filled-document-content');
+            if (textarea) {
+                textarea.select();
+                document.execCommand('copy');
+                alert('✅ Document copied to clipboard!');
+            }
+        }
+        
+        // Download document
+        function downloadDocument(templateId) {
+            const textarea = document.getElementById('filled-document-content');
+            if (!textarea) return;
+            
+            const content = textarea.value;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${templateId}-${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        // Print document
+        function printDocument() {
+            const textarea = document.getElementById('filled-document-content');
+            if (!textarea) return;
+            
+            const content = textarea.value;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print Document</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 2rem; line-height: 1.6; }
+                        pre { white-space: pre-wrap; word-wrap: break-word; }
+                    </style>
+                </head>
+                <body>
+                    <pre>${content}</pre>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+        
+        // Clear user profile
+        function clearProfile() {
+            if (confirm('Are you sure you want to clear your saved profile data? This cannot be undone.')) {
+                if (userDataManager) {
+                    userDataManager.clearProfile();
+                    updateProfileStatusDisplay();
+                    alert('✅ Profile data cleared.');
+                }
+            }
+        }
+        
+        // Start comprehensive intake
+        function startComprehensiveIntake() {
+            // Scroll to the intake section or open it in a modal
+            alert('The comprehensive intake questionnaire would open here. This connects to the existing intake system.');
+            // In production, this would trigger the actual intake flow
+        }
+        
         // Initialize AI config when page loads
         document.addEventListener('DOMContentLoaded', () => {
             initAIConfig();
+            initAutoFillSystem();
         });
     </script>
 </body>
