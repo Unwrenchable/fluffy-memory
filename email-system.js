@@ -192,9 +192,12 @@ Always consult with qualified professionals for your specific situation.`;
         const userEmail = currentUser ? currentUser.email : '';
         const userName = currentUser ? currentUser.name : '';
         
+        // Sanitize doc name for display
+        const sanitizedDocName = doc.name.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        
         modalContent.innerHTML = `
             <h2 style="margin-top: 0; color: #2d3748;">📧 Email Document</h2>
-            <p style="color: #718096; margin-bottom: 1.5rem;">Send "${doc.name}" to your email</p>
+            <p style="color: #718096; margin-bottom: 1.5rem;">Send "${sanitizedDocName}" to your email</p>
             
             <div style="margin-bottom: 1rem;">
                 <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #2d3748;">Email Address:</label>
@@ -203,18 +206,18 @@ Always consult with qualified professionals for your specific situation.`;
             </div>
             
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1.5rem;">
-                <button onclick="emailSystem.sendEmailClick('${doc.id}')" class="btn-primary" style="flex: 1; min-width: 120px;">
+                <button data-action="send-email" class="btn-primary email-action-btn" style="flex: 1; min-width: 120px;">
                     📧 Send Email
                 </button>
-                <button onclick="emailSystem.downloadTextClick('${doc.id}')" class="btn-secondary" style="flex: 1; min-width: 120px;">
+                <button data-action="download" class="btn-secondary email-action-btn" style="flex: 1; min-width: 120px;">
                     💾 Download
                 </button>
-                <button onclick="emailSystem.copyClipboardClick('${doc.id}')" class="btn-secondary" style="flex: 1; min-width: 120px;">
+                <button data-action="copy" class="btn-secondary email-action-btn" style="flex: 1; min-width: 120px;">
                     📋 Copy
                 </button>
             </div>
             
-            <button onclick="emailSystem.closeEmailDialog()" class="btn-secondary" 
+            <button data-action="close" class="btn-secondary email-action-btn" 
                     style="width: 100%; margin-top: 1rem;">
                 Close
             </button>
@@ -223,6 +226,28 @@ Always consult with qualified professionals for your specific situation.`;
         modal.appendChild(modalContent);
         modal.setAttribute('data-doc-id', doc.id);
         modal.setAttribute('data-doc-name', doc.name);
+        
+        // Add event listeners instead of inline onclick handlers (safer)
+        const actionButtons = modalContent.querySelectorAll('.email-action-btn');
+        actionButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const action = button.getAttribute('data-action');
+                switch(action) {
+                    case 'send-email':
+                        this.sendEmailClick(doc.id);
+                        break;
+                    case 'download':
+                        this.downloadTextClick(doc.id);
+                        break;
+                    case 'copy':
+                        this.copyClipboardClick(doc.id);
+                        break;
+                    case 'close':
+                        this.closeEmailDialog();
+                        break;
+                }
+            });
+        });
         
         return modal;
     }

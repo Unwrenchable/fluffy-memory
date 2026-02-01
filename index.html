@@ -616,8 +616,10 @@
             }
         }
         
-        // Auto-save progress
+        // Auto-save progress periodically
         let autoSaveInterval = null;
+        const AUTO_SAVE_INTERVAL_MS = 2 * 60 * 1000; // 2 minutes
+        
         function startAutoSave() {
             // Save progress every 2 minutes
             if (autoSaveInterval) {
@@ -635,7 +637,7 @@
                     window.authSystem.saveProgress(progressData);
                     console.log('Progress auto-saved');
                 }
-            }, 120000); // 2 minutes
+            }, AUTO_SAVE_INTERVAL_MS);
         }
         
         // Initialize on page load

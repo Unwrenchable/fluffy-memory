@@ -280,9 +280,11 @@ class AuthenticationSystem {
     }
 
     // Helper: Simple password hashing (for demo purposes only)
+    // WARNING: This is NOT secure for production use!
+    // In production, use a proper backend with bcrypt or similar secure hashing
     hashPassword(password) {
-        // In production, use proper hashing like bcrypt
-        // This is a simple hash for demonstration
+        // This is a simple hash for demonstration only
+        // DO NOT use this in production - passwords can be easily extracted from localStorage
         let hash = 0;
         for (let i = 0; i < password.length; i++) {
             const char = password.charCodeAt(i);
@@ -294,12 +296,12 @@ class AuthenticationSystem {
 
     // Helper: Generate unique user ID
     generateUserId() {
-        return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        return 'user_' + Date.now() + '_' + Math.random().toString(36).slice(2, 11);
     }
 
     // Helper: Generate unique document ID
     generateDocumentId() {
-        return 'doc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        return 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 11);
     }
 
     // Helper: Remove sensitive data from user object
