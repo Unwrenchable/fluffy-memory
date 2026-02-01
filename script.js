@@ -688,6 +688,9 @@ function predictCoverage() {
 function generateAppealLetter() {
     const previewDiv = document.getElementById('letter-preview');
     if (previewDiv) {
+        // Get user data if logged in
+        const user = window.authSystem && window.authSystem.isLoggedIn() ? window.authSystem.getCurrentUser() : null;
+        
         previewDiv.innerHTML = `
             <div style="background: white; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 5px;">
                 <h4>Preview of Generated Appeal Letter:</h4>
@@ -695,15 +698,73 @@ function generateAppealLetter() {
                     [Your generated professional appeal letter would appear here with proper formatting, 
                     medical justification, and supporting arguments based on your input]
                 </p>
-                <button class="btn-primary" style="margin-top: 1rem;" onclick="downloadLetter()">Download Letter</button>
-                <button class="btn-secondary" style="margin-top: 1rem; margin-left: 0.5rem;" onclick="editLetter()">Edit Letter</button>
+                <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn-primary" onclick="downloadLetter()">💾 Download Letter</button>
+                    <button class="btn-secondary" onclick="editLetter()">✏️ Edit Letter</button>
+                    ${user ? '<button class="btn-secondary" onclick="saveAndEmailLetter()">📧 Save & Email</button>' : ''}
+                </div>
             </div>
         `;
     }
 }
 
+function saveAndEmailLetter() {
+    if (!window.authSystem || !window.authSystem.isLoggedIn()) {
+        if (confirm('You need to be logged in to save and email documents. Would you like to login now?')) {
+            window.location.href = 'login.html';
+        }
+        return;
+    }
+    
+    const document = {
+        name: 'Disability Appeal Letter',
+        description: 'Professional appeal letter for disability denial',
+        category: 'Appeals',
+        content: 'Your generated appeal letter content...',
+        type: 'appeal-letter'
+    };
+    
+    // Save to user's library
+    const result = window.authSystem.saveDocument(document);
+    
+    if (result.success) {
+        alert('✓ Letter saved to your account!');
+        
+        // Show email dialog
+        const user = window.authSystem.getCurrentUser();
+        if (window.emailSystem && confirm('Would you like to email this letter to yourself now?')) {
+            window.emailSystem.showEmailDialog(result.document, user);
+        }
+    } else {
+        alert('Failed to save: ' + result.error);
+    }
+}
+
+function saveProgress() {
+    if (window.authSystem && window.authSystem.isLoggedIn()) {
+        const progressData = {
+            lastSave: new Date().toISOString(),
+            currentPage: window.location.pathname
+        };
+        
+        const result = window.authSystem.saveProgress(progressData);
+        
+        if (result.success) {
+            alert('✓ Progress saved! You can return later to complete this form.');
+        } else {
+            alert('Failed to save progress: ' + result.error);
+        }
+    } else {
+        alert('⚠️ You are not logged in. Your progress will be lost if you leave this page. Please login to save your progress.');
+    }
+}
+
 function saveAppointment() {
-    alert('Appointment saved! In production, this would sync with your calendar and send reminders.');
+    if (window.authSystem && window.authSystem.isLoggedIn()) {
+        alert('✓ Appointment saved! In production, this would sync with your calendar and send reminders.');
+    } else {
+        alert('⚠️ Login to save appointments to your account.');
+    }
 }
 
 function downloadLetter() {
@@ -717,10 +778,6 @@ function editLetter() {
 // Form Submission Functions
 function submitForm(formType) {
     alert(`${formType.charAt(0).toUpperCase() + formType.slice(1)} form submitted successfully! In a production environment, this would process your application.`);
-}
-
-function saveProgress() {
-    alert('Progress saved! You can return later to complete this form.');
 }
 
 // External Link Handler
