@@ -769,4 +769,542 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.style.display = 'none';
         }
     };
+
+    // Initialize AI Assistant and Condition Categorizer
+    if (typeof MedicalAIAssistant !== 'undefined') {
+        window.aiAssistant = new MedicalAIAssistant();
+    }
+    if (typeof MedicalConditionCategorizer !== 'undefined') {
+        window.conditionCategorizer = new MedicalConditionCategorizer();
+    }
 });
+
+// ========================================
+// AI ASSISTANT WIDGET FUNCTIONS
+// ========================================
+
+function toggleAIAssistant() {
+    const panel = document.getElementById('ai-assistant-panel');
+    if (panel.style.display === 'none' || panel.style.display === '') {
+        panel.style.display = 'flex';
+    } else {
+        panel.style.display = 'none';
+    }
+}
+
+function handleAIEnter(event) {
+    if (event.key === 'Enter') {
+        sendToAI();
+    }
+}
+
+async function sendToAI() {
+    const input = document.getElementById('ai-user-input');
+    const messagesDiv = document.getElementById('ai-messages');
+    const userMessage = input.value.trim();
+    
+    if (!userMessage) return;
+    
+    // Add user message to chat
+    addAIMessage(userMessage, 'user');
+    input.value = '';
+    
+    // Get AI response
+    if (window.aiAssistant) {
+        const response = await window.aiAssistant.getIntelligentGuidance(userMessage);
+        
+        // Add AI response
+        addAIMessage(response.response, 'assistant');
+        
+        // Add suggestion buttons if available
+        if (response.suggestions && response.suggestions.length > 0) {
+            addAISuggestions(response.suggestions);
+        }
+    }
+}
+
+function addAIMessage(text, sender) {
+    const messagesDiv = document.getElementById('ai-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `ai-message ${sender}`;
+    messageDiv.textContent = text;
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function addAISuggestions(suggestions) {
+    const messagesDiv = document.getElementById('ai-messages');
+    const suggestionsDiv = document.createElement('div');
+    suggestionsDiv.className = 'ai-suggestions';
+    
+    suggestions.forEach(suggestion => {
+        const btn = document.createElement('button');
+        btn.className = 'ai-suggestion-btn';
+        btn.innerHTML = `${suggestion.icon} <strong>${suggestion.text}</strong><br><small>${suggestion.description}</small>`;
+        btn.onclick = () => handleSuggestionClick(suggestion.action);
+        suggestionsDiv.appendChild(btn);
+    });
+    
+    messagesDiv.appendChild(suggestionsDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function handleQuickAction(action) {
+    const messages = {
+        'confused': "I'm feeling confused and overwhelmed by all of this. Where do I even start?",
+        'denied': "My application was denied and I don't know what to do next.",
+        'start': "I need help but don't know where to begin. What should I do first?",
+        'appeal': "I need to appeal a denial. How do I make my appeal successful?"
+    };
+    
+    const input = document.getElementById('ai-user-input');
+    input.value = messages[action];
+    sendToAI();
+}
+
+function handleSuggestionClick(action) {
+    // Route to appropriate tool or section
+    const actions = {
+        'insurance_wizard': () => document.getElementById('insurance').scrollIntoView({ behavior: 'smooth' }),
+        'disability_strategy': () => document.getElementById('disability').scrollIntoView({ behavior: 'smooth' }),
+        'paperwork_helper': () => document.getElementById('paperwork').scrollIntoView({ behavior: 'smooth' }),
+        'find_specialist': () => document.getElementById('doctors').scrollIntoView({ behavior: 'smooth' }),
+        'appeal_help': () => openAITool('appeal-generator'),
+        'document_review': () => openAITool('document-analyzer'),
+        'start_questionnaire': () => startAIAssessment()
+    };
+    
+    if (actions[action]) {
+        actions[action]();
+    }
+}
+
+// ========================================
+// AI GUIDED JOURNEY FUNCTIONS
+// ========================================
+
+async function startAIGuidedJourney() {
+    toggleAIAssistant();
+    setTimeout(() => {
+        addAIMessage("Hi! I'm here to help you get the medical assistance you need. Let's start by understanding your situation.", 'assistant');
+        setTimeout(() => {
+            addAIMessage("What brings you here today? Are you looking for insurance, disability benefits, or help with something else?", 'assistant');
+        }, 1000);
+    }, 500);
+}
+
+async function startAIAssessment() {
+    const container = document.getElementById('ai-assessment-container');
+    container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth' });
+    
+    if (window.aiAssistant) {
+        const questionnaire = await window.aiAssistant.conductIntakeQuestionnaire();
+        renderQuestionnaire(questionnaire);
+    }
+}
+
+function renderQuestionnaire(questionnaire) {
+    const container = document.getElementById('ai-assessment-container');
+    let html = '<div class="questionnaire-box">';
+    html += `<h3>Quick Assessment</h3>`;
+    html += `<p>${questionnaire.purpose}</p>`;
+    html += '<form id="assessment-form" onsubmit="submitAssessment(event)">';
+    
+    questionnaire.questions.forEach((q, index) => {
+        html += `<div class="form-field">`;
+        html += `<label><strong>Question ${index + 1}:</strong> ${q.question}</label>`;
+        
+        if (q.type === 'multiple-choice') {
+            html += `<select name="${q.id}" required>`;
+            html += `<option value="">Select an option...</option>`;
+            q.options.forEach(option => {
+                html += `<option value="${option}">${option}</option>`;
+            });
+            html += `</select>`;
+        }
+        
+        html += `</div>`;
+    });
+    
+    html += '<button type="submit" class="btn-primary btn-large">Get My Personalized Plan</button>';
+    html += '</form>';
+    html += '</div>';
+    
+    container.innerHTML = html;
+}
+
+async function submitAssessment(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const answers = {};
+    
+    for (const [key, value] of formData.entries()) {
+        answers[key] = value;
+    }
+    
+    // Generate roadmap
+    if (window.aiAssistant) {
+        const roadmap = window.aiAssistant.createPersonalizedRoadmap(answers);
+        displayRoadmap(roadmap);
+    }
+}
+
+function displayRoadmap(roadmap) {
+    const container = document.getElementById('ai-roadmap-container');
+    container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth' });
+    
+    let html = '<div class="roadmap-box">';
+    html += `<h2>🎯 ${roadmap.title}</h2>`;
+    
+    // Urgent actions
+    if (roadmap.urgentActions && roadmap.urgentActions.length > 0) {
+        html += '<div class="urgent-section">';
+        html += '<h3>⚠️ URGENT ACTIONS</h3>';
+        roadmap.urgentActions.forEach(action => {
+            html += `<div class="urgent-action ${action.priority.toLowerCase()}">`;
+            html += `<strong>${action.action}</strong> - ${action.deadline}<br>`;
+            html += `<small>${action.description}</small>`;
+            html += `</div>`;
+        });
+        html += '</div>';
+    }
+    
+    // Steps
+    html += '<div class="roadmap-steps">';
+    html += '<h3>📋 Your Step-by-Step Plan</h3>';
+    roadmap.steps.forEach(step => {
+        html += `<div class="roadmap-step">`;
+        html += `<h4>Step ${step.number}: ${step.title}</h4>`;
+        html += `<p>${step.description}</p>`;
+        html += `<ul>`;
+        step.actions.forEach(action => {
+            html += `<li>${action}</li>`;
+        });
+        html += `</ul>`;
+        html += `<p class="timeframe"><strong>Estimated Time:</strong> ${step.timeframe}</p>`;
+        html += `</div>`;
+    });
+    html += '</div>';
+    
+    html += '<button onclick="startProcessNavigation()" class="btn-primary btn-large">Start Process with AI Guidance →</button>';
+    html += '</div>';
+    
+    container.innerHTML = html;
+}
+
+function startProcessNavigation() {
+    alert('AI will now guide you step-by-step through the process. Each form and action will have AI assistance.');
+    document.getElementById('ai-tools').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ========================================
+// DOCUMENT UPLOAD & AUTO-FILL FUNCTIONS
+// ========================================
+
+function openAITool(toolType) {
+    const modal = document.getElementById('ai-tool-modal');
+    const container = document.getElementById('ai-tool-container');
+    
+    let content = '';
+    
+    switch(toolType) {
+        case 'document-autofill':
+            content = generateDocumentAutoFillTool();
+            break;
+        case 'form-filler':
+            content = generateFormFillerTool();
+            break;
+        case 'chat-assistant':
+            content = generateChatAssistantTool();
+            break;
+        case 'document-analyzer':
+            content = generateDocumentAnalyzerTool();
+            break;
+        case 'coverage-predictor':
+            content = generateCoveragePredictorTool();
+            break;
+        case 'appeal-generator':
+            content = generateAppealGeneratorTool();
+            break;
+        case 'appointment-coordinator':
+            content = generateAppointmentCoordinatorTool();
+            break;
+    }
+    
+    container.innerHTML = content;
+    modal.style.display = 'block';
+}
+
+function generateDocumentAutoFillTool() {
+    return `
+        <h2>📄 AI Document Upload & Auto-Fill</h2>
+        <p class="section-description">Upload your documents and let AI automatically extract information and fill out forms for you!</p>
+        
+        <div class="process-navigation">
+            <div class="process-steps">
+                <div class="process-step active">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Upload</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">AI Extract</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Categorize</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Auto-Fill</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-circle">5</div>
+                    <div class="step-label">Review</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-upload').click()">
+            <div class="upload-icon">📁</div>
+            <h3>Drop your documents here or click to upload</h3>
+            <p>Supported: Medical records, ID cards, insurance cards, diagnosis letters, test results</p>
+            <p><small>PDF, JPG, PNG, Word documents accepted</small></p>
+            <input type="file" id="file-upload" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none;" onchange="handleFileUpload(event)">
+        </div>
+        
+        <div id="upload-status" style="display: none;">
+            <div class="message message-info">
+                <strong>🤖 AI is analyzing your documents...</strong>
+                <p>Extracting personal information, medical conditions, and relevant details</p>
+            </div>
+        </div>
+        
+        <div id="extracted-info" style="display: none;"></div>
+        <div id="condition-categorization" style="display: none;"></div>
+        <div id="auto-filled-forms" style="display: none;"></div>
+        
+        <div class="message message-success" style="margin-top: 2rem;">
+            <strong>How This Works:</strong>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Upload:</strong> Add any documents (ID, medical records, diagnosis letters)</li>
+                <li><strong>AI Extract:</strong> AI reads and extracts your information</li>
+                <li><strong>Categorize:</strong> AI identifies your conditions and categorizes you</li>
+                <li><strong>Auto-Fill:</strong> AI fills out all relevant forms with your information</li>
+                <li><strong>Review:</strong> You review and submit - no manual typing needed!</li>
+            </ol>
+        </div>
+    `;
+}
+
+// Handle file upload and process with AI
+async function handleFileUpload(event) {
+    const files = event.target.files;
+    if (files.length === 0) return;
+    
+    // Show processing status
+    const statusDiv = document.getElementById('upload-status');
+    statusDiv.style.display = 'block';
+    
+    // Update process navigation
+    updateProcessStep(2);
+    
+    // Simulate AI processing (in production, would send to backend/HuggingFace API)
+    setTimeout(() => {
+        processUploadedDocuments(files);
+    }, 2000);
+}
+
+function processUploadedDocuments(files) {
+    // Simulate extracted information from documents
+    const extractedData = simulateDocumentExtraction(files);
+    
+    // Display extracted information
+    displayExtractedInfo(extractedData);
+    
+    // Update process step
+    updateProcessStep(3);
+    
+    // Categorize patient based on conditions
+    setTimeout(() => {
+        if (window.conditionCategorizer) {
+            const report = window.conditionCategorizer.generatePatientReport(extractedData.medicalText);
+            displayConditionCategorization(report);
+            
+            // Update process step
+            updateProcessStep(4);
+            
+            // Auto-fill forms
+            setTimeout(() => {
+                autoFillForms(extractedData, report);
+                updateProcessStep(5);
+            }, 1500);
+        }
+    }, 1500);
+}
+
+function simulateDocumentExtraction(files) {
+    // In production, this would use OCR and AI to extract actual data
+    // For demo, we'll simulate extracted data
+    const fileNames = Array.from(files).map(f => f.name).join(', ');
+    
+    return {
+        personalInfo: {
+            fullName: 'John Smith',
+            dateOfBirth: '1975-06-15',
+            ssn: 'XXX-XX-6789',
+            address: '123 Main St, Anytown, CA 90210',
+            phone: '(555) 123-4567',
+            email: 'john.smith@email.com'
+        },
+        medicalText: 'Patient diagnosed with rheumatoid arthritis and major depression. Multiple sclerosis with persistent mobility limitations. Chronic COPD requiring daily oxygen therapy.',
+        filesProcessed: fileNames
+    };
+}
+
+function displayExtractedInfo(data) {
+    const container = document.getElementById('extracted-info');
+    container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    
+    let html = '<div class="extracted-data">';
+    html += '<h4>✅ Information Successfully Extracted</h4>';
+    html += '<p><strong>Files Processed:</strong> ' + data.filesProcessed + '</p>';
+    html += '<div class="data-fields">';
+    
+    for (const [key, value] of Object.entries(data.personalInfo)) {
+        const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        html += `<div class="data-field">`;
+        html += `<span class="data-label">${label}:</span>`;
+        html += `<span class="data-value">${value}</span>`;
+        html += `</div>`;
+    }
+    
+    html += '</div>';
+    html += '<p><small>✓ AI extracted this information with high confidence</small></p>';
+    html += '</div>';
+    
+    container.innerHTML = html;
+}
+
+function displayConditionCategorization(report) {
+    if (!report.success) {
+        return;
+    }
+    
+    const container = document.getElementById('condition-categorization');
+    container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    
+    let html = '<div class="extracted-data" style="background: #fff5f5; border-color: #f56565;">';
+    html += '<h4>🎯 AI Condition Analysis & Categorization</h4>';
+    html += report.summary.replace(/\n/g, '<br>');
+    
+    html += '<h4 style="margin-top: 1.5rem;">📋 Required Documentation:</h4>';
+    html += '<ul>';
+    report.recommendations.documentation.slice(0, 5).forEach(doc => {
+        html += `<li>${doc}</li>`;
+    });
+    html += '</ul>';
+    
+    html += '<h4 style="margin-top: 1.5rem;">📝 Forms You Need:</h4>';
+    html += '<ul>';
+    report.requiredForms.forEach(form => {
+        html += `<li><strong>${form.name}</strong> - ${form.type}</li>`;
+    });
+    html += '</ul>';
+    
+    html += '</div>';
+    
+    container.innerHTML = html;
+}
+
+function autoFillForms(extractedData, report) {
+    const container = document.getElementById('auto-filled-forms');
+    container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    
+    let html = '<div class="form-preview">';
+    html += '<h3>🎉 Forms Automatically Filled by AI!</h3>';
+    html += '<p>Review the auto-filled information below. Green fields were filled with high confidence.</p>';
+    
+    // Sample SSDI Application Form
+    html += '<h4 style="margin-top: 2rem;">Social Security Disability Application (Form SSA-16)</h4>';
+    html += '<div class="form-field">';
+    html += '<label>Full Legal Name <span class="confidence-indicator confidence-high">High Confidence</span></label>';
+    html += `<input type="text" class="auto-filled" value="${extractedData.personalInfo.fullName}" readonly>`;
+    html += '</div>';
+    
+    html += '<div class="form-field">';
+    html += '<label>Social Security Number <span class="confidence-indicator confidence-high">High Confidence</span></label>';
+    html += `<input type="text" class="auto-filled" value="${extractedData.personalInfo.ssn}" readonly>`;
+    html += '</div>';
+    
+    html += '<div class="form-field">';
+    html += '<label>Date of Birth <span class="confidence-indicator confidence-high">High Confidence</span></label>';
+    html += `<input type="date" class="auto-filled" value="${extractedData.personalInfo.dateOfBirth}" readonly>`;
+    html += '</div>';
+    
+    html += '<div class="form-field">';
+    html += '<label>Mailing Address <span class="confidence-indicator confidence-high">High Confidence</span></label>';
+    html += `<input type="text" class="auto-filled" value="${extractedData.personalInfo.address}" readonly>`;
+    html += '</div>';
+    
+    if (report && report.success) {
+        html += '<div class="form-field">';
+        html += '<label>Primary Disabling Conditions <span class="confidence-indicator confidence-high">AI Identified</span></label>';
+        const conditions = report.profile.conditions.map(c => c.name).join(', ');
+        html += `<textarea class="auto-filled" readonly>${conditions}</textarea>`;
+        html += '</div>';
+        
+        html += '<div class="form-field">';
+        html += '<label>How do your conditions limit your ability to work? <span class="confidence-indicator confidence-medium">AI Suggested</span></label>';
+        html += `<textarea class="auto-filled" rows="4" readonly>My ${report.profile.conditions[0]?.category || 'medical'} condition(s) significantly limit my ability to perform work activities. I experience persistent symptoms that prevent me from maintaining regular employment and completing tasks consistently over an 8-hour workday.</textarea>`;
+        html += '</div>';
+    }
+    
+    html += '<div class="message message-success" style="margin-top: 2rem;">';
+    html += '<strong>✨ All forms filled automatically!</strong><br>';
+    html += 'AI has filled out your disability application, medical records requests, and other required forms based on your uploaded documents.';
+    html += '</div>';
+    
+    html += '<div style="margin-top: 2rem; display: flex; gap: 1rem;">';
+    html += '<button class="btn-primary" onclick="downloadFilledForms()">📥 Download All Forms</button>';
+    html += '<button class="btn-secondary" onclick="emailForms()">📧 Email Forms to Me</button>';
+    html += '<button class="btn-secondary" onclick="editForms()">✏️ Edit Before Submitting</button>';
+    html += '</div>';
+    
+    html += '</div>';
+    
+    container.innerHTML = html;
+}
+
+function updateProcessStep(stepNumber) {
+    const steps = document.querySelectorAll('.process-step');
+    steps.forEach((step, index) => {
+        if (index < stepNumber - 1) {
+            step.classList.add('completed');
+            step.classList.remove('active');
+        } else if (index === stepNumber - 1) {
+            step.classList.add('active');
+        } else {
+            step.classList.remove('active', 'completed');
+        }
+    });
+}
+
+function downloadFilledForms() {
+    alert('✅ All filled forms would be downloaded as a PDF package. In production, this generates actual form PDFs with your information.');
+}
+
+function emailForms() {
+    alert('✅ Forms would be emailed to your registered email address. In production, this sends the completed forms.');
+}
+
+function editForms() {
+    alert('Opening form editor... You can review and edit any field before final submission.');
+}

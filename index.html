@@ -7,11 +7,52 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- AI-Powered Smart Assistant Widget -->
+    <div id="ai-assistant-widget" class="ai-widget">
+        <button id="ai-widget-toggle" class="ai-widget-toggle" onclick="toggleAIAssistant()">
+            <span class="ai-icon">🤖</span>
+            <span class="ai-text">Need Help? Ask AI</span>
+        </button>
+        <div id="ai-assistant-panel" class="ai-assistant-panel" style="display: none;">
+            <div class="ai-panel-header">
+                <h3>🤖 Your AI Medical Navigator</h3>
+                <p>I'll help you cut through the confusion and get the help you need</p>
+                <button class="ai-close" onclick="toggleAIAssistant()">×</button>
+            </div>
+            <div id="ai-chat-container" class="ai-chat-container">
+                <div class="ai-welcome-message">
+                    <p><strong>Hi! I'm your AI assistant.</strong></p>
+                    <p>I understand navigating medical assistance can be confusing and frustrating. I'm here to:</p>
+                    <ul>
+                        <li>✅ Understand exactly what you need</li>
+                        <li>✅ Cut through red tape and bureaucracy</li>
+                        <li>✅ Help with denials and appeals</li>
+                        <li>✅ Find the right doctors and programs</li>
+                        <li>✅ Simplify the entire process</li>
+                    </ul>
+                    <p><strong>What's your situation? Tell me what you're struggling with:</strong></p>
+                </div>
+                <div id="ai-messages" class="ai-messages"></div>
+            </div>
+            <div class="ai-quick-actions" id="ai-quick-actions">
+                <button onclick="handleQuickAction('confused')" class="quick-action-btn">😵 I'm Confused</button>
+                <button onclick="handleQuickAction('denied')" class="quick-action-btn">❌ I Was Denied</button>
+                <button onclick="handleQuickAction('start')" class="quick-action-btn">🎯 Where to Start?</button>
+                <button onclick="handleQuickAction('appeal')" class="quick-action-btn">⚖️ Need to Appeal</button>
+            </div>
+            <div class="ai-input-area">
+                <input type="text" id="ai-user-input" placeholder="Type your question or concern..." onkeypress="handleAIEnter(event)">
+                <button onclick="sendToAI()" class="btn-primary">Send</button>
+            </div>
+        </div>
+    </div>
+
     <header>
         <nav class="navbar">
             <div class="container">
                 <h1 class="logo">🏥 Medical Assistance Helper</h1>
                 <ul class="nav-menu">
+                    <li><a href="#ai-guide">AI Guide</a></li>
                     <li><a href="#insurance">Insurance Search</a></li>
                     <li><a href="#paperwork">Paperwork Guide</a></li>
                     <li><a href="#disability">Disability Support</a></li>
@@ -23,11 +64,46 @@
     </header>
 
     <main>
-        <!-- Hero Section -->
+        <!-- Hero Section with AI Prompt -->
         <section class="hero">
             <div class="container">
-                <h2>Get the Medical Help You Need</h2>
-                <p>Find programs, insurance coverage, doctors, and complete paperwork assistance all in one place</p>
+                <h2>Get the Medical Help You Need - With AI Guidance</h2>
+                <p>Stop getting confused and giving up. Our AI helps you navigate bureaucracy, denials, and complex processes</p>
+                <button onclick="startAIGuidedJourney()" class="btn-hero">🤖 Start AI-Guided Journey</button>
+            </div>
+        </section>
+
+        <!-- AI-Powered Needs Assessment -->
+        <section id="ai-guide" class="section">
+            <div class="container">
+                <h2>🎯 AI-Powered Needs Assessment</h2>
+                <p class="section-description">Confused about where to start? Let our AI figure out exactly what you need in 2 minutes</p>
+                
+                <div class="ai-assessment-box">
+                    <div class="assessment-benefits">
+                        <h3>Why This Helps:</h3>
+                        <ul>
+                            <li>✅ <strong>No more confusion</strong> - AI asks the right questions</li>
+                            <li>✅ <strong>Personalized path</strong> - Get a roadmap just for you</li>
+                            <li>✅ <strong>Avoid denials</strong> - Learn common mistakes before you make them</li>
+                            <li>✅ <strong>Track progress</strong> - See exactly where you are in the process</li>
+                            <li>✅ <strong>Don't give up</strong> - AI keeps you motivated and on track</li>
+                        </ul>
+                    </div>
+                    <div class="assessment-action">
+                        <h3>Take the Quick Assessment</h3>
+                        <p>Answer 4 simple questions and get your personalized action plan</p>
+                        <button onclick="startAIAssessment()" class="btn-primary btn-large">Start Assessment →</button>
+                    </div>
+                </div>
+
+                <div id="ai-assessment-container" style="display: none;">
+                    <!-- Assessment questions will be loaded here -->
+                </div>
+
+                <div id="ai-roadmap-container" style="display: none;">
+                    <!-- Personalized roadmap will be shown here -->
+                </div>
             </div>
         </section>
 
@@ -139,8 +215,16 @@
                 <p class="section-description">Advanced AI tools to help with every step of your medical journey</p>
                 
                 <div class="ai-tools-grid">
+                    <div class="card ai-card featured-card">
+                        <div class="featured-badge">⭐ NEW - Auto-Fill</div>
+                        <h3>📄 AI Document Upload & Auto-Fill</h3>
+                        <p><strong>Upload your documents once, AI fills out ALL your forms!</strong></p>
+                        <p>Upload ID, medical records, or any documents - our AI extracts info and auto-fills paperwork for you</p>
+                        <button onclick="openAITool('document-autofill')" class="btn-primary">Upload & Auto-Fill</button>
+                    </div>
+
                     <div class="card ai-card">
-                        <h3>📄 Smart Form Filler</h3>
+                        <h3>📋 Smart Form Filler</h3>
                         <p>AI assists in completing medical forms by analyzing your information and suggesting accurate responses</p>
                         <button onclick="openAITool('form-filler')" class="btn-secondary">Launch Tool</button>
                     </div>
@@ -218,6 +302,8 @@
         </div>
     </footer>
 
+    <script src="condition-categorizer.js"></script>
+    <script src="ai-assistant.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
