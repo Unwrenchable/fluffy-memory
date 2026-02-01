@@ -2050,3 +2050,106 @@ h3 {
     }
 }
 
+
+/* Document Upload Styles */
+.upload-zone {
+    border: 3px dashed #cbd5e0;
+    border-radius: 12px;
+    padding: 3rem;
+    text-align: center;
+    background: #f7fafc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-zone:hover {
+    border-color: #8b5cf6;
+    background: #faf5ff;
+}
+
+.upload-zone .upload-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.upload-zone h3 {
+    color: #2d3748;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.upload-zone p {
+    color: #718096;
+    font-size: 1rem;
+}
+
+/* Document Item Styles */
+.document-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f7fafc;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    transition: background 0.2s ease;
+}
+
+.document-item:hover {
+    background: #edf2f7;
+}
+
+/* Chat Message Styles */
+.chat-message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    animation: slideIn 0.3s ease;
+}
+
+.chat-message.user {
+    background: white;
+    border-left: 3px solid #8b5cf6;
+}
+
+.chat-message.assistant {
+    background: #e6f7ff;
+    border-left: 3px solid #48bb78;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments for upload zone */
+@media (max-width: 768px) {
+    .upload-zone {
+        padding: 2rem 1rem;
+    }
+    
+    .upload-zone .upload-icon {
+        font-size: 3rem;
+    }
+    
+    .document-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .document-item > div:last-child {
+        margin-top: 1rem;
+        width: 100%;
+    }
+    
+    .document-item button {
+        width: 48%;
+        margin-right: 0 !important;
+    }
+}
