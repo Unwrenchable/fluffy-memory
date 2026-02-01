@@ -1310,17 +1310,66 @@ async function sendToAI() {
     addAIMessage(userMessage, 'user');
     input.value = '';
     
-    // Get AI response
-    if (window.aiAssistant) {
-        const response = await window.aiAssistant.getIntelligentGuidance(userMessage);
+    // Show typing indicator
+    addTypingIndicator();
+    
+    try {
+        let response;
+        
+        // Try dual AI system first if configured
+        if (window.aiTeam && window.appConfig) {
+            const status = window.appConfig.getStatus();
+            if (status.anyConfigured) {
+                response = await window.aiTeam.getTeamResponse(userMessage);
+                
+                // Add source indicator
+                if (response.source && response.source !== 'system') {
+                    addAIMessage(`💡 Answered by: ${response.source}`, 'system-info');
+                }
+            }
+        }
+        
+        // Fallback to rule-based AI assistant if dual AI not configured
+        if (!response && window.aiAssistant) {
+            response = await window.aiAssistant.getIntelligentGuidance(userMessage);
+        }
+        
+        // Remove typing indicator
+        removeTypingIndicator();
         
         // Add AI response
-        addAIMessage(response.response, 'assistant');
-        
-        // Add suggestion buttons if available
-        if (response.suggestions && response.suggestions.length > 0) {
-            addAISuggestions(response.suggestions);
+        if (response) {
+            addAIMessage(response.response, 'assistant');
+            
+            // Add suggestion buttons if available
+            if (response.suggestions && response.suggestions.length > 0) {
+                addAISuggestions(response.suggestions);
+            }
+        } else {
+            addAIMessage('I apologize, but I encountered an issue. Please try again or configure your AI settings.', 'assistant');
         }
+    } catch (error) {
+        console.error('AI Error:', error);
+        removeTypingIndicator();
+        addAIMessage('I apologize for the error. Please check your AI configuration or try again.', 'assistant');
+    }
+}
+
+function addTypingIndicator() {
+    const messagesDiv = document.getElementById('ai-messages');
+    const indicator = document.createElement('div');
+    indicator.className = 'ai-message assistant typing-indicator';
+    indicator.id = 'typing-indicator';
+    indicator.setAttribute('aria-label', 'AI is typing');
+    indicator.innerHTML = '<span>●</span><span>●</span><span>●</span>';
+    messagesDiv.appendChild(indicator);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function removeTypingIndicator() {
+    const indicator = document.getElementById('typing-indicator');
+    if (indicator) {
+        indicator.remove();
     }
 }
 

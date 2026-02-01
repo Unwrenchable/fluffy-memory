@@ -579,20 +579,41 @@ Enclosed: HIPAA Authorization Form`;
             return null;
         }
 
+        // If userData is not provided, try to load from UserDataManager
+        if (!userData || Object.keys(userData).length === 0) {
+            if (typeof UserDataManager !== 'undefined') {
+                const userDataManager = new UserDataManager();
+                if (userDataManager.hasProfile()) {
+                    userData = userDataManager.getDocumentData();
+                    console.log('Auto-filling from saved intake data');
+                }
+            }
+        }
+
+        // If still no userData, use empty defaults
+        userData = userData || {};
+
         // Replace placeholders with user data
         const replacements = {
-            '[Your Name]': userData.name || '[Your Name]',
+            '[Your Name]': userData.name || userData.firstName || '[Your Name]',
             '[Your Address]': userData.address || '[Your Address]',
-            '[City, State ZIP]': userData.cityStateZip || '[City, State ZIP]',
+            '[City, State ZIP]': userData.cityStateZip || (userData.state ? `[City], ${userData.state} [ZIP]` : '[City, State ZIP]'),
             '[Phone Number]': userData.phone || '[Phone Number]',
             '[Email]': userData.email || '[Email]',
             '[Date]': new Date().toLocaleDateString(),
             '[Your SSN]': userData.ssn || '[Your SSN]',
             '[Your DOB]': userData.dob || '[Your DOB]',
             '[Your Claim Number]': userData.claimNumber || '[Your Claim Number]',
-            '[Doctor\'s Name]': userData.doctorName || '[Doctor\'s Name]',
+            '[Doctor\'s Name]': userData.doctorName || userData.specialistTypes || '[Doctor\'s Name]',
             '[denial date]': userData.denialDate || '[denial date]',
-            '[list conditions]': userData.conditions || '[list conditions]'
+            '[list conditions]': userData.conditions || userData.primaryCondition || '[list conditions]',
+            '[describe what was missed - e.g., severity of symptoms, combination of conditions, medication side effects, etc.]': this.generateWhatWasMissed(userData),
+            '[List new medical records, test results, doctor statements, etc.]': userData.newEvidence || '[List new medical records, test results, doctor statements, etc.]',
+            '[Describe physical limitations]': this.formatPhysicalLimitations(userData),
+            '[Describe mental/cognitive limitations]': this.formatCognitiveLimitations(userData),
+            '[Describe symptoms: pain, fatigue, side effects]': this.formatSymptoms(userData),
+            '[Describe unpredictability of symptoms]': this.formatUnpredictability(userData),
+            '[explain]': this.generateCannotWorkExplanation(userData)
         };
 
         for (const [placeholder, value] of Object.entries(replacements)) {
@@ -600,6 +621,93 @@ Enclosed: HIPAA Authorization Form`;
         }
 
         return template;
+    }
+
+    // Helper methods for generating content from intake data
+    generateWhatWasMissed(userData) {
+        const missed = [];
+        
+        if (userData.conditionProgression && userData.conditionProgression.includes('worse')) {
+            missed.push('the progressive worsening of my condition');
+        }
+        if (userData.medicationSideEffects && userData.medicationSideEffects.includes('severe')) {
+            missed.push('severe medication side effects that impair functioning');
+        }
+        if (userData.badDaysPerWeek && (userData.badDaysPerWeek === 'Every day' || userData.badDaysPerWeek === '5-6 days')) {
+            missed.push('the frequency and severity of bad days');
+        }
+        if (userData.cognitiveProblems && userData.cognitiveProblems !== 'No cognitive problems') {
+            missed.push('significant cognitive and mental limitations');
+        }
+        
+        return missed.length > 0 ? missed.join(', ') : 'severity of symptoms and their impact on daily functioning';
+    }
+
+    formatPhysicalLimitations(userData) {
+        if (!userData.physicalLimitations || userData.physicalLimitations.length === 0) {
+            return 'Significant physical limitations affecting daily activities';
+        }
+        
+        const limitations = Array.isArray(userData.physicalLimitations) ? userData.physicalLimitations : [userData.physicalLimitations];
+        return '- ' + limitations.join('\n- ');
+    }
+
+    formatCognitiveLimitations(userData) {
+        const limitations = [];
+        
+        if (userData.cognitiveProblems && userData.cognitiveProblems !== 'No cognitive problems') {
+            limitations.push(userData.cognitiveProblems);
+        }
+        if (userData.concentrationTime) {
+            limitations.push(`Can only concentrate for ${userData.concentrationTime}`);
+        }
+        
+        return limitations.length > 0 ? '- ' + limitations.join('\n- ') : 'Cognitive difficulties affecting work capacity';
+    }
+
+    formatSymptoms(userData) {
+        const symptoms = [];
+        
+        if (userData.primaryCondition) {
+            symptoms.push(`Primary condition: ${userData.primaryCondition}`);
+        }
+        if (userData.medicationSideEffects && userData.medicationSideEffects !== 'No major side effects') {
+            symptoms.push(`Medication side effects: ${userData.medicationSideEffects}`);
+        }
+        if (userData.restFrequency && userData.restFrequency !== 'Rarely need to rest') {
+            symptoms.push(`Need to rest: ${userData.restFrequency}`);
+        }
+        
+        return symptoms.length > 0 ? '- ' + symptoms.join('\n- ') : 'Chronic symptoms affecting daily function';
+    }
+
+    formatUnpredictability(userData) {
+        if (userData.badDaysPerWeek) {
+            return `I experience ${userData.badDaysPerWeek.toLowerCase()} where symptoms are severe and unpredictable, making consistent work impossible.`;
+        }
+        return 'My symptoms vary significantly day to day, making it impossible to maintain consistent work attendance.';
+    }
+
+    generateCannotWorkExplanation(userData) {
+        const reasons = [];
+        
+        if (userData.badDaysPerWeek && (userData.badDaysPerWeek === 'Every day' || userData.badDaysPerWeek === '5-6 days')) {
+            reasons.push('I have frequent bad days where I can barely function');
+        }
+        if (userData.restFrequency && userData.restFrequency === 'Multiple times every day') {
+            reasons.push('I need to lie down and rest multiple times daily');
+        }
+        if (userData.concentrationTime && (userData.concentrationTime === 'Less than 5 minutes' || userData.concentrationTime === '5-15 minutes')) {
+            reasons.push('my concentration is severely limited');
+        }
+        if (userData.physicalLimitations && userData.physicalLimitations.length > 3) {
+            reasons.push('I have multiple significant physical limitations');
+        }
+        
+        if (reasons.length > 0) {
+            return reasons.join(', ') + '.';
+        }
+        return 'my medical condition and resulting limitations prevent consistent, reliable work performance.';
     }
 
     // Download document (simulate download)
