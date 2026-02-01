@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Medical Assistance Helper</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Login to access your medical assistance account">
+    <meta name="theme-color" content="#8b5cf6">
+    
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .auth-container {
+            max-width: 450px;
+            margin: 60px auto;
+            padding: 2rem;
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-header h1 {
+            color: #2d3748;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .auth-header p {
+            color: #718096;
+            font-size: 0.95rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+        
+        .btn-auth {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn-auth:hover {
+            transform: translateY(-2px);
+        }
+        
+        .auth-toggle {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #718096;
+        }
+        
+        .auth-toggle a {
+            color: #8b5cf6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            background: #fee;
+            color: #c53030;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .success-message {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .benefits-list {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .benefits-list h3 {
+            color: #2d3748;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .benefits-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .benefits-list li {
+            color: #4a5568;
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .benefits-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: bold;
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: #8b5cf6;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        #signup-form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <a href="index.html" class="back-link">← Back to Medical Assistance Helper</a>
+        
+        <div class="auth-card">
+            <!-- Login Form -->
+            <div id="login-form">
+                <div class="auth-header">
+                    <h1>🏥 Welcome Back</h1>
+                    <p>Login to continue your journey</p>
+                </div>
+                
+                <div id="login-error" class="error-message" style="display: none;"></div>
+                
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" required placeholder="your@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required placeholder="Enter your password">
+                    </div>
+                    
+                    <button type="submit" class="btn-auth">Login</button>
+                </form>
+                
+                <div class="auth-toggle">
+                    Don't have an account? <a href="#" onclick="toggleForms(); return false;">Sign Up</a>
+                </div>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signup-form">
+                <div class="auth-header">
+                    <h1>🌟 Create Your Account</h1>
+                    <p>Start tracking your medical assistance journey</p>
+                </div>
+                
+                <div id="signup-error" class="error-message" style="display: none;"></div>
+                
+                <form onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" required placeholder="John Doe">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-email">Email Address</label>
+                        <input type="email" id="signup-email" required placeholder="your@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" required minlength="6" placeholder="At least 6 characters">
+                    </div>
+                    
+                    <button type="submit" class="btn-auth">Create Account</button>
+                </form>
+                
+                <div class="auth-toggle">
+                    Already have an account? <a href="#" onclick="toggleForms(); return false;">Login</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Benefits of Creating Account -->
+        <div class="benefits-list">
+            <h3>Why Create an Account?</h3>
+            <ul>
+                <li>Save your progress and return anytime</li>
+                <li>Store completed forms and documents</li>
+                <li>Email documents to yourself</li>
+                <li>Track your application status</li>
+                <li>Get personalized recommendations</li>
+                <li>Access your medical assistance journey across devices</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script src="auth.js"></script>
+    <script>
+        // Toggle between login and signup forms
+        function toggleForms() {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                clearError('signup-error');
+            } else {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                clearError('login-error');
+            }
+        }
+        
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            clearError('login-error');
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            const result = window.authSystem.login(email, password);
+            
+            if (result.success) {
+                // Redirect to main app
+                window.location.href = 'index.html';
+            } else {
+                showError('login-error', result.error);
+            }
+        }
+        
+        // Handle signup
+        function handleSignup(event) {
+            event.preventDefault();
+            clearError('signup-error');
+            
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            
+            const result = window.authSystem.signup(email, password, name);
+            
+            if (result.success) {
+                // Redirect to main app
+                window.location.href = 'index.html';
+            } else {
+                showError('signup-error', result.error);
+            }
+        }
+        
+        // Show error message
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        // Clear error message
+        function clearError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.style.display = 'none';
+        }
+        
+        // Check if user is already logged in
+        if (window.authSystem.isLoggedIn()) {
+            // Redirect to main app if already logged in
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
