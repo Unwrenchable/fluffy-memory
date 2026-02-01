@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Assistance Helper - Find Help, Insurance & Support</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <h1 class="logo">🏥 Medical Assistance Helper</h1>
+                <ul class="nav-menu">
+                    <li><a href="#insurance">Insurance Search</a></li>
+                    <li><a href="#paperwork">Paperwork Guide</a></li>
+                    <li><a href="#disability">Disability Support</a></li>
+                    <li><a href="#doctors">Find Doctors</a></li>
+                    <li><a href="#ai-tools">AI Tools</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h2>Get the Medical Help You Need</h2>
+                <p>Find programs, insurance coverage, doctors, and complete paperwork assistance all in one place</p>
+            </div>
+        </section>
+
+        <!-- Insurance Search Section -->
+        <section id="insurance" class="section">
+            <div class="container">
+                <h2>🔍 Search Insurance & Aid Programs</h2>
+                <div class="search-box">
+                    <input type="text" id="insurance-input" placeholder="Enter your insurance provider (e.g., Medicare, Medicaid, Blue Cross)">
+                    <input type="text" id="condition-input" placeholder="Enter medical condition or treatment needed">
+                    <input type="text" id="location-input" placeholder="Enter your ZIP code or city">
+                    <button onclick="searchPrograms()" class="btn-primary">Search Programs</button>
+                </div>
+                <div id="insurance-results" class="results-container"></div>
+            </div>
+        </section>
+
+        <!-- Paperwork Guidance Section -->
+        <section id="paperwork" class="section bg-light">
+            <div class="container">
+                <h2>📋 Paperwork Guidance & Assistance</h2>
+                <p class="section-description">We'll guide you through every form and help you complete necessary documentation</p>
+                
+                <div class="paperwork-options">
+                    <div class="card">
+                        <h3>Insurance Applications</h3>
+                        <p>Step-by-step help with insurance enrollment forms</p>
+                        <button onclick="startPaperwork('insurance')" class="btn-secondary">Start Guide</button>
+                    </div>
+                    <div class="card">
+                        <h3>Medical Records Request</h3>
+                        <p>Request and organize your medical documentation</p>
+                        <button onclick="startPaperwork('records')" class="btn-secondary">Start Guide</button>
+                    </div>
+                    <div class="card">
+                        <h3>Financial Assistance Forms</h3>
+                        <p>Apply for financial aid and support programs</p>
+                        <button onclick="startPaperwork('financial')" class="btn-secondary">Start Guide</button>
+                    </div>
+                    <div class="card">
+                        <h3>Treatment Authorization</h3>
+                        <p>Get pre-authorization for treatments and procedures</p>
+                        <button onclick="startPaperwork('authorization')" class="btn-secondary">Start Guide</button>
+                    </div>
+                </div>
+                
+                <div id="paperwork-wizard" class="wizard-container"></div>
+            </div>
+        </section>
+
+        <!-- Disability Support Section -->
+        <section id="disability" class="section">
+            <div class="container">
+                <h2>♿ Disability Support for Rare Conditions</h2>
+                <p class="section-description">Specialized assistance for rare conditions and disability benefits</p>
+                
+                <div class="disability-form">
+                    <h3>Find Support for Your Condition</h3>
+                    <input type="text" id="rare-condition-input" placeholder="Enter rare condition or diagnosis">
+                    <select id="disability-type">
+                        <option value="">Select disability type</option>
+                        <option value="ssdi">Social Security Disability Insurance (SSDI)</option>
+                        <option value="ssi">Supplemental Security Income (SSI)</option>
+                        <option value="state">State Disability Programs</option>
+                        <option value="private">Private Disability Insurance</option>
+                    </select>
+                    <button onclick="searchDisabilitySupport()" class="btn-primary">Find Support Resources</button>
+                </div>
+
+                <div id="disability-results" class="results-container"></div>
+
+                <div class="info-box">
+                    <h4>Common Resources for Rare Conditions:</h4>
+                    <ul>
+                        <li><strong>National Organization for Rare Disorders (NORD)</strong> - Patient assistance programs</li>
+                        <li><strong>Rare Disease Database</strong> - Comprehensive information on rare conditions</li>
+                        <li><strong>Social Security Administration</strong> - Disability benefits for qualifying conditions</li>
+                        <li><strong>State Vocational Rehabilitation</strong> - Employment support services</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Doctor Finder Section -->
+        <section id="doctors" class="section bg-light">
+            <div class="container">
+                <h2>👨‍⚕️ Find Doctors for Approval & Treatment</h2>
+                <p class="section-description">Connect with specialists who can help with disability approval and treatment</p>
+                
+                <div class="doctor-search">
+                    <input type="text" id="specialty-input" placeholder="Enter specialty or condition">
+                    <input type="text" id="doctor-location-input" placeholder="Enter ZIP code or city">
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="accepts-insurance"> Accepts my insurance</label>
+                        <label><input type="checkbox" id="disability-expert"> Disability approval expert</label>
+                        <label><input type="checkbox" id="rare-condition-expert"> Rare condition specialist</label>
+                    </div>
+                    <button onclick="searchDoctors()" class="btn-primary">Search Doctors</button>
+                </div>
+
+                <div id="doctor-results" class="results-container"></div>
+            </div>
+        </section>
+
+        <!-- AI Tools Section -->
+        <section id="ai-tools" class="section">
+            <div class="container">
+                <h2>🤖 AI-Powered Assistance Tools</h2>
+                <p class="section-description">Advanced AI tools to help with every step of your medical journey</p>
+                
+                <div class="ai-tools-grid">
+                    <div class="card ai-card">
+                        <h3>📄 Smart Form Filler</h3>
+                        <p>AI assists in completing medical forms by analyzing your information and suggesting accurate responses</p>
+                        <button onclick="openAITool('form-filler')" class="btn-secondary">Launch Tool</button>
+                    </div>
+                    
+                    <div class="card ai-card">
+                        <h3>💬 Virtual Health Assistant</h3>
+                        <p>Chat with AI to get guidance on finding programs, understanding requirements, and next steps</p>
+                        <button onclick="openAITool('chat-assistant')" class="btn-secondary">Start Chat</button>
+                    </div>
+                    
+                    <div class="card ai-card">
+                        <h3>🔎 Document Analyzer</h3>
+                        <p>Upload medical documents and get AI-powered analysis and recommendations</p>
+                        <button onclick="openAITool('document-analyzer')" class="btn-secondary">Upload Documents</button>
+                    </div>
+                    
+                    <div class="card ai-card">
+                        <h3>📊 Coverage Predictor</h3>
+                        <p>AI predicts coverage likelihood and suggests best programs for your situation</p>
+                        <button onclick="openAITool('coverage-predictor')" class="btn-secondary">Check Coverage</button>
+                    </div>
+
+                    <div class="card ai-card">
+                        <h3>✍️ Appeal Letter Generator</h3>
+                        <p>Generate professional appeal letters for denied claims or applications</p>
+                        <button onclick="openAITool('appeal-generator')" class="btn-secondary">Generate Letter</button>
+                    </div>
+
+                    <div class="card ai-card">
+                        <h3>📅 Appointment Coordinator</h3>
+                        <p>AI helps schedule and coordinate medical appointments and follow-ups</p>
+                        <button onclick="openAITool('appointment-coordinator')" class="btn-secondary">Coordinate Appointments</button>
+                    </div>
+                </div>
+
+                <div id="ai-tool-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeAITool()">&times;</span>
+                        <div id="ai-tool-container"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Links Section -->
+        <section class="section bg-light">
+            <div class="container">
+                <h2>🔗 Quick Access Resources</h2>
+                <div class="quick-links">
+                    <a href="#" class="quick-link-card" onclick="externalLink('healthcare.gov')">
+                        <h4>Healthcare.gov</h4>
+                        <p>Federal health insurance marketplace</p>
+                    </a>
+                    <a href="#" class="quick-link-card" onclick="externalLink('ssa.gov')">
+                        <h4>Social Security</h4>
+                        <p>Disability benefits and SSI</p>
+                    </a>
+                    <a href="#" class="quick-link-card" onclick="externalLink('medicaid.gov')">
+                        <h4>Medicaid</h4>
+                        <p>State health coverage programs</p>
+                    </a>
+                    <a href="#" class="quick-link-card" onclick="externalLink('medicare.gov')">
+                        <h4>Medicare</h4>
+                        <p>Federal health insurance</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Medical Assistance Helper. This tool provides guidance only and does not constitute medical or legal advice.</p>
+            <p>Always consult with qualified professionals for your specific situation.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
