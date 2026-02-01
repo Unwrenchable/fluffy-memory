@@ -1248,10 +1248,248 @@
             // In production, this would trigger the actual intake flow
         }
         
+        // ============================================
+        // Smart Search Integration
+        // ============================================
+        
+        // Initialize Smart Search System
+        let smartSearchSystem = null;
+        
+        function initSmartSearch() {
+            if (typeof SmartSearchSystem !== 'undefined') {
+                smartSearchSystem = new SmartSearchSystem();
+                console.log('Smart Search System initialized');
+            } else {
+                console.warn('SmartSearchSystem class not available');
+            }
+        }
+        
+        // Handle real-time search as user types
+        function handleSmartSearch(event) {
+            const query = event.target.value.trim();
+            const suggestionsContainer = document.getElementById('search-suggestions');
+            
+            if (!smartSearchSystem) {
+                initSmartSearch();
+            }
+            
+            // Clear suggestions if query is too short
+            if (query.length < 2) {
+                if (suggestionsContainer) {
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.style.display = 'none';
+                }
+                return;
+            }
+            
+            // Get autocomplete suggestions
+            if (smartSearchSystem) {
+                const suggestions = smartSearchSystem.getAutocompleteSuggestions(query);
+                displaySuggestions(suggestions);
+            }
+            
+            // Execute search on Enter key
+            if (event.key === 'Enter') {
+                executeSmartSearch();
+            }
+        }
+        
+        // Display autocomplete suggestions
+        function displaySuggestions(suggestions) {
+            const suggestionsContainer = document.getElementById('search-suggestions');
+            if (!suggestionsContainer) return;
+            
+            if (suggestions.length === 0) {
+                suggestionsContainer.style.display = 'none';
+                return;
+            }
+            
+            const html = suggestions.map(suggestion => 
+                `<div class="suggestion-item" onclick="fillSearchQuery('${suggestion.replace(/'/g, "\\'")}')">${suggestion}</div>`
+            ).join('');
+            
+            suggestionsContainer.innerHTML = html;
+            suggestionsContainer.style.display = 'block';
+        }
+        
+        // Fill search query from suggestion
+        function fillSearchQuery(suggestion) {
+            const input = document.getElementById('smart-search-input');
+            if (input) {
+                input.value = suggestion;
+                executeSmartSearch();
+            }
+        }
+        
+        // Execute the search
+        function executeSmartSearch() {
+            const input = document.getElementById('smart-search-input');
+            const resultsContainer = document.getElementById('search-results-container');
+            const suggestionsContainer = document.getElementById('search-suggestions');
+            
+            if (!input || !resultsContainer) return;
+            
+            const query = input.value.trim();
+            
+            // Hide suggestions
+            if (suggestionsContainer) {
+                suggestionsContainer.style.display = 'none';
+            }
+            
+            // Clear results if query is empty
+            if (query.length === 0) {
+                resultsContainer.style.display = 'none';
+                return;
+            }
+            
+            if (!smartSearchSystem) {
+                initSmartSearch();
+            }
+            
+            if (!smartSearchSystem) {
+                console.error('Smart Search System not available');
+                return;
+            }
+            
+            // Analyze the search query
+            const analysis = smartSearchSystem.analyzeSearch(query);
+            
+            // Search documents if document library is available
+            let documentResults = [];
+            if (window.documentLibrary) {
+                documentResults = smartSearchSystem.searchDocuments(query, window.documentLibrary);
+            }
+            
+            // Generate and display results
+            const results = smartSearchSystem.generateSearchResults(analysis, documentResults);
+            displaySearchResults(results);
+        }
+        
+        // Display search results
+        function displaySearchResults(results) {
+            const resultsContainer = document.getElementById('search-results-container');
+            if (!resultsContainer) return;
+            
+            let html = '<div class="search-results">';
+            
+            // Message
+            if (results.message) {
+                html += `<div class="search-message">${results.message}</div>`;
+            }
+            
+            // Primary action
+            if (results.primaryAction) {
+                html += `
+                    <div class="search-primary-action">
+                        <div class="action-icon">${results.primaryAction.icon}</div>
+                        <div class="action-content">
+                            <h3>${results.primaryAction.title}</h3>
+                            <p>${results.primaryAction.description}</p>
+                            <button onclick="executeAction('${results.primaryAction.action}')" class="btn-primary">
+                                ${results.primaryAction.title}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Related actions
+            if (results.relatedActions && results.relatedActions.length > 0) {
+                html += '<div class="search-related-actions"><h4>Related Options:</h4>';
+                results.relatedActions.forEach(action => {
+                    html += `
+                        <div class="related-action-item" onclick="executeAction('${action.action}')">
+                            <span class="action-icon">${action.icon}</span>
+                            <span>${action.title}</span>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Document results
+            if (results.documents && results.documents.length > 0) {
+                html += '<div class="search-documents"><h4>Related Documents:</h4>';
+                results.documents.forEach(doc => {
+                    html += `
+                        <div class="document-item" onclick="openDocument('${doc.id}')">
+                            <span class="doc-icon">📄</span>
+                            <div>
+                                <strong>${doc.title}</strong>
+                                <p>${doc.description || ''}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Suggestions
+            if (results.suggestions && results.suggestions.length > 0) {
+                html += '<div class="search-suggestions-results"><h4>You might also want to:</h4>';
+                results.suggestions.forEach(suggestion => {
+                    html += `
+                        <div class="suggestion-result-item" onclick="executeAction('${suggestion.action}')">
+                            <span class="suggestion-icon">${suggestion.icon}</span>
+                            <span>${suggestion.text}</span>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            
+            resultsContainer.innerHTML = html;
+            resultsContainer.style.display = 'block';
+            resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // Execute an action based on the action type
+        function executeAction(action) {
+            console.log('Executing action:', action);
+            
+            switch(action) {
+                case 'start_intake':
+                    startComprehensiveIntake();
+                    break;
+                case 'show_document_library':
+                    if (window.documentLibrary) {
+                        window.documentLibrary.showLibrary();
+                    }
+                    break;
+                case 'show_doctor_finder':
+                    if (window.disabilityDoctorFinder) {
+                        window.disabilityDoctorFinder.showFinder();
+                    }
+                    break;
+                case 'show_location_services':
+                    if (window.locationServices) {
+                        window.locationServices.findNearbyServices();
+                    }
+                    break;
+                case 'open_ai_chat':
+                    if (window.aiAssistant) {
+                        window.aiAssistant.openChat();
+                    }
+                    break;
+                default:
+                    alert(`Action "${action}" will be implemented soon. This would trigger the ${action} feature.`);
+            }
+        }
+        
+        // Open a document
+        function openDocument(docId) {
+            if (window.documentLibrary) {
+                window.documentLibrary.openDocument(docId);
+            }
+        }
+        
         // Initialize AI config when page loads
         document.addEventListener('DOMContentLoaded', () => {
             initAIConfig();
             initAutoFillSystem();
+            initSmartSearch();
         });
     </script>
 </body>
