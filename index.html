@@ -190,8 +190,23 @@
         <!-- Doctor Finder Section -->
         <section id="doctors" class="section bg-light">
             <div class="container">
-                <h2>👨‍⚕️ Find Doctors for Approval & Treatment</h2>
-                <p class="section-description">Connect with specialists who can help with disability approval and treatment</p>
+                <h2>👨‍⚕️ Find Disability-Supportive Doctors</h2>
+                <p class="section-description"><strong style="color: #e53e3e;">Having trouble finding doctors who will document your disability?</strong> We'll help you find doctors who understand disability evaluations and will properly document your limitations.</p>
+                
+                <!-- NEW: Doctor Help Tool -->
+                <div class="card" style="background: linear-gradient(135deg, rgba(229, 62, 62, 0.1) 0%, rgba(245, 101, 101, 0.1) 100%); border: 2px solid #e53e3e; margin-bottom: 2rem;">
+                    <h3>🩺 Can't Find Doctors Who Will Document Your Disability?</h3>
+                    <p><strong>Common Problem:</strong> "I have a serious condition but no doctor will say on paper that I'm disabled"</p>
+                    <p><strong>We can help you:</strong></p>
+                    <ul>
+                        <li>✅ Find doctors who specialize in disability evaluations</li>
+                        <li>✅ Know what questions to ask when calling doctors</li>
+                        <li>✅ Document your limitations (even if you can't put them into words)</li>
+                        <li>✅ Generate letters to give your doctor explaining what you need</li>
+                    </ul>
+                    <button onclick="startDoctorFinderTool()" class="btn-primary btn-large">Find Disability-Supportive Doctors</button>
+                    <button onclick="startLimitationDocumentor()" class="btn-secondary" style="margin-left: 1rem;">Document My Limitations (No words needed)</button>
+                </div>
                 
                 <div class="doctor-search">
                     <input type="text" id="specialty-input" placeholder="Enter specialty or condition">
@@ -302,8 +317,10 @@
         </div>
     </footer>
 
+    <script src="comprehensive-intake.js"></script>
     <script src="condition-categorizer.js"></script>
     <script src="ai-assistant.js"></script>
+    <script src="disability-doctor-finder.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

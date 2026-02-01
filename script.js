@@ -770,12 +770,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Initialize AI Assistant and Condition Categorizer
+    // Initialize AI Assistant, Condition Categorizer, and Intake System
     if (typeof MedicalAIAssistant !== 'undefined') {
         window.aiAssistant = new MedicalAIAssistant();
     }
     if (typeof MedicalConditionCategorizer !== 'undefined') {
         window.conditionCategorizer = new MedicalConditionCategorizer();
+    }
+    if (typeof ComprehensiveIntakeSystem !== 'undefined') {
+        window.intakeSystem = new ComprehensiveIntakeSystem();
+    }
+    if (typeof DisabilityDoctorFinder !== 'undefined') {
+        window.doctorFinder = new DisabilityDoctorFinder();
+    }
+    if (typeof DailyLimitationDocumentor !== 'undefined') {
+        window.limitationDocumentor = new DailyLimitationDocumentor();
     }
 });
 
@@ -1307,4 +1316,424 @@ function emailForms() {
 
 function editForms() {
     alert('Opening form editor... You can review and edit any field before final submission.');
+}
+
+// ========================================
+// COMPREHENSIVE INTAKE SYSTEM
+// ========================================
+
+let currentIntakeData = {};
+
+async function startAIGuidedJourney() {
+    // First, start comprehensive intake
+    if (window.intakeSystem) {
+        startComprehensiveIntake();
+    } else {
+        toggleAIAssistant();
+    }
+}
+
+function startComprehensiveIntake() {
+    const modal = document.getElementById('ai-tool-modal');
+    const container = document.getElementById('ai-tool-container');
+    
+    if (!window.intakeSystem) {
+        alert('Intake system not loaded');
+        return;
+    }
+    
+    const sectionData = window.intakeSystem.startIntake();
+    renderIntakeSection(sectionData);
+    
+    modal.style.display = 'block';
+}
+
+function renderIntakeSection(sectionData) {
+    const container = document.getElementById('ai-tool-container');
+    
+    if (sectionData.complete) {
+        renderIntakeComplete(sectionData);
+        return;
+    }
+    
+    const section = sectionData.section;
+    const progress = sectionData.progress;
+    
+    let html = '<div class="intake-container">';
+    
+    // Progress bar
+    html += '<div class="progress-bar-container">';
+    html += `<div class="progress-bar" style="width: ${progress.percentage}%"></div>`;
+    html += `<div class="progress-text">Step ${progress.current} of ${progress.total}</div>`;
+    html += '</div>';
+    
+    // Section header
+    html += `<h2>${section.title}</h2>`;
+    html += `<p class="section-description">${section.description}</p>`;
+    
+    // Questions
+    html += '<form id="intake-form" onsubmit="submitIntakeSection(event)">';
+    
+    section.questions.forEach((q, index) => {
+        html += '<div class="form-field intake-question">';
+        html += `<label><strong>${q.question}</strong> ${q.required ? '<span class="required">*</span>' : ''}</label>`;
+        
+        if (q.helper) {
+            html += `<p class="helper-text">${q.helper}</p>`;
+        }
+        
+        if (q.type === 'text') {
+            html += `<input type="text" name="${q.id}" ${q.required ? 'required' : ''} placeholder="${q.placeholder || ''}">`;
+        } else if (q.type === 'textarea') {
+            html += `<textarea name="${q.id}" rows="4" ${q.required ? 'required' : ''} placeholder="${q.placeholder || ''}"></textarea>`;
+        } else if (q.type === 'select') {
+            html += `<select name="${q.id}" ${q.required ? 'required' : ''}>`;
+            html += '<option value="">Select an option...</option>';
+            q.options.forEach(opt => {
+                html += `<option value="${opt}">${opt}</option>`;
+            });
+            html += '</select>';
+        } else if (q.type === 'checkboxes') {
+            q.options.forEach(opt => {
+                html += `<label class="checkbox-label">`;
+                html += `<input type="checkbox" name="${q.id}" value="${opt}"> ${opt}`;
+                html += `</label>`;
+            });
+        }
+        
+        html += '</div>';
+    });
+    
+    html += '<div class="intake-navigation">';
+    html += '<button type="submit" class="btn-primary btn-large">Continue →</button>';
+    html += '</div>';
+    
+    html += '</form>';
+    html += '</div>';
+    
+    container.innerHTML = html;
+}
+
+function submitIntakeSection(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const answers = {};
+    
+    // Process form data
+    for (const [key, value] of formData.entries()) {
+        if (answers[key]) {
+            // Multiple values (checkboxes)
+            if (Array.isArray(answers[key])) {
+                answers[key].push(value);
+            } else {
+                answers[key] = [answers[key], value];
+            }
+        } else {
+            answers[key] = value;
+        }
+    }
+    
+    // Store current section data
+    currentIntakeData = { ...currentIntakeData, ...answers };
+    
+    // Get next section
+    const nextSection = window.intakeSystem.processSection(answers);
+    renderIntakeSection(nextSection);
+}
+
+function renderIntakeComplete(data) {
+    const container = document.getElementById('ai-tool-container');
+    const analysis = data.analysis;
+    const recommendations = data.recommendations;
+    
+    let html = '<div class="intake-complete">';
+    html += '<div class="success-header">';
+    html += '<h2>✅ We Now Understand Your Situation</h2>';
+    html += '<p>Based on everything you told us, here\'s your personalized plan:</p>';
+    html += '</div>';
+    
+    // Urgency alert
+    if (analysis.urgencyLevel === 'CRITICAL' || analysis.urgencyLevel === 'HIGH') {
+        html += `<div class="alert alert-${analysis.urgencyLevel.toLowerCase()}">`;
+        html += `<strong>⚠️ ${analysis.urgencyLevel} PRIORITY</strong><br>`;
+        html += 'Your situation requires immediate action. Follow the steps below carefully.';
+        html += '</div>';
+    }
+    
+    // Priority 1 Actions
+    if (recommendations.priority1.length > 0) {
+        html += '<div class="recommendations-section priority-1">';
+        html += '<h3>🚨 DO THESE FIRST (Most Important)</h3>';
+        recommendations.priority1.forEach(rec => {
+            html += '<div class="recommendation-card urgent">';
+            html += `<h4>${rec.action}</h4>`;
+            html += `<p><strong>Why:</strong> ${rec.why}</p>`;
+            html += `<p><strong>How:</strong> ${rec.how}</p>`;
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+    
+    // Special Instructions
+    if (recommendations.specialInstructions.length > 0) {
+        html += '<div class="special-instructions">';
+        html += '<h3>📌 Important Things to Know:</h3>';
+        html += '<ul>';
+        recommendations.specialInstructions.forEach(instruction => {
+            html += `<li>${instruction}</li>`;
+        });
+        html += '</ul>';
+        html += '</div>';
+    }
+    
+    // Next Steps
+    html += '<div class="next-steps-section">';
+    html += '<h3>📋 Your Step-by-Step Action Plan:</h3>';
+    recommendations.nextSteps.forEach(step => {
+        html += `<div class="step-card ${step.urgent ? 'urgent' : ''}">`;
+        html += `<div class="step-number">${step.number}</div>`;
+        html += '<div class="step-content">';
+        html += `<h4>${step.action}</h4>`;
+        html += `<p>${step.description}</p>`;
+        html += `<p class="how-to"><strong>How to do this:</strong> ${step.howTo}</p>`;
+        html += '</div>';
+        html += '</div>';
+    });
+    html += '</div>';
+    
+    // Action buttons
+    html += '<div class="action-buttons">';
+    
+    if (analysis.needsDoctorHelp) {
+        html += '<button onclick="startDoctorFinderTool()" class="btn-primary btn-large">Find Disability-Supportive Doctors</button>';
+    }
+    
+    if (analysis.wasDenied) {
+        html += '<button onclick="openAITool(\'appeal-generator\')" class="btn-primary btn-large">Help Me Write an Appeal</button>';
+    }
+    
+    html += '<button onclick="openAITool(\'document-autofill\')" class="btn-secondary">Upload Documents & Auto-Fill Forms</button>';
+    html += '<button onclick="closeAITool()" class="btn-secondary">Start Using Tools</button>';
+    html += '</div>';
+    
+    html += '</div>';
+    
+    container.innerHTML = html;
+}
+
+// ========================================
+// DOCTOR FINDER & LIMITATION DOCUMENTOR
+// ========================================
+
+function startDoctorFinderTool() {
+    const modal = document.getElementById('ai-tool-modal');
+    const container = document.getElementById('ai-tool-container');
+    
+    if (!window.doctorFinder) {
+        alert('Doctor finder not loaded');
+        return;
+    }
+    
+    // Get user's condition from intake if available
+    const condition = currentIntakeData.primary_condition || 'your condition';
+    const doctorInfo = window.doctorFinder.findDoctorsForCondition(condition);
+    
+    let html = '<div class="doctor-finder-tool">';
+    html += '<h2>🩺 Finding Disability-Supportive Doctors</h2>';
+    html += '<div class="alert alert-info">';
+    html += '<strong>The Problem:</strong> Many doctors don\'t understand disability requirements or won\'t fill out forms. You need doctors who will PROPERLY document your limitations.';
+    html += '</div>';
+    
+    // Recommended specialists
+    html += '<div class="section-box">';
+    html += '<h3>👨‍⚕️ Doctors You Should See:</h3>';
+    html += '<ul class="specialist-list">';
+    doctorInfo.specialties.forEach(spec => {
+        html += `<li><strong>${spec}</strong></li>`;
+    });
+    html += '</ul>';
+    html += '</div>';
+    
+    // How to find them
+    html += '<div class="section-box">';
+    html += '<h3>📍 How to Find These Doctors:</h3>';
+    html += '<ol>';
+    doctorInfo.howToFind.forEach(method => {
+        html += `<li>${method}</li>`;
+    });
+    html += '</ol>';
+    html += '</div>';
+    
+    // What to ask
+    html += '<div class="section-box">';
+    html += '<h3>❓ What to Ask When Calling:</h3>';
+    html += '<div style="white-space: pre-line;">';
+    doctorInfo.whatToAsk.forEach(question => {
+        html += question + '\n';
+    });
+    html += '</div>';
+    html += '</div>';
+    
+    // Red and green flags
+    html += '<div class="flags-container">';
+    html += '<div class="red-flags">';
+    html += '<h4>🚩 RED FLAGS (Avoid These Doctors):</h4>';
+    html += '<ul>';
+    doctorInfo.redFlags.forEach(flag => {
+        html += `<li>${flag}</li>`;
+    });
+    html += '</ul>';
+    html += '</div>';
+    
+    html += '<div class="green-flags">';
+    html += '<h4>✅ GREEN FLAGS (Good Signs):</h4>';
+    html += '<ul>';
+    doctorInfo.greenFlags.forEach(flag => {
+        html += `<li>${flag}</li>`;
+    });
+    html += '</ul>';
+    html += '</div>';
+    html += '</div>';
+    
+    // Action buttons
+    html += '<div style="margin-top: 2rem;">';
+    html += '<button onclick="generateDoctorLetter()" class="btn-primary">Generate Letter for My Doctor</button>';
+    html += '<button onclick="startLimitationDocumentor()" class="btn-secondary">Document My Limitations (No Words Needed)</button>';
+    html += '</div>';
+    
+    html += '</div>';
+    
+    container.innerHTML = html;
+    modal.style.display = 'block';
+}
+
+function startLimitationDocumentor() {
+    const modal = document.getElementById('ai-tool-modal');
+    const container = document.getElementById('ai-tool-container');
+    
+    if (!window.limitationDocumentor) {
+        alert('Limitation documentor not loaded');
+        return;
+    }
+    
+    const questionnaire = window.limitationDocumentor.generateQuestionnaire();
+    
+    let html = '<div class="limitation-documentor">';
+    html += `<h2>${questionnaire.title}</h2>`;
+    html += `<p class="subtitle">${questionnaire.subtitle}</p>`;
+    html += `<div class="alert alert-success">${questionnaire.instructions}</div>`;
+    
+    html += '<p><strong>This tool helps if you struggle to "put into words" how your condition affects you.</strong></p>';
+    html += '<p>Just select options that match your situation - AI will convert it to proper medical documentation.</p>';
+    
+    html += '<form id="limitation-form" onsubmit="submitLimitations(event)">';
+    
+    // Render each category
+    for (const [key, category] of Object.entries(questionnaire.categories)) {
+        html += `<div class="limitation-category">`;
+        html += `<h3>${category.icon} ${category.title}</h3>`;
+        
+        category.activities.forEach(activity => {
+            html += `<div class="limitation-question">`;
+            html += `<label><strong>${activity.activity}</strong></label>`;
+            html += `<select name="${key}_${activity.id}" required>`;
+            html += '<option value="">Select...</option>';
+            activity.options.forEach(opt => {
+                html += `<option value="${opt}">${opt}</option>`;
+            });
+            html += `</select>`;
+            html += `</div>`;
+        });
+        
+        html += `</div>`;
+    }
+    
+    html += '<button type="submit" class="btn-primary btn-large">Generate My Documentation</button>';
+    html += '</form>';
+    html += '</div>';
+    
+    container.innerHTML = html;
+    modal.style.display = 'block';
+}
+
+function submitLimitations(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const responses = {};
+    
+    // Organize responses by category
+    for (const [key, value] of formData.entries()) {
+        const parts = key.split('_');
+        const category = parts[0];
+        const activityId = parts.slice(1).join('_');
+        
+        if (!responses[category]) {
+            responses[category] = {};
+        }
+        responses[category][activityId] = value;
+    }
+    
+    // Process with limitation documentor
+    if (window.limitationDocumentor) {
+        const documentation = window.limitationDocumentor.processResponses(responses);
+        displayLimitationDocumentation(documentation);
+    }
+}
+
+function displayLimitationDocumentation(documentation) {
+    const container = document.getElementById('ai-tool-container');
+    
+    let html = '<div class="limitation-results">';
+    html += '<h2>✅ Your Limitations Documented!</h2>';
+    html += '<p><strong>You did it! Your limitations are now in proper medical language.</strong></p>';
+    
+    html += '<div class="documentation-box">';
+    html += '<h3>📄 Generated Documentation:</h3>';
+    html += '<div class="narrative-summary">';
+    html += '<pre>' + documentation.narrativeSummary + '</pre>';
+    html += '</div>';
+    html += '</div>';
+    
+    html += '<div class="rfc-recommendations">';
+    html += '<h3>RFC (Residual Functional Capacity) Recommendations:</h3>';
+    html += '<p>Give this to your doctor - it shows what you CAN and CANNOT do:</p>';
+    html += '<ul>';
+    html += `<li><strong>Physical Capacity:</strong> ${documentation.rfcRecommendations.physicalCapacity}</li>`;
+    html += `<li><strong>Standing/Walking:</strong> ${documentation.rfcRecommendations.standingWalking}</li>`;
+    html += `<li><strong>Concentration:</strong> ${documentation.rfcRecommendations.mentalCapacity.concentration}</li>`;
+    html += `<li><strong>Off-Task Time:</strong> ${documentation.rfcRecommendations.offTaskTime}</li>`;
+    html += `<li><strong>Expected Absences:</strong> ${documentation.rfcRecommendations.absences}</li>`;
+    html += '</ul>';
+    html += '</div>';
+    
+    html += '<div class="action-buttons">';
+    html += '<button onclick="downloadLimitationDoc()" class="btn-primary">📥 Download Documentation</button>';
+    html += '<button onclick="generateDoctorLetter()" class="btn-secondary">Generate Letter for Doctor</button>';
+    html += '<button onclick="emailForms()" class="btn-secondary">Email to Me</button>';
+    html += '</div>';
+    
+    html += '</div>';
+    
+    container.innerHTML = html;
+}
+
+function generateDoctorLetter() {
+    if (!window.limitationDocumentor) {
+        alert('System not loaded');
+        return;
+    }
+    
+    const patientName = currentIntakeData.first_name || 'Patient';
+    const condition = currentIntakeData.primary_condition || 'my medical condition';
+    const letter = window.limitationDocumentor.generateDoctorLetter(patientName, condition, {});
+    
+    alert('Doctor letter generated! In production, this would create a downloadable PDF letter to give your doctor.\n\nThe letter explains exactly what you need documented for your disability application.');
+}
+
+function downloadLimitationDoc() {
+    alert('✅ Your limitation documentation would be downloaded as a PDF. In production, this creates a professional document to give your doctor.');
 }

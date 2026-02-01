@@ -1100,3 +1100,381 @@ footer p {
         display: none;
     }
 }
+
+/* Comprehensive Intake System Styles */
+.intake-container {
+    padding: 2rem;
+}
+
+.progress-bar-container {
+    background: #e2e8f0;
+    border-radius: 10px;
+    height: 30px;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.intake-question {
+    margin-bottom: 2rem;
+    background: #f7fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.intake-question label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+}
+
+.required {
+    color: #e53e3e;
+}
+
+.helper-text {
+    font-size: 0.9rem;
+    color: #718096;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+}
+
+.checkbox-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: normal !important;
+}
+
+.checkbox-label input {
+    margin-right: 0.5rem;
+}
+
+.intake-navigation {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+/* Intake Complete Styles */
+.intake-complete {
+    padding: 2rem;
+}
+
+.success-header {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.success-header h2 {
+    margin-bottom: 0.5rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border-left: 4px solid;
+}
+
+.alert-critical {
+    background: #fed7d7;
+    border-color: #e53e3e;
+    color: #742a2a;
+}
+
+.alert-high {
+    background: #feebc8;
+    border-color: #dd6b20;
+    color: #7c2d12;
+}
+
+.alert-info {
+    background: #bee3f8;
+    border-color: #3182ce;
+    color: #2c5282;
+}
+
+.alert-success {
+    background: #c6f6d5;
+    border-color: #38a169;
+    color: #22543d;
+}
+
+.recommendations-section {
+    margin-bottom: 2rem;
+}
+
+.recommendations-section h3 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.recommendation-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    margin-bottom: 1rem;
+}
+
+.recommendation-card.urgent {
+    border-left-color: #e53e3e;
+    background: #fff5f5;
+}
+
+.recommendation-card h4 {
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.special-instructions {
+    background: #f7fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.special-instructions ul {
+    margin-left: 1.5rem;
+}
+
+.special-instructions li {
+    margin-bottom: 0.75rem;
+}
+
+.next-steps-section h3 {
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+}
+
+.step-card {
+    display: flex;
+    gap: 1rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #667eea;
+}
+
+.step-card.urgent {
+    border-left-color: #e53e3e;
+    background: #fff5f5;
+}
+
+.step-number {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.step-card.urgent .step-number {
+    background: #e53e3e;
+}
+
+.step-content h4 {
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.how-to {
+    color: #4a5568;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    justify-content: center;
+}
+
+/* Doctor Finder Tool Styles */
+.doctor-finder-tool {
+    padding: 2rem;
+}
+
+.section-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #667eea;
+}
+
+.section-box h3 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.specialist-list {
+    list-style: none;
+    padding: 0;
+}
+
+.specialist-list li {
+    padding: 0.75rem;
+    background: #f7fafc;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+}
+
+.flags-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.red-flags,
+.green-flags {
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.red-flags {
+    background: #fff5f5;
+    border-left: 4px solid #e53e3e;
+}
+
+.green-flags {
+    background: #f0fff4;
+    border-left: 4px solid #38a169;
+}
+
+.red-flags h4 {
+    color: #e53e3e;
+}
+
+.green-flags h4 {
+    color: #38a169;
+}
+
+/* Limitation Documentor Styles */
+.limitation-documentor {
+    padding: 2rem;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #667eea;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.limitation-category {
+    background: #f7fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #667eea;
+}
+
+.limitation-category h3 {
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+}
+
+.limitation-question {
+    margin-bottom: 1.5rem;
+}
+
+.limitation-question label {
+    display: block;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.limitation-question select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.limitation-results {
+    padding: 2rem;
+}
+
+.documentation-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    border: 2px solid #667eea;
+    margin: 2rem 0;
+}
+
+.narrative-summary pre {
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #2d3748;
+}
+
+.rfc-recommendations {
+    background: #f0fff4;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #38a169;
+    margin-bottom: 2rem;
+}
+
+.rfc-recommendations h3 {
+    color: #22543d;
+    margin-bottom: 1rem;
+}
+
+.rfc-recommendations ul {
+    margin-left: 1.5rem;
+}
+
+.rfc-recommendations li {
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+}
+
+@media (max-width: 768px) {
+    .flags-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons button {
+        width: 100%;
+    }
+}
