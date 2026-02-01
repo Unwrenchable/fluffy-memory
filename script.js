@@ -786,6 +786,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof DailyLimitationDocumentor !== 'undefined') {
         window.limitationDocumentor = new DailyLimitationDocumentor();
     }
+    if (typeof LocationBasedServices !== 'undefined') {
+        window.locationServices = new LocationBasedServices();
+    }
 });
 
 // ========================================
@@ -1736,4 +1739,289 @@ function generateDoctorLetter() {
 
 function downloadLimitationDoc() {
     alert('✅ Your limitation documentation would be downloaded as a PDF. In production, this creates a professional document to give your doctor.');
+}
+
+// ========================================
+// UNIVERSAL HELP & LOCATION SERVICES
+// ========================================
+
+// Show pathway for uninsured people
+function showUninsuredPathway() {
+    const modal = document.getElementById('ai-tool-modal');
+    const container = document.getElementById('ai-tool-container');
+    
+    if (!window.locationServices) {
+        alert('Location services not loaded');
+        return;
+    }
+    
+    const pathway = window.locationServices.generateUninsuredPathway({ general: true });
+    
+    let html = '<div class="pathway-container">';
+    html += `<h2>${pathway.title}</h2>`;
+    html += `<p class="subtitle">${pathway.subtitle}</p>`;
+    
+    html += '<div class="alert alert-success">';
+    html += '<strong>✅ YOU CAN GET CARE - Even with NO Insurance!</strong><br>';
+    html += 'These programs exist specifically to help people without insurance. You have a RIGHT to healthcare.';
+    html += '</div>';
+    
+    // Urgent care section
+    html += '<div class="pathway-section">';
+    html += '<h3>🚨 If You Need Care RIGHT NOW:</h3>';
+    pathway.urgentCare.forEach(step => {
+        html += `<div class="pathway-step">`;
+        html += `<div class="step-number">${step.step}</div>`;
+        html += '<div class="step-content">';
+        html += `<h4>${step.action}</h4>`;
+        html += `<p>${step.details}</p>`;
+        html += `<p><strong>Cost:</strong> ${step.cost}</p>`;
+        if (step.services) html += `<p><strong>Services:</strong> ${step.services}</p>`;
+        html += '</div></div>';
+    });
+    html += '</div>';
+    
+    // Ongoing care
+    html += '<div class="pathway-section">';
+    html += '<h3>🏥 For Ongoing Medical Care:</h3>';
+    pathway.ongoingCare.forEach(step => {
+        html += `<div class="pathway-step">`;
+        html += `<div class="step-number">${step.step}</div>`;
+        html += '<div class="step-content">';
+        html += `<h4>${step.action}</h4>`;
+        html += `<p><strong>Why:</strong> ${step.why}</p>`;
+        if (step.howTo) html += `<p><strong>How:</strong> ${step.howTo}</p>`;
+        html += `<p><strong>Cost:</strong> ${step.cost}</p>`;
+        html += '</div></div>';
+    });
+    html += '</div>';
+    
+    // Prescriptions
+    html += '<div class="pathway-section">';
+    html += '<h3>💊 Getting Prescriptions Without Insurance:</h3>';
+    pathway.prescriptions.forEach(program => {
+        html += `<div class="program-card">`;
+        html += `<h4>${program.name}</h4>`;
+        html += `<p>${program.description}</p>`;
+        html += `<p><strong>Who qualifies:</strong> ${program.eligibility}</p>`;
+        html += `<p><strong>How to apply:</strong> ${program.howToApply}</p>`;
+        if (program.noQuestionsAsked) {
+            html += `<span class="badge badge-success">✅ No questions asked!</span>`;
+        }
+        html += `</div>`;
+    });
+    html += '</div>';
+    
+    html += '<div class="action-buttons">';
+    html += '<button onclick="requestLocation()" class="btn-primary">Find Care Near Me</button>';
+    html += '<button onclick="startComprehensiveIntake()" class="btn-secondary">Get Personalized Help</button>';
+    html += '</div>';
+    
+    html += '</div>';
+    
+    container.innerHTML = html;
+    modal.style.display = 'block';
+}
+
+// Show dental care pathway
+function showDentalPathway() {
+    const modal = document.getElementById('ai-tool-modal');
+    const container = document.getElementById('ai-tool-container');
+    
+    if (!window.locationServices) {
+        alert('Location services not loaded');
+        return;
+    }
+    
+    const pathway = window.locationServices.generateDentalPathway('general');
+    
+    let html = '<div class="pathway-container">';
+    html += `<h2>${pathway.title}</h2>`;
+    html += `<p class="subtitle">${pathway.subtitle}</p>`;
+    
+    html += '<div class="alert alert-success">';
+    html += '<strong>🦷 FREE DENTAL CARE EXISTS!</strong><br>';
+    html += 'Many programs give COMPLETELY FREE dental care - even dentures. Some ask NO questions at all.';
+    html += '</div>';
+    
+    // Immediate options
+    html += '<div class="pathway-section">';
+    html += '<h3>🚨 Get Dental Care THIS WEEK:</h3>';
+    pathway.immediate.forEach(option => {
+        html += `<div class="dental-option priority-${option.priority.toLowerCase()}">`;
+        html += `<div class="priority-badge">${option.priority} PRIORITY</div>`;
+        html += `<h4>${option.option}</h4>`;
+        html += `<p>${option.description}</p>`;
+        html += `<p><strong>Who can go:</strong> ${option.eligibility}</p>`;
+        html += `<p><strong>Cost:</strong> ${option.cost}</p>`;
+        html += '<div class="how-to-box">';
+        html += '<h5>How to do this:</h5>';
+        html += '<ol>';
+        option.howTo.forEach(step => {
+            html += `<li>${step}</li>`;
+        });
+        html += '</ol>';
+        html += '</div>';
+        if (option.websites) {
+            html += '<p><strong>Websites:</strong> ';
+            option.websites.forEach(site => {
+                html += `<a href="https://${site}" target="_blank">${site}</a> `;
+            });
+            html += '</p>';
+        }
+        html += `</div>`;
+    });
+    html += '</div>';
+    
+    // Comprehensive care
+    html += '<div class="pathway-section">';
+    html += '<h3>🏥 For Complete Dental Restoration (FREE):</h3>';
+    pathway.comprehensive.forEach(option => {
+        html += `<div class="program-card comprehensive">`;
+        html += `<h4>${option.option}</h4>`;
+        html += `<p>${option.description}</p>`;
+        html += `<p><strong>Who qualifies:</strong> ${option.eligibility}</p>`;
+        html += `<p><strong>What's covered:</strong> ${option.coverage}</p>`;
+        html += `<p class="cost-free"><strong>Cost: ${option.cost}</strong></p>`;
+        html += '<div class="how-to-box">';
+        html += '<h5>How to apply:</h5>';
+        html += '<ol>';
+        option.howTo.forEach(step => {
+            html += `<li>${step}</li>`;
+        });
+        html += '</ol>';
+        html += '</div>';
+        if (option.website) {
+            html += `<p><strong>Apply at:</strong> <a href="https://${option.website}" target="_blank">${option.website}</a></p>`;
+        }
+        html += `</div>`;
+    });
+    html += '</div>';
+    
+    html += '<div class="action-buttons">';
+    html += '<button onclick="findDentalNearMe()" class="btn-primary">Find Dental Care Near Me</button>';
+    html += '<button onclick="startComprehensiveIntake()" class="btn-secondary">Get Full Help</button>';
+    html += '</div>';
+    
+    html += '</div>';
+    
+    container.innerHTML = html;
+    modal.style.display = 'block';
+}
+
+// Show help for denials
+function startDenialHelp() {
+    if (window.intakeSystem) {
+        // Start intake but pre-fill that they were denied
+        startComprehensiveIntake();
+        setTimeout(() => {
+            addAIMessage("I see you were denied. Don't give up! Most successful applicants are denied first. Let me help you appeal and WIN.", 'assistant');
+        }, 1000);
+    } else {
+        openAITool('appeal-generator');
+    }
+}
+
+// Location services
+async function requestLocation() {
+    if (!window.locationServices) {
+        alert('Location services not loaded');
+        return;
+    }
+    
+    const resultsDiv = document.getElementById('location-results');
+    const facilitiesDiv = document.getElementById('nearest-facilities');
+    
+    resultsDiv.style.display = 'block';
+    facilitiesDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Getting your location...</p></div>';
+    
+    try {
+        const location = await window.locationServices.getUserLocation();
+        displayNearestFacilities(location);
+    } catch (error) {
+        facilitiesDiv.innerHTML = '<div class="message message-error">Could not get your location. Please enter it manually below.</div>';
+    }
+}
+
+function setManualLocation() {
+    const input = document.getElementById('manual-location');
+    const location = input.value.trim();
+    
+    if (!location) {
+        alert('Please enter your ZIP code or city');
+        return;
+    }
+    
+    if (window.locationServices) {
+        const loc = window.locationServices.setLocationManually(location);
+        displayNearestFacilities(loc);
+    }
+}
+
+function displayNearestFacilities(location) {
+    const resultsDiv = document.getElementById('location-results');
+    const facilitiesDiv = document.getElementById('nearest-facilities');
+    
+    resultsDiv.style.display = 'block';
+    resultsDiv.scrollIntoView({ behavior: 'smooth' });
+    
+    // Determine user needs (could be from intake data)
+    const userNeeds = {
+        uninsured: true,
+        dental: false,
+        prescriptions: true
+    };
+    
+    const recommendations = window.locationServices.generateLocationRecommendations(userNeeds, location);
+    
+    let html = '<div class="nearest-facilities-container">';
+    
+    recommendations.closestFacilities.forEach(facility => {
+        html += '<div class="facility-recommendation">';
+        html += `<h4>${facility.type}</h4>`;
+        html += `<p><strong>Why:</strong> ${facility.why}</p>`;
+        
+        const findInfo = facility.find;
+        html += '<div class="find-instructions">';
+        html += '<h5>How to find near you:</h5>';
+        html += `<pre style="white-space: pre-wrap; font-family: inherit;">${findInfo.searchInstructions}</pre>`;
+        
+        if (findInfo.nationalResources.length > 0) {
+            html += '<p><strong>National Resources:</strong></p>';
+            html += '<ul>';
+            findInfo.nationalResources.forEach(resource => {
+                html += `<li>${resource}</li>`;
+            });
+            html += '</ul>';
+        }
+        html += '</div>';
+        html += '</div>';
+    });
+    
+    if (recommendations.callToday.length > 0) {
+        html += '<div class="call-today-section">';
+        html += '<h4>📞 Call or Search Today:</h4>';
+        recommendations.callToday.forEach(action => {
+            html += `<div class="call-action">`;
+            html += `<strong>${action.action}</strong><br>`;
+            html += `${action.why}<br>`;
+            html += `<em>${action.how}</em>`;
+            html += `</div>`;
+        });
+        html += '</div>';
+    }
+    
+    html += '</div>';
+    
+    facilitiesDiv.innerHTML = html;
+}
+
+function findDentalNearMe() {
+    closeAITool();
+    document.getElementById('location-services').scrollIntoView({ behavior: 'smooth' });
+    
+    // Show message to use location
+    setTimeout(() => {
+        alert('Enter your location above to find free dental care near you!');
+    }, 500);
 }

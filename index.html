@@ -67,9 +67,134 @@
         <!-- Hero Section with AI Prompt -->
         <section class="hero">
             <div class="container">
-                <h2>Get the Medical Help You Need - With AI Guidance</h2>
-                <p>Stop getting confused and giving up. Our AI helps you navigate bureaucracy, denials, and complex processes</p>
-                <button onclick="startAIGuidedJourney()" class="btn-hero">🤖 Start AI-Guided Journey</button>
+                <h2>Medical Help for EVERYONE - No Matter Your Situation</h2>
+                <p><strong>Confused? Overwhelmed? Ready to give up?</strong> We help ALL people get medical assistance - with ANY condition, ANY situation, even with NO insurance.</p>
+                <p style="font-size: 1.1rem; margin-top: 1rem;">✅ Don't understand the process? <strong>We simplify it.</strong><br>
+                ✅ Don't know where to start? <strong>We tell you exactly what to do.</strong><br>
+                ✅ Been denied? <strong>We help you appeal.</strong><br>
+                ✅ Have no insurance? <strong>We find free care.</strong><br>
+                ✅ Can't find doctors who help? <strong>We find them for you.</strong></p>
+                <button onclick="startComprehensiveIntake()" class="btn-hero">🎯 Start Here - We'll Figure Out What You Need</button>
+            </div>
+        </section>
+
+        <!-- Universal Help Section - NEW -->
+        <section id="universal-help" class="section bg-light">
+            <div class="container">
+                <h2>🌟 This is For YOU - Whatever Your Situation</h2>
+                <p class="section-description" style="font-size: 1.2rem; color: #2d3748;"><strong>Don't give up!</strong> Most people who succeed were confused and overwhelmed at first. We make it simple.</p>
+                
+                <div class="universal-scenarios">
+                    <div class="scenario-card">
+                        <h3>😵 "I'm completely confused"</h3>
+                        <p>You're not alone! The process IS confusing. We ask you simple questions and tell you exactly what to do step-by-step.</p>
+                        <button onclick="startComprehensiveIntake()" class="btn-secondary">Start Simple Questions</button>
+                    </div>
+                    
+                    <div class="scenario-card">
+                        <h3>❌ "I have NO insurance"</h3>
+                        <p>There ARE programs that will help you - FREE or very low cost. We'll show you where to go.</p>
+                        <button onclick="showUninsuredPathway()" class="btn-secondary">Show Me Free Care Options</button>
+                    </div>
+                    
+                    <div class="scenario-card">
+                        <h3>🦷 "I need dental work but can't afford it"</h3>
+                        <p>There are programs that give FREE dental care - extractions, fillings, even dentures. No questions asked.</p>
+                        <button onclick="showDentalPathway()" class="btn-secondary">Find Free Dental Care</button>
+                    </div>
+                    
+                    <div class="scenario-card">
+                        <h3>🏥 "I have a serious condition"</h3>
+                        <p>Whether it's cancer, diabetes, heart disease, pain, mental health - we help with ALL conditions.</p>
+                        <button onclick="startComprehensiveIntake()" class="btn-secondary">Get Help for My Condition</button>
+                    </div>
+                    
+                    <div class="scenario-card">
+                        <h3>📋 "I was denied"</h3>
+                        <p>Most successful applicants are denied first! We help you appeal and WIN.</p>
+                        <button onclick="startDenialHelp()" class="btn-secondary">Help Me Appeal</button>
+                    </div>
+                    
+                    <div class="scenario-card">
+                        <h3>🎯 "Where do I even start?"</h3>
+                        <p>Right here! Answer a few questions and we'll create your personal roadmap.</p>
+                        <button onclick="startComprehensiveIntake()" class="btn-secondary">Create My Roadmap</button>
+                    </div>
+                </div>
+
+                <div class="universal-promise">
+                    <h3>Our Promise to You:</h3>
+                    <ul>
+                        <li>✅ <strong>NO medical jargon</strong> - we explain everything in plain English</li>
+                        <li>✅ <strong>Step-by-step guidance</strong> - you don't need to figure anything out</li>
+                        <li>✅ <strong>For ALL conditions</strong> - physical, mental, rare diseases, chronic pain, EVERYTHING</li>
+                        <li>✅ <strong>With or without insurance</strong> - we help everyone</li>
+                        <li>✅ <strong>No judgment</strong> - we understand you're struggling</li>
+                        <li>✅ <strong>Prevent giving up</strong> - we keep you motivated and on track</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Location Services Section - NEW -->
+        <section id="location-services" class="section">
+            <div class="container">
+                <h2>📍 Find Help Near YOU</h2>
+                <p class="section-description">Enter your location to find the closest free/low-cost medical care, dental clinics, and pharmacies</p>
+                
+                <div class="location-input-box">
+                    <h3>Where are you located?</h3>
+                    <div class="location-options">
+                        <div class="location-option">
+                            <button onclick="requestLocation()" class="btn-primary">📍 Use My Current Location</button>
+                            <p style="font-size: 0.9rem; color: #718096; margin-top: 0.5rem;">Fastest way to find help near you</p>
+                        </div>
+                        <div class="location-option">
+                            <p><strong>Or enter manually:</strong></p>
+                            <input type="text" id="manual-location" placeholder="Enter ZIP code or city, state">
+                            <button onclick="setManualLocation()" class="btn-secondary">Find Near Me</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="location-results" style="display: none;">
+                    <h3>Closest Resources to You:</h3>
+                    <div id="nearest-facilities"></div>
+                </div>
+
+                <div class="what-we-find">
+                    <h4>What we'll find near you:</h4>
+                    <div class="facility-types-grid">
+                        <div class="facility-type-card">
+                            <span class="facility-icon">🏥</span>
+                            <h4>Community Health Centers</h4>
+                            <p>Medical, dental, mental health</p>
+                            <p><strong>Cost:</strong> $0-$25 based on income</p>
+                            <p><strong>Insurance:</strong> Not needed</p>
+                        </div>
+                        <div class="facility-type-card">
+                            <span class="facility-icon">🦷</span>
+                            <h4>Free Dental Clinics</h4>
+                            <p>Extractions, fillings, cleanings</p>
+                            <p><strong>Cost:</strong> FREE</p>
+                            <p><strong>Insurance:</strong> Not needed</p>
+                        </div>
+                        <div class="facility-type-card">
+                            <span class="facility-icon">💊</span>
+                            <h4>Low-Cost Pharmacies</h4>
+                            <p>$4 generic medications</p>
+                            <p><strong>Cost:</strong> $4-$25</p>
+                            <p><strong>Insurance:</strong> Not needed</p>
+                        </div>
+                        <div class="facility-type-card">
+                            <span class="facility-icon">🏥</span>
+                            <h4>Charity Care Hospitals</h4>
+                            <p>Free emergency & hospital care</p>
+                            <p><strong>Cost:</strong> FREE if you qualify</p>
+                            <p><strong>Insurance:</strong> Not needed</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -317,6 +442,7 @@
         </div>
     </footer>
 
+    <script src="location-services.js"></script>
     <script src="comprehensive-intake.js"></script>
     <script src="condition-categorizer.js"></script>
     <script src="ai-assistant.js"></script>
