@@ -450,8 +450,115 @@
             </div>
         </section>
 
+        <!-- AI Configuration Section -->
+        <section id="ai-config" class="section bg-light">
+            <div class="container">
+                <h2>⚙️ AI Configuration</h2>
+                <p class="section-description">Configure your AI assistants (X.AI + HuggingFace) to get advanced help</p>
+                
+                <div class="config-info-box" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin-bottom: 2rem; border-radius: 8px;">
+                    <h4>🔒 Your API Keys are Secure</h4>
+                    <p style="margin: 0.5rem 0;">• API keys are stored only in your browser's memory (not saved to disk)</p>
+                    <p style="margin: 0.5rem 0;">• They are NEVER sent to our servers or saved permanently</p>
+                    <p style="margin: 0.5rem 0;">• You'll need to re-enter them each session</p>
+                    <p style="margin: 0.5rem 0;">• See <code>.env.example</code> file for server-side configuration</p>
+                </div>
+
+                <div class="config-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                    <!-- X.AI Configuration -->
+                    <div class="card">
+                        <h3>🤖 X.AI (Grok) Configuration</h3>
+                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                            Advanced conversational AI for complex medical guidance and reasoning
+                        </p>
+                        <div style="margin-bottom: 1rem;">
+                            <label for="xai-api-key" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">API Key:</label>
+                            <input 
+                                type="password" 
+                                id="xai-api-key" 
+                                placeholder="xai-..." 
+                                style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <small style="color: #666;">Get your key from <a href="https://console.x.ai/" target="_blank">console.x.ai</a></small>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" id="xai-enabled" checked style="margin-right: 0.5rem;">
+                                <span>Enable X.AI</span>
+                            </label>
+                        </div>
+                        <div id="xai-status" style="padding: 0.5rem; border-radius: 4px; font-size: 0.9rem; margin-top: 1rem;">
+                            ⚪ Not configured
+                        </div>
+                    </div>
+
+                    <!-- HuggingFace Configuration -->
+                    <div class="card">
+                        <h3>🤗 HuggingFace Configuration</h3>
+                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                            Specialized AI models for document analysis, summarization, and medical text processing
+                        </p>
+                        <div style="margin-bottom: 1rem;">
+                            <label for="hf-api-key" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">API Key:</label>
+                            <input 
+                                type="password" 
+                                id="hf-api-key" 
+                                placeholder="hf_..." 
+                                style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <small style="color: #666;">Get your key from <a href="https://huggingface.co/settings/tokens" target="_blank">huggingface.co/settings/tokens</a></small>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" id="hf-enabled" checked style="margin-right: 0.5rem;">
+                                <span>Enable HuggingFace</span>
+                            </label>
+                        </div>
+                        <div id="hf-status" style="padding: 0.5rem; border-radius: 4px; font-size: 0.9rem; margin-top: 1rem;">
+                            ⚪ Not configured
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Mode Configuration -->
+                <div class="card" style="margin-top: 2rem;">
+                    <h3>🎯 AI Team Mode</h3>
+                    <p style="margin-bottom: 1rem;">Choose how your AI assistants work together:</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <label class="mode-option" style="padding: 1rem; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                            <input type="radio" name="team-mode" value="auto" checked style="margin-right: 0.5rem;">
+                            <strong>Auto</strong>
+                            <p style="font-size: 0.85rem; color: #666; margin: 0.5rem 0 0 0;">Smart routing to best AI</p>
+                        </label>
+                        <label class="mode-option" style="padding: 1rem; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                            <input type="radio" name="team-mode" value="xai-only" style="margin-right: 0.5rem;">
+                            <strong>X.AI Only</strong>
+                            <p style="font-size: 0.85rem; color: #666; margin: 0.5rem 0 0 0;">Use only Grok</p>
+                        </label>
+                        <label class="mode-option" style="padding: 1rem; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                            <input type="radio" name="team-mode" value="huggingface-only" style="margin-right: 0.5rem;">
+                            <strong>HuggingFace Only</strong>
+                            <p style="font-size: 0.85rem; color: #666; margin: 0.5rem 0 0 0;">Use only HF models</p>
+                        </label>
+                        <label class="mode-option" style="padding: 1rem; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                            <input type="radio" name="team-mode" value="both" style="margin-right: 0.5rem;">
+                            <strong>Both</strong>
+                            <p style="font-size: 0.85rem; color: #666; margin: 0.5rem 0 0 0;">Get responses from both</p>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="margin-top: 2rem; text-align: center;">
+                    <button onclick="saveAIConfig()" class="btn-primary" style="margin: 0 0.5rem;">💾 Save Configuration</button>
+                    <button onclick="testAIConfig()" class="btn-secondary" style="margin: 0 0.5rem;">🧪 Test AI Connection</button>
+                    <button onclick="clearAIConfig()" class="btn-secondary" style="margin: 0 0.5rem;">🗑️ Clear Keys</button>
+                </div>
+
+                <div id="config-message" style="margin-top: 1rem; padding: 1rem; border-radius: 8px; display: none;"></div>
+            </div>
+        </section>
+
         <!-- Quick Links Section -->
-        <section class="section bg-light">
+        <section class="section">
             <div class="container">
                 <h2>🔗 Quick Access Resources</h2>
                 <div class="quick-links">
@@ -519,6 +626,8 @@
     <script src="location-services.js"></script>
     <script src="comprehensive-intake.js"></script>
     <script src="condition-categorizer.js"></script>
+    <script src="config.js"></script>
+    <script src="xai-huggingface-integration.js"></script>
     <script src="ai-assistant.js"></script>
     <script src="disability-doctor-finder.js"></script>
     <script src="document-library.js"></script>
@@ -642,6 +751,237 @@
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', initUserAuth);
+        
+        // ============================================
+        // AI Configuration Functions
+        // ============================================
+        
+        // Initialize AI configuration system
+        let appConfig = null;
+        let aiTeam = null;
+        
+        function initAIConfig() {
+            // Initialize configuration and AI team
+            appConfig = new AppConfig();
+            aiTeam = new DualAIMedicalTeam();
+            
+            // Load saved configuration
+            const config = appConfig.getConfig();
+            
+            // Update UI based on saved settings
+            document.getElementById('xai-enabled').checked = config.xai.enabled;
+            document.getElementById('hf-enabled').checked = config.huggingface.enabled;
+            
+            // Set team mode radio button
+            const modeRadios = document.querySelectorAll('input[name="team-mode"]');
+            modeRadios.forEach(radio => {
+                if (radio.value === config.teamMode) {
+                    radio.checked = true;
+                }
+            });
+            
+            // Update status displays
+            updateConfigStatus();
+            
+            // If keys are already set, configure the AI team
+            if (appConfig.isConfigured('xai') || appConfig.isConfigured('huggingface')) {
+                aiTeam.setApiKeys(
+                    appConfig.getApiKey('xai'),
+                    appConfig.getApiKey('huggingface')
+                );
+                aiTeam.setTeamMode(appConfig.getTeamMode());
+            }
+        }
+        
+        // Save AI configuration
+        function saveAIConfig() {
+            const xaiKey = document.getElementById('xai-api-key').value.trim();
+            const hfKey = document.getElementById('hf-api-key').value.trim();
+            const xaiEnabled = document.getElementById('xai-enabled').checked;
+            const hfEnabled = document.getElementById('hf-enabled').checked;
+            const teamMode = document.querySelector('input[name="team-mode"]:checked').value;
+            
+            let hasError = false;
+            let errorMessage = '';
+            
+            // Validate X.AI key if provided
+            if (xaiKey) {
+                const validation = appConfig.validateApiKey('xai', xaiKey);
+                if (!validation.valid) {
+                    hasError = true;
+                    errorMessage += `X.AI: ${validation.error}\n`;
+                }
+            }
+            
+            // Validate HuggingFace key if provided
+            if (hfKey) {
+                const validation = appConfig.validateApiKey('huggingface', hfKey);
+                if (!validation.valid) {
+                    hasError = true;
+                    errorMessage += `HuggingFace: ${validation.error}\n`;
+                }
+            }
+            
+            // Check if at least one key is provided
+            if (!xaiKey && !hfKey) {
+                showConfigMessage('Please provide at least one API key to enable AI assistance.', 'warning');
+                return;
+            }
+            
+            if (hasError) {
+                showConfigMessage(errorMessage, 'error');
+                return;
+            }
+            
+            // Save API keys (in memory only)
+            appConfig.setApiKeys(xaiKey || null, hfKey || null);
+            
+            // Save preferences (without keys)
+            appConfig.setTeamMode(teamMode);
+            appConfig.config.xai.enabled = xaiEnabled;
+            appConfig.config.huggingface.enabled = hfEnabled;
+            appConfig.saveConfig();
+            
+            // Configure AI team
+            aiTeam.setApiKeys(
+                xaiKey || null,
+                hfKey || null
+            );
+            aiTeam.setTeamMode(teamMode);
+            
+            // Update window.aiAssistant to use the new dual AI system
+            if (window.aiAssistant) {
+                window.aiAssistant.dualAI = aiTeam;
+                window.aiAssistant.useDualAI = true;
+            }
+            
+            // Update status
+            updateConfigStatus();
+            
+            showConfigMessage('✅ AI configuration saved successfully! Your AI assistants are now active.', 'success');
+        }
+        
+        // Test AI configuration
+        async function testAIConfig() {
+            if (!aiTeam) {
+                showConfigMessage('Please configure your AI first.', 'warning');
+                return;
+            }
+            
+            const status = aiTeam.getStatus();
+            
+            if (!status.xaiConfigured && !status.huggingFaceConfigured) {
+                showConfigMessage('Please configure at least one API key first.', 'warning');
+                return;
+            }
+            
+            showConfigMessage('🧪 Testing AI connection...', 'info');
+            
+            try {
+                const testQuery = 'Hello, this is a test. Please respond briefly.';
+                const response = await aiTeam.getTeamResponse(testQuery);
+                
+                if (response && !response.error) {
+                    showConfigMessage(`✅ Test successful!\n\nSource: ${response.source}\nResponse: ${response.response.substring(0, 100)}...`, 'success');
+                } else {
+                    showConfigMessage(`❌ Test failed: ${response.response}`, 'error');
+                }
+            } catch (error) {
+                showConfigMessage(`❌ Test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        // Clear AI configuration
+        function clearAIConfig() {
+            if (confirm('Are you sure you want to clear all AI API keys? This will only clear them from memory.')) {
+                document.getElementById('xai-api-key').value = '';
+                document.getElementById('hf-api-key').value = '';
+                
+                if (appConfig) {
+                    appConfig.clearApiKeys();
+                }
+                
+                if (aiTeam) {
+                    aiTeam.clearHistory();
+                }
+                
+                updateConfigStatus();
+                showConfigMessage('🗑️ API keys cleared from memory.', 'info');
+            }
+        }
+        
+        // Update configuration status displays
+        function updateConfigStatus() {
+            const xaiStatus = document.getElementById('xai-status');
+            const hfStatus = document.getElementById('hf-status');
+            
+            if (appConfig) {
+                // X.AI status
+                if (appConfig.isConfigured('xai')) {
+                    xaiStatus.innerHTML = '✅ Configured and ready';
+                    xaiStatus.style.background = '#d4edda';
+                    xaiStatus.style.color = '#155724';
+                } else {
+                    xaiStatus.innerHTML = '⚪ Not configured';
+                    xaiStatus.style.background = '#f8f9fa';
+                    xaiStatus.style.color = '#6c757d';
+                }
+                
+                // HuggingFace status
+                if (appConfig.isConfigured('huggingface')) {
+                    hfStatus.innerHTML = '✅ Configured and ready';
+                    hfStatus.style.background = '#d4edda';
+                    hfStatus.style.color = '#155724';
+                } else {
+                    hfStatus.innerHTML = '⚪ Not configured';
+                    hfStatus.style.background = '#f8f9fa';
+                    hfStatus.style.color = '#6c757d';
+                }
+            }
+        }
+        
+        // Show configuration message
+        function showConfigMessage(message, type) {
+            const msgDiv = document.getElementById('config-message');
+            msgDiv.style.display = 'block';
+            msgDiv.textContent = message;
+            
+            // Set style based on type
+            switch (type) {
+                case 'success':
+                    msgDiv.style.background = '#d4edda';
+                    msgDiv.style.color = '#155724';
+                    msgDiv.style.border = '1px solid #c3e6cb';
+                    break;
+                case 'error':
+                    msgDiv.style.background = '#f8d7da';
+                    msgDiv.style.color = '#721c24';
+                    msgDiv.style.border = '1px solid #f5c6cb';
+                    break;
+                case 'warning':
+                    msgDiv.style.background = '#fff3cd';
+                    msgDiv.style.color = '#856404';
+                    msgDiv.style.border = '1px solid #ffeaa7';
+                    break;
+                case 'info':
+                    msgDiv.style.background = '#d1ecf1';
+                    msgDiv.style.color = '#0c5460';
+                    msgDiv.style.border = '1px solid #bee5eb';
+                    break;
+            }
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    msgDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Initialize AI config when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initAIConfig();
+        });
     </script>
 </body>
 </html>
