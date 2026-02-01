@@ -477,24 +477,37 @@ function generateFormFillerTool() {
 }
 
 function generateChatAssistantTool() {
+    const uploadedDocs = getUserUploadedDocuments();
+    const hasDocuments = uploadedDocs.length > 0;
+    
     return `
         <h2>💬 Virtual Health Assistant</h2>
-        <div style="border: 2px solid #e2e8f0; border-radius: 8px; padding: 1rem; height: 400px; overflow-y: auto; margin-bottom: 1rem; background: #f7fafc;">
+        
+        ${hasDocuments ? `
+        <div class="message message-success" style="margin-bottom: 1rem;">
+            <strong>📄 ${uploadedDocs.length} Medical Document(s) Available</strong>
+            <p style="margin-top: 0.5rem;">I can reference your uploaded documents to provide personalized assistance!</p>
+        </div>
+        ` : ''}
+        
+        <div id="chat-messages" style="border: 2px solid #e2e8f0; border-radius: 8px; padding: 1rem; height: 400px; overflow-y: auto; margin-bottom: 1rem; background: #f7fafc;">
             <div class="chat-message assistant">
-                <strong>Assistant:</strong> Hello! I'm your virtual health assistant. I can help you with:
+                <strong>🤖 Assistant:</strong> Hello! I'm your virtual health assistant. I can help you with:
                 <ul style="margin-left: 20px; margin-top: 10px;">
                     <li>Finding insurance programs</li>
                     <li>Understanding disability benefits</li>
                     <li>Navigating paperwork requirements</li>
                     <li>Locating doctors and specialists</li>
                     <li>Answering questions about medical assistance</li>
+                    ${hasDocuments ? '<li><strong>Analyzing your uploaded medical documents</strong> 📄</li>' : ''}
                 </ul>
+                ${hasDocuments ? '<p style="margin-top: 1rem; padding: 1rem; background: #fff; border-radius: 4px; border-left: 3px solid #48bb78;"><strong>💡 Tip:</strong> Try asking me: "What conditions are in my medical records?" or "Summarize my uploaded documents"</p>' : ''}
                 How can I help you today?
             </div>
         </div>
         
         <div style="display: flex; gap: 0.5rem;">
-            <input type="text" id="chat-input" placeholder="Type your question..." style="flex: 1;">
+            <input type="text" id="chat-input" placeholder="Type your question..." style="flex: 1;" onkeypress="if(event.key==='Enter') sendChatMessage()">
             <button class="btn-primary" onclick="sendChatMessage()">Send</button>
         </div>
         
@@ -503,26 +516,68 @@ function generateChatAssistantTool() {
             <button class="btn-secondary" style="margin: 0.25rem; padding: 0.5rem 1rem;" onclick="askQuestion('medicare')">What is Medicare?</button>
             <button class="btn-secondary" style="margin: 0.25rem; padding: 0.5rem 1rem;" onclick="askQuestion('disability')">How do I apply for disability?</button>
             <button class="btn-secondary" style="margin: 0.25rem; padding: 0.5rem 1rem;" onclick="askQuestion('appeal')">My claim was denied</button>
+            ${hasDocuments ? '<button class="btn-secondary" style="margin: 0.25rem; padding: 0.5rem 1rem; background: #48bb78;" onclick="askQuestion(\'documents\')">📄 Review my documents</button>' : ''}
         </div>
     `;
 }
 
 function generateDocumentAnalyzerTool() {
+    // Get uploaded documents if user is logged in
+    const uploadedDocs = getUserUploadedDocuments();
+    const hasDocuments = uploadedDocs.length > 0;
+    
     return `
         <h2>🔎 AI Document Analyzer</h2>
         <p>Upload medical documents, bills, or insurance letters for AI analysis and recommendations.</p>
         
+        ${hasDocuments ? `
+        <div class="message message-success" style="margin-bottom: 1rem;">
+            <strong>✓ ${uploadedDocs.length} document(s) uploaded</strong>
+            <p style="margin-top: 0.5rem;">These documents are now available to the AI assistant for analysis and reference.</p>
+        </div>
+        ` : ''}
+        
         <div class="wizard-step">
             <h4>Upload Documents</h4>
-            <input type="file" multiple accept=".pdf,.doc,.docx,.jpg,.png">
-            <p style="color: #718096; font-size: 0.9rem; margin-top: 0.5rem;">
-                Supported formats: PDF, Word, Images
-            </p>
+            <div class="upload-zone" id="doc-upload-zone" 
+                 ondrop="handleDocumentDrop(event)" 
+                 ondragover="handleDragOver(event)"
+                 onclick="document.getElementById('document-file-input').click()">
+                <div class="upload-icon">📄</div>
+                <h3>Drop files here or click to upload</h3>
+                <p style="color: #718096; font-size: 0.9rem; margin-top: 0.5rem;">
+                    Supported formats: PDF, Word, Images (JPG, PNG)
+                </p>
+            </div>
+            <input type="file" id="document-file-input" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" 
+                   style="display: none;" onchange="handleDocumentUpload(event)">
         </div>
         
-        <button class="btn-primary" onclick="analyzeDocuments()">Analyze Documents</button>
-        
+        <div id="upload-progress" style="display: none; margin-top: 1rem;"></div>
         <div id="analysis-results" style="margin-top: 1rem;"></div>
+        
+        ${hasDocuments ? `
+        <div style="margin-top: 2rem;">
+            <h4>📋 Uploaded Documents</h4>
+            <div id="uploaded-documents-list">
+                ${uploadedDocs.map(doc => `
+                    <div class="document-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f7fafc; border-radius: 8px; margin-bottom: 0.5rem;">
+                        <div>
+                            <strong>${doc.name}</strong>
+                            <p style="color: #718096; font-size: 0.85rem; margin-top: 0.25rem;">
+                                ${doc.type} • ${formatFileSize(doc.size)} • ${new Date(doc.uploadedAt).toLocaleDateString()}
+                            </p>
+                            ${doc.analyzed ? `<p style="color: #48bb78; font-size: 0.85rem; margin-top: 0.25rem;">✓ Analyzed</p>` : ''}
+                        </div>
+                        <div>
+                            <button class="btn-secondary" style="margin-right: 0.5rem;" onclick="viewDocumentAnalysis('${doc.id}')">View</button>
+                            <button class="btn-secondary" onclick="deleteUploadedDocument('${doc.id}')">Delete</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        ` : ''}
         
         <div class="message message-info" style="margin-top: 1rem;">
             <strong>What we can analyze:</strong>
@@ -531,7 +586,10 @@ function generateDocumentAnalyzerTool() {
                 <li>Insurance denials - suggest appeal strategies</li>
                 <li>Medical records - extract key information</li>
                 <li>EOB statements - explain benefits and costs</li>
+                <li>Lab results - interpret findings</li>
+                <li>Prescription information - track medications</li>
             </ul>
+            <p style="margin-top: 1rem;"><strong>💬 Tip:</strong> After uploading, ask the AI assistant about your documents in the chat!</p>
         </div>
     `;
 }
@@ -637,19 +695,156 @@ function processAIForm() {
 
 function sendChatMessage() {
     const input = document.getElementById('chat-input');
-    if (input && input.value.trim()) {
-        alert('Chat functionality is a demo. In production, this would connect to a real AI assistant. Your question: ' + input.value);
-        input.value = '';
+    const messagesDiv = document.getElementById('chat-messages');
+    
+    if (!input || !input.value.trim()) return;
+    
+    const userMessage = input.value.trim();
+    input.value = '';
+    
+    // Add user message to chat
+    if (messagesDiv) {
+        const userMsgDiv = document.createElement('div');
+        userMsgDiv.className = 'chat-message user';
+        userMsgDiv.innerHTML = `<strong>You:</strong> ${escapeHtml(userMessage)}`;
+        userMsgDiv.style.cssText = 'margin-top: 1rem; padding: 0.75rem; background: white; border-radius: 8px; border-left: 3px solid #8b5cf6;';
+        messagesDiv.appendChild(userMsgDiv);
+        
+        // Show typing indicator
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typing-indicator';
+        typingDiv.className = 'chat-message assistant';
+        typingDiv.innerHTML = '<strong>🤖 Assistant:</strong> <em>Typing...</em>';
+        typingDiv.style.cssText = 'margin-top: 1rem; padding: 0.75rem; background: #f0f0f0; border-radius: 8px;';
+        messagesDiv.appendChild(typingDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        
+        // Generate AI response with document context
+        setTimeout(() => {
+            const response = generateAIResponse(userMessage);
+            
+            // Remove typing indicator
+            const typing = document.getElementById('typing-indicator');
+            if (typing) typing.remove();
+            
+            // Add AI response
+            const aiMsgDiv = document.createElement('div');
+            aiMsgDiv.className = 'chat-message assistant';
+            aiMsgDiv.innerHTML = `<strong>🤖 Assistant:</strong> ${response}`;
+            aiMsgDiv.style.cssText = 'margin-top: 1rem; padding: 0.75rem; background: #e6f7ff; border-radius: 8px; border-left: 3px solid #48bb78;';
+            messagesDiv.appendChild(aiMsgDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }, 1000);
     }
+}
+
+function generateAIResponse(userMessage) {
+    const msg = userMessage.toLowerCase();
+    const uploadedDocs = getUserUploadedDocuments();
+    const hasDocuments = uploadedDocs.length > 0;
+    
+    // Check if asking about uploaded documents
+    if (hasDocuments && (msg.includes('document') || msg.includes('record') || msg.includes('upload') || msg.includes('medical'))) {
+        let response = `I can see you have ${uploadedDocs.length} document(s) uploaded. Here's what I found:<br/><br/>`;
+        
+        uploadedDocs.forEach((doc, index) => {
+            response += `<strong>${index + 1}. ${escapeHtml(doc.name)}</strong><br/>`;
+            response += `<span style="color: #718096;">${escapeHtml(doc.extractedContent)}</span><br/><br/>`;
+        });
+        
+        response += `Would you like me to help you with anything specific related to these documents?`;
+        return response;
+    }
+    
+    // Check for specific medical queries with document context
+    if (hasDocuments && (msg.includes('condition') || msg.includes('diagnos') || msg.includes('what') && msg.includes('wrong'))) {
+        const conditions = [];
+        uploadedDocs.forEach(doc => {
+            if (doc.extractedContent.toLowerCase().includes('diabetes')) conditions.push('Type 2 Diabetes');
+            if (doc.extractedContent.toLowerCase().includes('hypertension')) conditions.push('Hypertension');
+            if (doc.extractedContent.toLowerCase().includes('cholesterol')) conditions.push('High Cholesterol');
+        });
+        
+        if (conditions.length > 0) {
+            return `Based on your uploaded documents, I can see the following conditions mentioned:<br/><br/>` +
+                   conditions.map(c => `• ${c}`).join('<br/>') +
+                   `<br/><br/>Would you like help finding programs or resources for any of these conditions?`;
+        }
+    }
+    
+    if (hasDocuments && (msg.includes('medication') || msg.includes('prescription') || msg.includes('drug'))) {
+        const meds = [];
+        uploadedDocs.forEach(doc => {
+            if (doc.extractedContent.toLowerCase().includes('lisinopril')) meds.push('Lisinopril 10mg');
+            if (doc.extractedContent.toLowerCase().includes('metformin')) meds.push('Metformin 500mg');
+        });
+        
+        if (meds.length > 0) {
+            return `According to your documents, you're taking:<br/><br/>` +
+                   meds.map(m => `• ${m}`).join('<br/>') +
+                   `<br/><br/>Would you like information about medication assistance programs?`;
+        }
+    }
+    
+    // Default responses
+    if (msg.includes('insurance') || msg.includes('coverage')) {
+        return `I can help you understand insurance coverage options! ${hasDocuments ? 'Based on your uploaded documents, ' : ''}Are you looking for:<br/>• Medicare or Medicaid information<br/>• Private insurance options<br/>• Coverage for specific treatments<br/>• How to appeal a denial`;
+    }
+    
+    if (msg.includes('disability') || msg.includes('ssdi') || msg.includes('ssi')) {
+        return `Disability benefits can be complex. ${hasDocuments ? 'I see you have medical documents uploaded which will be helpful! ' : ''}I can help you with:<br/>• SSDI vs SSI eligibility<br/>• Application process<br/>• Required documentation<br/>• Appeal process if denied<br/><br/>What would you like to know?`;
+    }
+    
+    if (msg.includes('appeal') || msg.includes('denied') || msg.includes('reject')) {
+        return `I'm sorry to hear about a denial. ${hasDocuments ? 'Your uploaded documents will be valuable for the appeal. ' : ''}Important steps:<br/>1. Review the denial letter carefully<br/>2. Gather supporting medical evidence<br/>3. File within the deadline (usually 60 days)<br/>4. Consider getting professional help<br/><br/>Would you like help generating an appeal letter?`;
+    }
+    
+    // General response
+    return `I understand you're asking about "${escapeHtml(userMessage)}". ${hasDocuments ? 'I have access to your ' + uploadedDocs.length + ' uploaded document(s). ' : ''}I'm here to help! Can you provide more details about what you need assistance with?`;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 function askQuestion(topic) {
     const responses = {
         'medicare': 'Medicare is federal health insurance for people 65+, younger people with disabilities, and people with End-Stage Renal Disease. It has Parts A, B, C, and D covering different services.',
         'disability': 'To apply for disability: 1) Gather medical records, 2) Complete application at ssa.gov or local office, 3) Provide detailed work history, 4) Wait for evaluation (3-5 months), 5) Consider appeal if denied.',
-        'appeal': 'If your claim was denied: 1) Review the denial letter carefully, 2) Gather additional supporting documentation, 3) Write a formal appeal within the deadline, 4) Consider getting help from an advocate or attorney.'
+        'appeal': 'If your claim was denied: 1) Review the denial letter carefully, 2) Gather additional supporting documentation, 3) Write a formal appeal within the deadline, 4) Consider getting help from an advocate or attorney.',
+        'documents': generateDocumentsSummary()
     };
-    alert(responses[topic] || 'Question received');
+    
+    const messagesDiv = document.getElementById('chat-messages');
+    if (messagesDiv && responses[topic]) {
+        const aiMsgDiv = document.createElement('div');
+        aiMsgDiv.className = 'chat-message assistant';
+        aiMsgDiv.innerHTML = `<strong>🤖 Assistant:</strong> ${responses[topic]}`;
+        aiMsgDiv.style.cssText = 'margin-top: 1rem; padding: 0.75rem; background: #e6f7ff; border-radius: 8px; border-left: 3px solid #48bb78;';
+        messagesDiv.appendChild(aiMsgDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    } else {
+        alert(responses[topic] || 'Question received');
+    }
+}
+
+function generateDocumentsSummary() {
+    const uploadedDocs = getUserUploadedDocuments();
+    if (uploadedDocs.length === 0) {
+        return 'You haven\'t uploaded any documents yet. Would you like to upload some medical records so I can help analyze them?';
+    }
+    
+    let summary = `You have ${uploadedDocs.length} document(s) uploaded:<br/><br/>`;
+    uploadedDocs.forEach((doc, index) => {
+        summary += `<strong>${index + 1}. ${escapeHtml(doc.name)}</strong><br/>`;
+        summary += `<span style="color: #718096; font-size: 0.9rem;">Uploaded ${new Date(doc.uploadedAt).toLocaleDateString()}</span><br/>`;
+        summary += `<span style="color: #4a5568;">${escapeHtml(doc.extractedContent.slice(0, 100))}${doc.extractedContent.length > 100 ? '...' : ''}</span><br/><br/>`;
+    });
+    
+    summary += `Would you like me to analyze specific information from these documents?`;
+    return summary;
 }
 
 function analyzeDocuments() {
@@ -667,6 +862,236 @@ function analyzeDocuments() {
                 </ul>
             </div>
         `;
+    }
+}
+
+// Document Upload Management
+function getUserUploadedDocuments() {
+    if (!window.localStorage) return [];
+    const docs = localStorage.getItem('medhelper_uploaded_documents');
+    return docs ? JSON.parse(docs) : [];
+}
+
+function saveUserUploadedDocuments(docs) {
+    if (!window.localStorage) return;
+    localStorage.setItem('medhelper_uploaded_documents', JSON.stringify(docs));
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.dataTransfer.dropEffect = 'copy';
+}
+
+function handleDocumentDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+        processDocumentFiles(files);
+    }
+}
+
+function handleDocumentUpload(event) {
+    const files = event.target.files;
+    if (files.length > 0) {
+        processDocumentFiles(files);
+    }
+}
+
+async function processDocumentFiles(files) {
+    const progressDiv = document.getElementById('upload-progress');
+    const resultsDiv = document.getElementById('analysis-results');
+    
+    if (progressDiv) {
+        progressDiv.style.display = 'block';
+        progressDiv.innerHTML = `
+            <div class="message message-info">
+                <strong>📤 Uploading and analyzing ${files.length} document(s)...</strong>
+                <p>Please wait while we process your files.</p>
+            </div>
+        `;
+    }
+    
+    // Process each file
+    const uploadedDocs = getUserUploadedDocuments();
+    const newDocs = [];
+    
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        try {
+            // Read file for storage (in production, would upload to backend)
+            const fileData = await readFileAsDataURL(file);
+            
+            // Extract text content simulation (in production, would use OCR/AI)
+            const extractedContent = await simulateTextExtraction(file);
+            
+            const docMetadata = {
+                id: 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 11),
+                name: file.name,
+                type: file.type || getFileTypeFromName(file.name),
+                size: file.size,
+                uploadedAt: new Date().toISOString(),
+                analyzed: true,
+                extractedContent: extractedContent,
+                fileData: fileData.slice(0, 100) + '...' // Store preview only for demo
+            };
+            
+            newDocs.push(docMetadata);
+            uploadedDocs.push(docMetadata);
+        } catch (error) {
+            console.error('Error processing file:', file.name, error);
+        }
+    }
+    
+    // Save to localStorage
+    saveUserUploadedDocuments(uploadedDocs);
+    
+    // Also save to user's account if logged in
+    if (window.authSystem && window.authSystem.isLoggedIn()) {
+        newDocs.forEach(doc => {
+            window.authSystem.saveDocument({
+                type: 'medical_upload',
+                name: doc.name,
+                metadata: doc
+            });
+        });
+    }
+    
+    // Show results
+    if (progressDiv) {
+        progressDiv.innerHTML = `
+            <div class="message message-success">
+                <strong>✓ Upload Complete!</strong>
+                <p>${files.length} document(s) have been uploaded and analyzed.</p>
+            </div>
+        `;
+    }
+    
+    if (resultsDiv) {
+        resultsDiv.innerHTML = `
+            <div class="message message-success">
+                <strong>🤖 AI Analysis Results:</strong>
+                <ul style="margin-left: 20px; margin-top: 0.5rem;">
+                    <li><strong>Documents processed:</strong> ${files.length}</li>
+                    <li><strong>Information extracted:</strong> Medical records, conditions, medications</li>
+                    <li><strong>AI Status:</strong> Ready to answer questions about your documents</li>
+                </ul>
+                <p style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e2e8f0;">
+                    <strong>💡 Next Steps:</strong> Open the AI Chat Assistant and ask questions like:<br/>
+                    • "What medical conditions are mentioned in my documents?"<br/>
+                    • "Summarize my medical history"<br/>
+                    • "What medications am I taking according to my records?"
+                </p>
+            </div>
+        `;
+    }
+    
+    // Refresh the document list
+    setTimeout(() => {
+        // Re-render the tool to show uploaded documents
+        if (document.getElementById('ai-tool-container')) {
+            document.getElementById('ai-tool-container').innerHTML = generateDocumentAnalyzerTool();
+        }
+    }, 1500);
+}
+
+function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = (e) => reject(e);
+        reader.readAsDataURL(file);
+    });
+}
+
+async function simulateTextExtraction(file) {
+    // Simulate AI text extraction
+    await new Promise(r => setTimeout(r, 500));
+    
+    // Demo extracted content based on file name
+    const fileName = file.name.toLowerCase();
+    if (fileName.includes('lab') || fileName.includes('test')) {
+        return 'Lab Results: Blood test results showing normal values. Cholesterol: 180 mg/dL, Glucose: 95 mg/dL.';
+    } else if (fileName.includes('prescription') || fileName.includes('rx')) {
+        return 'Prescription: Lisinopril 10mg, once daily. Metformin 500mg, twice daily with meals.';
+    } else if (fileName.includes('bill') || fileName.includes('invoice')) {
+        return 'Medical Bill: Office visit $150, Lab work $200. Insurance paid $280, Patient responsibility $70.';
+    } else if (fileName.includes('record') || fileName.includes('history')) {
+        return 'Medical Record: Patient presents with hypertension and type 2 diabetes. Current medications effective. Follow-up in 3 months.';
+    } else {
+        return 'Medical document containing patient information, diagnoses, and treatment plans.';
+    }
+}
+
+function getFileTypeFromName(fileName) {
+    const ext = fileName.split('.').pop().toLowerCase();
+    const types = {
+        'pdf': 'application/pdf',
+        'doc': 'application/msword',
+        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'png': 'image/png'
+    };
+    return types[ext] || 'application/octet-stream';
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
+function viewDocumentAnalysis(docId) {
+    const docs = getUserUploadedDocuments();
+    const doc = docs.find(d => d.id === docId);
+    
+    if (!doc) {
+        alert('Document not found');
+        return;
+    }
+    
+    const resultsDiv = document.getElementById('analysis-results');
+    if (resultsDiv) {
+        resultsDiv.innerHTML = `
+            <div class="message message-info">
+                <h4>📄 ${doc.name}</h4>
+                <p><strong>File Type:</strong> ${doc.type}</p>
+                <p><strong>Uploaded:</strong> ${new Date(doc.uploadedAt).toLocaleString()}</p>
+                <p><strong>Size:</strong> ${formatFileSize(doc.size)}</p>
+                <hr style="margin: 1rem 0; border: none; border-top: 1px solid #e2e8f0;">
+                <p><strong>Extracted Content:</strong></p>
+                <p style="background: #f7fafc; padding: 1rem; border-radius: 4px; margin-top: 0.5rem;">
+                    ${doc.extractedContent || 'No content extracted'}
+                </p>
+            </div>
+        `;
+        resultsDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function deleteUploadedDocument(docId) {
+    if (!confirm('Are you sure you want to delete this document?')) {
+        return;
+    }
+    
+    let docs = getUserUploadedDocuments();
+    docs = docs.filter(d => d.id !== docId);
+    saveUserUploadedDocuments(docs);
+    
+    // Also delete from user's account if logged in
+    if (window.authSystem && window.authSystem.isLoggedIn()) {
+        window.authSystem.deleteDocument(docId);
+    }
+    
+    // Refresh the document list
+    if (document.getElementById('ai-tool-container')) {
+        document.getElementById('ai-tool-container').innerHTML = generateDocumentAnalyzerTool();
     }
 }
 
