@@ -1999,3 +1999,54 @@ h3 {
         page-break-inside: avoid;
     }
 }
+
+/* PWA Install Button Styles */
+.install-button {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+    font-size: 0.95rem;
+}
+
+.install-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
+    background: linear-gradient(135deg, #059669, #047857);
+}
+
+.install-button:active {
+    transform: translateY(0);
+}
+
+/* Offline indicator */
+.offline-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f59e0b;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    font-weight: 600;
+}
+
+/* PWA-specific styles */
+@media (display-mode: standalone) {
+    .navbar {
+        padding-top: env(safe-area-inset-top);
+    }
+    
+    body {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}
+

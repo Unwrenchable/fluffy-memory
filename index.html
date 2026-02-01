@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medical Assistance Helper - Find Help, Insurance & Support</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="AI-powered medical assistance to help navigate insurance, disability, and healthcare programs. Find free care, doctors, and support.">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MedHelper">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="/icon-192.svg">
+    <link rel="apple-touch-icon" href="/icon-192.svg">
+    
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -56,6 +71,7 @@
                     <li><a href="#location-services">Find Care</a></li>
                     <li><a href="#documents">Documents</a></li>
                     <li><a href="#ai-tools">AI Tools</a></li>
+                    <li><button id="install-pwa-button" class="install-button" style="display: none;">📱 Install App</button></li>
                 </ul>
             </div>
         </nav>
@@ -465,6 +481,10 @@
     <script src="condition-categorizer.js"></script>
     <script src="ai-assistant.js"></script>
     <script src="disability-doctor-finder.js"></script>
+    <script src="document-library.js"></script>
+    <script src="smart-search.js"></script>
+    <script src="crypto-payment.js"></script>
+    <script src="pwa-install.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
