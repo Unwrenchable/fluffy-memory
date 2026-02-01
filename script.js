@@ -928,15 +928,21 @@ async function processDocumentFiles(files) {
             // Extract text content simulation (in production, would use OCR/AI)
             const extractedContent = await simulateTextExtraction(file);
             
+            // Generate unique ID with fallback for older browsers
+            const docId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
+                ? crypto.randomUUID() 
+                : 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 11);
+            
             const docMetadata = {
-                id: 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 11),
+                id: docId,
                 name: file.name,
                 type: file.type || getFileTypeFromName(file.name),
                 size: file.size,
                 uploadedAt: new Date().toISOString(),
                 analyzed: true,
                 extractedContent: extractedContent,
-                fileData: fileData.slice(0, 100) + '...' // Store preview only for demo
+                // Note: fileData not stored in demo - would be stored on backend in production
+                filePreview: fileData.slice(0, 50) // Store minimal preview for demo only
             };
             
             newDocs.push(docMetadata);
@@ -1041,6 +1047,7 @@ function getFileTypeFromName(fileName) {
 
 function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes';
+    
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
