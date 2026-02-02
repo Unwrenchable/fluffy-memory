@@ -19,7 +19,7 @@
     <link rel="icon" type="image/svg+xml" href="/icon-192.svg">
     <link rel="apple-touch-icon" href="/icon-192.svg">
     
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <!-- AI-Powered Smart Assistant Widget -->
@@ -858,6 +858,47 @@
         </div>
     </div>
 
+    <!-- Password Protection Modal -->
+    <div id="password-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10002; overflow-y: auto;">
+        <div style="background: white; margin: 2rem auto; max-width: 500px; border-radius: 10px; padding: 2rem; position: relative;">
+            <div style="text-align: center; font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+            <h2 id="password-modal-title" style="text-align: center; margin-bottom: 1rem;">Secure Your Document</h2>
+            <p style="color: #666; text-align: center; margin-bottom: 1.5rem;">
+                Medical documents contain sensitive information. Would you like to password-protect this document?
+            </p>
+            
+            <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px;">
+                <strong>⚠️ Important:</strong>
+                <ul style="margin: 0.5rem 0 0 1rem; padding: 0;">
+                    <li>Remember your password - it cannot be recovered</li>
+                    <li>Password must be at least 6 characters</li>
+                    <li>Document will be saved as an HTML file</li>
+                </ul>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Password:</label>
+                <input type="password" id="document-password" placeholder="Enter password (min 6 characters)" 
+                       style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem; box-sizing: border-box;">
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Confirm Password:</label>
+                <input type="password" id="confirm-document-password" placeholder="Confirm password" 
+                       style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem; box-sizing: border-box;">
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button id="skip-password-btn" class="btn-secondary" style="flex: 1; min-height: 44px;">
+                    Skip Password Protection
+                </button>
+                <button id="set-password-btn" class="btn-primary" style="flex: 1; min-height: 44px;">
+                    🔐 Set Password
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Info Modal for Checklist and Mistakes -->
     <div id="info-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10001; overflow-y: auto;">
         <div style="background: white; margin: 2rem auto; max-width: 800px; border-radius: 10px; padding: 2rem; position: relative;">
@@ -867,21 +908,22 @@
         </div>
     </div>
 
-    <script src="auth.js"></script>
-    <script src="email-system.js"></script>
-    <script src="location-services.js"></script>
-    <script src="comprehensive-intake.js"></script>
-    <script src="user-data-manager.js"></script>
-    <script src="condition-categorizer.js"></script>
-    <script src="config.js"></script>
-    <script src="xai-huggingface-integration.js"></script>
-    <script src="ai-assistant.js"></script>
-    <script src="disability-doctor-finder.js"></script>
-    <script src="document-library.js"></script>
-    <script src="smart-search.js"></script>
-    <script src="crypto-payment.js"></script>
-    <script src="pwa-install.js"></script>
-    <script src="script.js"></script>
+    <script src="js/document-password-protection.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/email-system.js"></script>
+    <script src="js/location-services.js"></script>
+    <script src="js/comprehensive-intake.js"></script>
+    <script src="js/user-data-manager.js"></script>
+    <script src="js/condition-categorizer.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/xai-huggingface-integration.js"></script>
+    <script src="js/ai-assistant.js"></script>
+    <script src="js/disability-doctor-finder.js"></script>
+    <script src="js/document-library.js"></script>
+    <script src="js/smart-search.js"></script>
+    <script src="js/crypto-payment.js"></script>
+    <script src="js/pwa-install.js"></script>
+    <script src="js/script.js"></script>
     <script>
         // Initialize user authentication UI
         function initUserAuth() {
@@ -1376,21 +1418,50 @@
             }
         }
         
-        // Download document
+        // Download document with optional password protection
         function downloadDocument(templateId) {
             const textarea = document.getElementById('filled-document-content');
             if (!textarea) return;
             
             const content = textarea.value;
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${templateId}-${new Date().toISOString().split('T')[0]}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
+            const templateNames = {
+                'appeal-letter': 'Appeal Letter',
+                'doctor-request': 'Doctor Request Letter',
+                'rfc-request': 'RFC Request Letter',
+                'medical-records-request': 'Medical Records Request',
+                'insurance-appeal': 'Insurance Appeal Letter'
+            };
+            
+            const documentName = templateNames[templateId] || 'Medical Document';
+            
+            // Show password protection modal
+            documentPasswordProtection.showPasswordModal(documentName, (password) => {
+                if (password) {
+                    // Generate password-protected HTML document
+                    const protectedHtml = documentPasswordProtection.generateProtectedDocument(
+                        content, 
+                        password, 
+                        documentName
+                    );
+                    documentPasswordProtection.downloadProtectedDocument(
+                        protectedHtml,
+                        `${templateId}-${new Date().toISOString().split('T')[0]}.html`
+                    );
+                    alert('✅ Password-protected document downloaded! Open the HTML file to unlock with your password.');
+                } else {
+                    // Download without password protection
+                    const blob = new Blob([content], { type: 'text/plain' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${templateId}-${new Date().toISOString().split('T')[0]}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    alert('✅ Document downloaded!');
+                }
+            });
         }
         
         // Print document
