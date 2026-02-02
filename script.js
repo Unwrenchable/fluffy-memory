@@ -2563,3 +2563,89 @@ function findDentalNearMe() {
         alert('Enter your location above to find free dental care near you!');
     }, 500);
 }
+
+// Document Checklist Function
+function showDocumentChecklist() {
+    const checklist = `
+📋 COMPLETE DISABILITY APPLICATION CHECKLIST
+
+Before you submit your application, make sure you have:
+
+✅ PERSONAL INFORMATION
+□ Social Security Number
+□ Birth Certificate or proof of age
+□ Proof of citizenship or lawful alien status
+□ Military discharge papers (DD-214) if applicable
+
+✅ MEDICAL INFORMATION
+□ Names, addresses, and phone numbers of ALL doctors
+□ Names and addresses of ALL hospitals/clinics
+□ Dates of all medical appointments
+□ List of ALL medications (names and dosages)
+□ List of ALL medical tests (MRIs, X-rays, blood work, etc.)
+□ Dates of all hospitalizations
+
+✅ WORK INFORMATION
+□ Last 15 years of work history (jobs, dates, duties)
+□ W-2 forms or tax returns
+□ Pay stubs if still working
+
+✅ OTHER IMPORTANT DOCUMENTS
+□ SSA-827 forms completed for EACH doctor/hospital
+□ RFC forms from treating physicians
+□ Letters from doctors describing your limitations
+□ Your own written statement about how your condition affects daily life
+
+⚠️ CRITICAL: The more documentation you provide, the better your chances!
+
+Don't let missing documents delay your case. Request medical records NOW.
+    `;
+    
+    alert(checklist);
+}
+
+// Common Mistakes Function
+function showCommonMistakes() {
+    const mistakes = `
+⚠️ TOP 10 MISTAKES THAT LEAD TO DENIAL
+
+1. ❌ NOT FILLING OUT SSA-827 FORMS FOR ALL PROVIDERS
+   → Fill out one for EVERY doctor, hospital, clinic you've visited
+
+2. ❌ INCOMPLETE WORK HISTORY
+   → List ALL jobs from last 15 years, even part-time or cash jobs
+
+3. ❌ NOT BEING SPECIFIC ABOUT LIMITATIONS
+   → Don't say "I have pain" - say "I can only sit for 15 minutes before severe pain"
+
+4. ❌ MISSING DOCTOR APPOINTMENTS
+   → Regular treatment shows your condition is serious and ongoing
+
+5. ❌ NOT FOLLOWING TREATMENT PLANS
+   → If you don't take prescribed medications, SSA assumes you're not that sick
+
+6. ❌ SAYING YOU CAN DO MORE THAN YOU ACTUALLY CAN
+   → Be honest about your WORST days, not your best days
+
+7. ❌ NOT GETTING RFC FORMS FROM YOUR DOCTOR
+   → These are CRITICAL evidence that many applicants forget
+
+8. ❌ WAITING TOO LONG TO APPLY
+   → Apply as soon as you become disabled - benefits only go back 12 months
+
+9. ❌ NOT APPEALING A DENIAL
+   → Most people are denied first time - you MUST appeal to win!
+
+10. ❌ NOT DOCUMENTING MENTAL HEALTH CONDITIONS
+    → Depression, anxiety, PTSD count! Don't leave them out
+
+💡 TIP: Use this app to avoid these mistakes! We guide you through each step correctly.
+    `;
+    
+    alert(mistakes);
+}
+
+// Initialize document library on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Document library features loaded');
+});
