@@ -2601,7 +2601,7 @@ Before you submit your application, make sure you have:
 Don't let missing documents delay your case. Request medical records NOW.
     `;
     
-    alert(checklist);
+    showInfoModal(checklist);
 }
 
 // Common Mistakes Function
@@ -2642,7 +2642,27 @@ function showCommonMistakes() {
 💡 TIP: Use this app to avoid these mistakes! We guide you through each step correctly.
     `;
     
-    alert(mistakes);
+    showInfoModal(mistakes);
+}
+
+// Show info modal
+function showInfoModal(content) {
+    const modal = document.getElementById('info-modal');
+    const modalContent = document.getElementById('info-modal-content');
+    if (modal && modalContent) {
+        modalContent.textContent = content;
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+// Close info modal
+function closeInfoModal() {
+    const modal = document.getElementById('info-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
 }
 
 // Initialize document library on page load
