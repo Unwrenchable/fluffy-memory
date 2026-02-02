@@ -19,7 +19,7 @@
     <link rel="icon" type="image/svg+xml" href="/icon-192.svg">
     <link rel="apple-touch-icon" href="/icon-192.svg">
     
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <!-- AI-Powered Smart Assistant Widget -->
@@ -69,7 +69,7 @@
                 <ul class="nav-menu">
                     <li><a href="#universal-help">Get Help</a></li>
                     <li><a href="#location-services">Find Care</a></li>
-                    <li><a href="#documents">Documents</a></li>
+                    <li><a href="#document-library">Documents</a></li>
                     <li><a href="#ai-tools">AI Tools</a></li>
                     <li><a href="donation.html" style="color: #ff69b4; font-weight: bold;">💝 Support Us</a></li>
                     <li><button id="install-pwa-button" class="install-button" style="display: none;">📱 Install App</button></li>
@@ -508,6 +508,185 @@
             </div>
         </section>
 
+        <!-- Comprehensive Document Library Section -->
+        <section id="document-library" class="section bg-light">
+            <div class="container">
+                <h2>📚 Complete Document Library</h2>
+                <p class="section-description">All the forms, templates, and guides you need - with instructions on how to use them</p>
+
+                <!-- SSDI/SSI Forms -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3>🏛️ Social Security Disability Forms (SSDI/SSI)</h3>
+                    <p style="margin-bottom: 1.5rem;">Official forms needed for disability applications</p>
+                    
+                    <div style="display: grid; gap: 1rem;">
+                        <div class="document-item" style="padding: 1rem; background: #f7fafc; border-radius: 8px; border-left: 4px solid #667eea;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <h4 style="margin: 0 0 0.5rem 0;">📋 SSA-16-BK - Disability Application</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #666;">Main SSDI application form. Start here if applying for disability benefits.</p>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #667eea;"><strong>16 pages • Fillable PDF</strong></p>
+                                </div>
+                                <button aria-label="Download form (opens in new tab)" onclick="window.open('https://www.ssa.gov/forms/ssa-16.html', '_blank')" class="btn-primary" style="min-width: 150px;">Download Form</button>
+                            </div>
+                        </div>
+
+                        <div class="document-item" style="padding: 1rem; background: #f7fafc; border-radius: 8px; border-left: 4px solid #667eea;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <h4 style="margin: 0 0 0.5rem 0;">📋 SSA-3368-BK - Adult Disability Report</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #666;">Detailed information about your medical conditions, treatments, and limitations.</p>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #667eea;"><strong>15 pages • Fillable PDF</strong></p>
+                                </div>
+                                <button aria-label="Download form (opens in new tab)" onclick="window.open('https://www.ssa.gov/forms/ssa-3368.html', '_blank')" class="btn-primary" style="min-width: 150px;">Download Form</button>
+                            </div>
+                        </div>
+
+                        <div class="document-item" style="padding: 1rem; background: #f7fafc; border-radius: 8px; border-left: 4px solid #e53e3e;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <h4 style="margin: 0 0 0.5rem 0;">⚠️ SSA-827 - Authorization to Release Information</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #666;"><strong>CRITICAL:</strong> Fill one out for EACH doctor/hospital. SSA needs this to get your medical records!</p>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #e53e3e;"><strong>Required • 2 pages • Fillable PDF</strong></p>
+                                </div>
+                                <button aria-label="Download form (opens in new tab)" onclick="window.open('https://www.ssa.gov/forms/ssa-827.html', '_blank')" class="btn-primary" style="min-width: 150px;">Download Form</button>
+                            </div>
+                        </div>
+
+                        <div class="document-item" style="padding: 1rem; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <h4 style="margin: 0 0 0.5rem 0;">⚖️ SSA-561-U2 - Request for Reconsideration</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #666;"><strong>For Appeals:</strong> Use this if your application was denied. File within 60 days!</p>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #d97706;"><strong>Appeal Form • 4 pages • Urgent if Denied</strong></p>
+                                </div>
+                                <button aria-label="Download form (opens in new tab)" onclick="window.open('https://www.ssa.gov/forms/ssa-561.html', '_blank')" class="btn-primary" style="min-width: 150px;">Download Form</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RFC Forms -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3>📝 RFC (Residual Functional Capacity) Forms</h3>
+                    <p style="margin-bottom: 1.5rem;">Give these to your doctor - they help document exactly what you can and can't do</p>
+                    
+                    <div style="display: grid; gap: 1rem;">
+                        <div class="document-item" style="padding: 1rem; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <h4 style="margin: 0 0 0.5rem 0;">🏋️ Physical RFC Questionnaire</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #666;">For documenting physical limitations: lifting, walking, standing, sitting, reaching.</p>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #10b981;"><strong>For Your Doctor • 8 pages • Free Template</strong></p>
+                                </div>
+                                <button aria-label="Download form (opens in new tab)" onclick="window.open('https://www.disabilitysecrets.com/resources/disability/how-qualify-disability/physical-residual-functional-capacity-form.htm', '_blank')" class="btn-primary" style="min-width: 150px;">Get Template</button>
+                            </div>
+                        </div>
+
+                        <div class="document-item" style="padding: 1rem; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <h4 style="margin: 0 0 0.5rem 0;">🧠 Mental RFC Questionnaire</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #666;">For documenting mental/cognitive limitations: memory, concentration, social interaction.</p>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #10b981;"><strong>For Your Doctor • 6 pages • Free Template</strong></p>
+                                </div>
+                                <button aria-label="Download form (opens in new tab)" onclick="window.open('https://www.disabilitysecrets.com/resources/disability/disability-and-social-security/mental-residual', '_blank')" class="btn-primary" style="min-width: 150px;">Get Template</button>
+                            </div>
+                        </div>
+
+                        <div class="document-item" style="padding: 1rem; background: #ede9fe; border-radius: 8px; border-left: 4px solid #8b5cf6;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <h4 style="margin: 0 0 0.5rem 0;">📄 Cover Letter for RFC Forms</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #666;">Give this with the RFC form to explain to your doctor exactly what you need.</p>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #8b5cf6;"><strong>Instructions for Doctor • 1 page</strong></p>
+                                </div>
+                                <button onclick="generateAutoFilledDocument('rfc-request')" class="btn-primary" style="min-width: 150px;">Generate Letter</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medical Records & Appeal Letters -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3>📬 Request Letters & Appeals</h3>
+                    <p style="margin-bottom: 1.5rem;">Professional letter templates you can customize and send</p>
+                    
+                    <div style="display: grid; gap: 1rem;">
+                        <div class="document-item" style="padding: 1rem; background: #f7fafc; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <h4 style="margin: 0 0 0.5rem 0;">🏥 Medical Records Request Letter</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #666;">Request your complete medical records from doctors and hospitals.</p>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #3b82f6;"><strong>Auto-fill with your info</strong></p>
+                                </div>
+                                <button onclick="generateAutoFilledDocument('medical-records-request')" class="btn-primary" style="min-width: 150px;">Generate Letter</button>
+                            </div>
+                        </div>
+
+                        <div class="document-item" style="padding: 1rem; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <h4 style="margin: 0 0 0.5rem 0;">⚖️ Disability Denial Appeal Letter</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #666;">Professional appeal letter if your disability claim was denied.</p>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #f59e0b;"><strong>Time sensitive • Must file within 60 days</strong></p>
+                                </div>
+                                <button onclick="generateAutoFilledDocument('appeal-letter')" class="btn-primary" style="min-width: 150px;">Generate Letter</button>
+                            </div>
+                        </div>
+
+                        <div class="document-item" style="padding: 1rem; background: #fce7f3; border-radius: 8px; border-left: 4px solid #ec4899;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <h4 style="margin: 0 0 0.5rem 0;">💊 Insurance Appeal Letter</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #666;">Appeal insurance denials for treatments, medications, or procedures.</p>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #ec4899;"><strong>For insurance companies</strong></p>
+                                </div>
+                                <button onclick="generateAutoFilledDocument('insurance-appeal')" class="btn-primary" style="min-width: 150px;">Generate Letter</button>
+                            </div>
+                        </div>
+
+                        <div class="document-item" style="padding: 1rem; background: #f7fafc; border-radius: 8px; border-left: 4px solid #6366f1;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <h4 style="margin: 0 0 0.5rem 0;">👨‍⚕️ Doctor Support Request Letter</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #666;">Request your doctor to provide additional documentation for your case.</p>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #6366f1;"><strong>Professional template</strong></p>
+                                </div>
+                                <button onclick="generateAutoFilledDocument('doctor-request')" class="btn-primary" style="min-width: 150px;">Generate Letter</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Helpful Guides -->
+                <div class="card">
+                    <h3>📖 Step-by-Step Guides & Resources</h3>
+                    <p style="margin-bottom: 1.5rem;">Learn how to complete forms correctly and avoid common mistakes</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; color: white;">
+                            <h4 style="margin: 0 0 0.5rem 0;">📚 SSDI Application Guide</h4>
+                            <p style="margin: 0 0 1rem 0; font-size: 0.9rem; opacity: 0.9;">Complete walkthrough of the disability application process</p>
+                            <button aria-label="Download form (opens in new tab)" onclick="window.open('https://www.ssa.gov/benefits/disability/apply.html', '_blank')" class="btn-secondary" style="width: 100%; background: white; color: #667eea;">View Guide</button>
+                        </div>
+
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 8px; color: white;">
+                            <h4 style="margin: 0 0 0.5rem 0;">✅ Document Checklist</h4>
+                            <p style="margin: 0 0 1rem 0; font-size: 0.9rem; opacity: 0.9;">Make sure you have everything you need before applying</p>
+                            <button onclick="showDocumentChecklist()" class="btn-secondary" style="width: 100%; background: white; color: #10b981;">View Checklist</button>
+                        </div>
+
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 8px; color: white;">
+                            <h4 style="margin: 0 0 0.5rem 0;">⚠️ Common Mistakes</h4>
+                            <p style="margin: 0 0 1rem 0; font-size: 0.9rem; opacity: 0.9;">Avoid the errors that lead to denial</p>
+                            <button onclick="showCommonMistakes()" class="btn-secondary" style="width: 100%; background: white; color: #f59e0b;">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- AI Configuration Section -->
         <section id="ai-config" class="section">
             <div class="container">
@@ -679,21 +858,72 @@
         </div>
     </div>
 
-    <script src="auth.js"></script>
-    <script src="email-system.js"></script>
-    <script src="location-services.js"></script>
-    <script src="comprehensive-intake.js"></script>
-    <script src="user-data-manager.js"></script>
-    <script src="condition-categorizer.js"></script>
-    <script src="config.js"></script>
-    <script src="xai-huggingface-integration.js"></script>
-    <script src="ai-assistant.js"></script>
-    <script src="disability-doctor-finder.js"></script>
-    <script src="document-library.js"></script>
-    <script src="smart-search.js"></script>
-    <script src="crypto-payment.js"></script>
-    <script src="pwa-install.js"></script>
-    <script src="script.js"></script>
+    <!-- Password Protection Modal -->
+    <div id="password-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10002; overflow-y: auto;">
+        <div style="background: white; margin: 2rem auto; max-width: 500px; border-radius: 10px; padding: 2rem; position: relative;">
+            <div style="text-align: center; font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+            <h2 id="password-modal-title" style="text-align: center; margin-bottom: 1rem;">Secure Your Document</h2>
+            <p style="color: #666; text-align: center; margin-bottom: 1.5rem;">
+                Medical documents contain sensitive information. Would you like to password-protect this document?
+            </p>
+            
+            <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px;">
+                <strong>⚠️ Important:</strong>
+                <ul style="margin: 0.5rem 0 0 1rem; padding: 0;">
+                    <li>Remember your password - it cannot be recovered</li>
+                    <li>Password must be at least 6 characters</li>
+                    <li>Document will be saved as an HTML file</li>
+                </ul>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Password:</label>
+                <input type="password" id="document-password" placeholder="Enter password (min 6 characters)" 
+                       style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem; box-sizing: border-box;">
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Confirm Password:</label>
+                <input type="password" id="confirm-document-password" placeholder="Confirm password" 
+                       style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem; box-sizing: border-box;">
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button id="skip-password-btn" class="btn-secondary" style="flex: 1; min-height: 44px;">
+                    Skip Password Protection
+                </button>
+                <button id="set-password-btn" class="btn-primary" style="flex: 1; min-height: 44px;">
+                    🔐 Set Password
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal for Checklist and Mistakes -->
+    <div id="info-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10001; overflow-y: auto;">
+        <div style="background: white; margin: 2rem auto; max-width: 800px; border-radius: 10px; padding: 2rem; position: relative;">
+            <button onclick="closeInfoModal()" style="position: absolute; top: 1rem; right: 1rem; background: #e53e3e; color: white; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 1.5rem; cursor: pointer;" aria-label="Close modal">×</button>
+            <div id="info-modal-content" style="white-space: pre-wrap; font-family: monospace; line-height: 1.6;"></div>
+            <button onclick="closeInfoModal()" class="btn-primary" style="width: 100%; margin-top: 1rem;">Close</button>
+        </div>
+    </div>
+
+    <script src="js/document-password-protection.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/email-system.js"></script>
+    <script src="js/location-services.js"></script>
+    <script src="js/comprehensive-intake.js"></script>
+    <script src="js/user-data-manager.js"></script>
+    <script src="js/condition-categorizer.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/xai-huggingface-integration.js"></script>
+    <script src="js/ai-assistant.js"></script>
+    <script src="js/disability-doctor-finder.js"></script>
+    <script src="js/document-library.js"></script>
+    <script src="js/smart-search.js"></script>
+    <script src="js/crypto-payment.js"></script>
+    <script src="js/pwa-install.js"></script>
+    <script src="js/script.js"></script>
     <script>
         // Initialize user authentication UI
         function initUserAuth() {
@@ -1188,21 +1418,50 @@
             }
         }
         
-        // Download document
+        // Download document with optional password protection
         function downloadDocument(templateId) {
             const textarea = document.getElementById('filled-document-content');
             if (!textarea) return;
             
             const content = textarea.value;
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${templateId}-${new Date().toISOString().split('T')[0]}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
+            const templateNames = {
+                'appeal-letter': 'Appeal Letter',
+                'doctor-request': 'Doctor Request Letter',
+                'rfc-request': 'RFC Request Letter',
+                'medical-records-request': 'Medical Records Request',
+                'insurance-appeal': 'Insurance Appeal Letter'
+            };
+            
+            const documentName = templateNames[templateId] || 'Medical Document';
+            
+            // Show password protection modal
+            documentPasswordProtection.showPasswordModal(documentName, (password) => {
+                if (password) {
+                    // Generate password-protected HTML document
+                    const protectedHtml = documentPasswordProtection.generateProtectedDocument(
+                        content, 
+                        password, 
+                        documentName
+                    );
+                    documentPasswordProtection.downloadProtectedDocument(
+                        protectedHtml,
+                        `${templateId}-${new Date().toISOString().split('T')[0]}.html`
+                    );
+                    alert('✅ Password-protected document downloaded! Open the HTML file to unlock with your password.');
+                } else {
+                    // Download without password protection
+                    const blob = new Blob([content], { type: 'text/plain' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${templateId}-${new Date().toISOString().split('T')[0]}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    alert('✅ Document downloaded!');
+                }
+            });
         }
         
         // Print document
