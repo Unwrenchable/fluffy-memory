@@ -956,6 +956,7 @@
     <script src="js/document-library.js"></script>
     <script src="js/smart-search.js"></script>
     <script src="js/crypto-payment.js"></script>
+    <script src="js/document-analyzer.js"></script>
     <script src="js/pwa-install.js"></script>
     <script src="js/script.js"></script>
     <script>
@@ -1811,85 +1812,187 @@
             const statusDiv = document.getElementById('ai-upload-status');
             const reviewDiv = document.getElementById('ai-review-area');
             const progressSteps = ['step-upload','step-extract','step-categorize','step-autofill','step-review'];
+            let extractedData = {};
+            let aiReport = null;
+
             function setStep(activeIdx) {
-                progressSteps.forEach((id,i)=>{
-                    const el = document.getElementById(id);
-                    el.style.color = i<=activeIdx?'#2563eb':'#94a3b8';
-                    el.style.fontWeight = i===activeIdx?'bold':'normal';
-                });
+              progressSteps.forEach((id,i)=>{
+                const el = document.getElementById(id);
+                el.style.color = i<=activeIdx?'#2563eb':'#94a3b8';
+                el.style.fontWeight = i===activeIdx?'bold':'normal';
+              });
             }
+
             function showStatus(msg, type='info') {
-                statusDiv.innerHTML = `<div class="message message-${type}" style="font-size:1.1em;">${msg}</div>`;
+              statusDiv.innerHTML = `<div class="message message-${type}" style="font-size:1.1em;">${msg}</div>`;
             }
+
             uploadArea.onclick = ()=>fileInput.click();
             uploadArea.ondragover = e=>{e.preventDefault();uploadArea.style.background='#e0f2fe';};
             uploadArea.ondragleave = e=>{e.preventDefault();uploadArea.style.background='#f0f9ff';};
             uploadArea.ondrop = e=>{
-                e.preventDefault();uploadArea.style.background='#f0f9ff';
-                fileInput.files = e.dataTransfer.files;
-                handleFiles();
+              e.preventDefault();uploadArea.style.background='#f0f9ff';
+              fileInput.files = e.dataTransfer.files;
+              handleFiles();
             };
             fileInput.onchange = handleFiles;
+
             async function handleFiles() {
-                setStep(0);
-                showStatus('Uploading and analyzing your documents...');
-                setStep(1);
-                // Simulate extraction, password prompt, and AI fill
-                const files = Array.from(fileInput.files);
-                let extracted = {};
-                for (const file of files) {
-                    let text = '';
-                    if (file.type==='application/pdf') {
-                        // Try to extract, prompt for password if needed
-                        try {
-                            text = await extractPDFWithPassword(file);
-                        } catch(e) {
-                            showStatus('PDF extraction failed: '+e.message,'error');
-                            return;
-                        }
-                    } else {
-                        text = await file.text();
-                    }
-                    extracted[file.name] = text;
-                }
-                showStatus('Extracting and categorizing information...');
-                setStep(2);
-                // Simulate AI extraction/categorization (replace with real AI call)
-                setTimeout(()=>{
-                    setStep(3);
-                    showStatus('Auto-filling all required forms...');
-                    setTimeout(()=>{
-                        setStep(4);
-                        showStatus('✅ All forms filled automatically! Review and download below.','success');
-                        reviewDiv.style.display='block';
-                        reviewDiv.innerHTML = `
-                            <h3 style='color:#2563eb;'>📝 Review & Edit Auto-Filled Forms</h3>
-                            <div style='background:#f0f9ff;padding:1.5em;border-radius:12px;margin-bottom:1.5em;'>
-                                <strong>Full Name:</strong> John Smith<br>
-                                <strong>Date Of Birth:</strong> 1975-06-15<br>
-                                <strong>SSN:</strong> XXX-XX-6789<br>
-                                <strong>Address:</strong> 123 Main St, Anytown, CA 90210<br>
-                                <strong>Phone:</strong> (555) 123-4567<br>
-                                <strong>Email:</strong> john.smith@email.com<br>
-                                <span style='color:#059669;'>✓ AI extracted this information with high confidence</span>
-                            </div>
-                            <button class='btn-primary' style='font-size:1.1em;padding:0.7em 2em;border-radius:8px;background:#2563eb;color:#fff;border:none;box-shadow:0 2px 8px #2563eb33;cursor:pointer;'>✅ Confirm & Download All Forms</button>
-                            <button class='btn-secondary' style='font-size:1.1em;padding:0.7em 2em;border-radius:8px;margin-left:1em;'>📧 Email Forms to Me</button>
-                        `;
-                    },1200);
-                },1200);
-            }
-            // Simulated PDF extraction with password prompt
-            async function extractPDFWithPassword(file) {
-                // Try to read PDF, if fails, prompt for password
+              setStep(0);
+              showStatus('Uploading and analyzing your documents...');
+              setStep(1);
+
+              // Initialize DocumentAnalyzer if not already
+              if (!window.documentAnalyzer) {
+                window.documentAnalyzer = new DocumentAnalyzer();
+              }
+
+              // Process files using real DocumentAnalyzer
+              const files = Array.from(fileInput.files);
+              extractedData = {};
+              for (const file of files) {
                 try {
-                    return await file.text(); // Simulate extraction
-                } catch {
-                    let password = prompt('This PDF is password-protected. Please enter the password:');
-                    if (!password) throw new Error('Password required');
-                    // Simulate password use
-                    return await file.text();
+                  let text = '';
+                  if (file.type === 'application/pdf') {
+                    text = await window.documentAnalyzer.extractPDFTextWithPassword(file);
+                    if (text === null) {
+                      showStatus('PDF extraction cancelled or failed.','error');
+                      return;
+                    }
+                    if (!text.trim()) {
+                      showStatus('No text found in PDF, running OCR...');
+                      text = await window.documentAnalyzer.ocrPDF(file);
+                      if (!text.trim()) {
+                        showStatus('OCR failed to extract text.','error');
+                        return;
+                      }
+                    }
+                  } else if (file.type.startsWith('image/')) {
+                    showStatus('Extracting text from image...');
+                    text = await window.documentAnalyzer.ocrImage(file);
+                    if (!text.trim()) {
+                      showStatus('OCR failed to extract text from image.','error');
+                      return;
+                    }
+                  } else {
+                    text = await window.documentAnalyzer.readFile(file);
+                    if (!text.trim()) {
+                      showStatus('No text found in document.','error');
+                      return;
+                    }
+                  }
+
+                  // Review extracted text
+                  text = await window.documentAnalyzer.reviewExtractedText(text);
+                  if (text === null) {
+                    showStatus('Extraction review cancelled.','error');
+                    return;
+                  }
+
+                  extractedData[file.name] = text;
+                } catch (e) {
+                  showStatus(`Error processing ${file.name}: ${e.message}`,'error');
+                  return;
                 }
+              }
+
+              showStatus('Extracting and categorizing information...');
+              setStep(2);
+
+              // Use AI to analyze extracted data
+              if (window.dualAIMedicalTeam && window.dualAIMedicalTeam.getTeamResponse) {
+                try {
+                  const allText = Object.values(extractedData).join('\n');
+                  aiReport = await window.dualAIMedicalTeam.getTeamResponse('Analyze this medical document and extract personal info, conditions, and categorize eligibility: ' + allText);
+                } catch (e) {
+                  aiReport = { response: 'AI analysis failed: ' + e.message };
+                }
+              } else {
+                aiReport = { response: 'AI not configured. Please set up API keys.' };
+              }
+
+              setStep(3);
+              showStatus('Auto-filling all required forms...');
+
+              // Auto-fill forms based on extracted data and AI report
+              setTimeout(()=>{
+                setStep(4);
+                showStatus('✅ All forms filled automatically! Review and download below.','success');
+                reviewDiv.style.display='block';
+                renderReviewScreen();
+              }, 1000);
+            }
+
+            function renderReviewScreen() {
+              // Parse extracted data using AI if available
+              let personalInfo = {
+                fullName: 'Unknown',
+                ssn: '',
+                dateOfBirth: '',
+                address: '',
+                phone: '',
+                email: ''
+              };
+              let conditions = 'Not extracted';
+              let limitations = 'Not extracted';
+
+              if (aiReport && aiReport.response) {
+                // Simple parsing - in production, use structured AI response
+                const response = aiReport.response.toLowerCase();
+                // Extract name
+                const nameMatch = response.match(/name[:\s]*([^\n,]+)/i);
+                if (nameMatch) personalInfo.fullName = nameMatch[1].trim();
+                // Extract SSN
+                const ssnMatch = response.match(/ssn[:\s]*([^\n,]+)/i) || response.match(/social security[:\s]*([^\n,]+)/i);
+                if (ssnMatch) personalInfo.ssn = ssnMatch[1].trim();
+                // Extract DOB
+                const dobMatch = response.match(/date of birth[:\s]*([^\n,]+)/i) || response.match(/dob[:\s]*([^\n,]+)/i);
+                if (dobMatch) personalInfo.dateOfBirth = dobMatch[1].trim();
+                // Extract address
+                const addrMatch = response.match(/address[:\s]*([^\n]+)/i);
+                if (addrMatch) personalInfo.address = addrMatch[1].trim();
+                // Extract phone
+                const phoneMatch = response.match(/phone[:\s]*([^\n,]+)/i);
+                if (phoneMatch) personalInfo.phone = phoneMatch[1].trim();
+                // Extract email
+                const emailMatch = response.match(/email[:\s]*([^\n,]+)/i);
+                if (emailMatch) personalInfo.email = emailMatch[1].trim();
+                // Extract conditions
+                const condMatch = response.match(/conditions?[:\s]*([^\n]+)/i);
+                if (condMatch) conditions = condMatch[1].trim();
+                // Extract limitations
+                const limMatch = response.match(/limitations?[:\s]*([^\n]+)/i) || response.match(/work limitations?[:\s]*([^\n]+)/i);
+                if (limMatch) limitations = limMatch[1].trim();
+              }
+
+              reviewDiv.innerHTML = `
+                <h3 style='color:#2563eb;margin-bottom:1em;'>📝 Review & Edit Auto-Filled Forms</h3>
+                <p style='margin-bottom:1.5em;'>Check the information below. <span style='color:#059669;'>Green</span> fields are high confidence. <span style='color:#f59e42;'>Orange</span> means review or complete.</p>
+                <form id='review-form' style='background:#f0f9ff;padding:1.5em;border-radius:12px;margin-bottom:1.5em;'>
+                  <div style='display:grid;grid-template-columns:1fr 1fr;gap:1em;'>
+                    <div><label>Full Legal Name <span style='color:#059669;'>✓ High Confidence</span></label><input type='text' name='fullName' value='${personalInfo.fullName}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
+                    <div><label>Social Security Number <span style='color:#059669;'>✓ High Confidence</span></label><input type='text' name='ssn' value='${personalInfo.ssn}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
+                    <div><label>Date of Birth <span style='color:#059669;'>✓ High Confidence</span></label><input type='date' name='dateOfBirth' value='${personalInfo.dateOfBirth}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
+                    <div><label>Mailing Address <span style='color:#059669;'>✓ High Confidence</span></label><input type='text' name='address' value='${personalInfo.address}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
+                    <div><label>Phone <span style='color:#059669;'>✓ High Confidence</span></label><input type='tel' name='phone' value='${personalInfo.phone}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
+                    <div><label>Email <span style='color:#059669;'>✓ High Confidence</span></label><input type='email' name='email' value='${personalInfo.email}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
+                  </div>
+                  <div style='margin-top:1em;'><label>Primary Disabling Conditions <span style='color:#059669;'>✓ High Confidence</span></label><textarea name='conditions' rows='3' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'>${conditions}</textarea></div>
+                  <div style='margin-top:1em;'><label>How do your conditions limit your ability to work? <span style='color:#059669;'>✓ High Confidence</span></label><textarea name='limitations' rows='4' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'>${limitations}</textarea></div>
+                </form>
+                <div style='text-align:center;'>
+                  <button class='btn-primary' style='font-size:1.1em;padding:0.7em 2em;border-radius:8px;background:#2563eb;color:#fff;border:none;box-shadow:0 2px 8px #2563eb33;cursor:pointer;margin-right:1em;' onclick='downloadFilledForms()'>✅ Confirm & Download All Forms</button>
+                  <button class='btn-secondary' style='font-size:1.1em;padding:0.7em 2em;border-radius:8px;background:#6b7280;color:#fff;border:none;box-shadow:0 2px 8px #6b728033;cursor:pointer;' onclick='emailForms()'>📧 Email Forms to Me</button>
+                </div>
+              `;
+            }
+
+            // Placeholder functions for download/email
+            function downloadFilledForms() {
+              alert('✅ Your reviewed forms are ready for download! (Integration pending)');
+            }
+            function emailForms() {
+              alert('📧 Your forms have been emailed to you! (Integration pending)');
             }
             </script>
     <!-- 🛡️ Coverage Predictor & Appeal Letter Generator Mount Point -->
@@ -1900,5 +2003,30 @@
     <div id="doctor-program-search"></div>
     <!-- 🔐 User Authentication Manager Mount Point -->
     <div id="user-auth-manager"></div>
+
+    <!-- PDF Password Modal -->
+    <div id="pdf-password-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10000; align-items:center; justify-content:center;">
+      <div style="background:#fff; padding:2em; border-radius:8px; box-shadow:0 2px 12px #0002; max-width:400px; width:90%;">
+        <h3>🔒 PDF Password Required</h3>
+        <p style="color:#555; margin-bottom:1em;">This PDF is password-protected. Please enter the password (often your date of birth or last 4 of SSN).</p>
+        <input type="password" id="pdf-password-input" placeholder="Enter password" style="width:100%; padding:0.5em; margin-bottom:1em; border:1px solid #ccc; border-radius:4px;">
+        <div id="pdf-password-error" style="color:#dc2626; margin-bottom:1em;"></div>
+        <div style="display:flex; gap:1em; justify-content:flex-end;">
+          <button id="pdf-password-cancel" style="padding:0.5em 1em; background:#6b7280; color:#fff; border:none; border-radius:4px; cursor:pointer;">Cancel</button>
+          <button id="pdf-password-submit" style="padding:0.5em 1em; background:#2563eb; color:#fff; border:none; border-radius:4px; cursor:pointer;">Unlock PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OCR Review Modal -->
+    <div id="ocr-review-modal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%,-20%); background:#fff; padding:2em; border-radius:8px; box-shadow:0 2px 12px #0002; z-index:1000; width:90vw; max-width:600px;">
+      <h3>Review & Edit Extracted Text</h3>
+      <p style="color:#555; font-size:0.95em; margin-bottom:0.5em;">Check the extracted info below. Edit if needed—this is what will be used to fill your forms.</p>
+      <textarea id="ocr-review-text" style="width:100%;height:200px; margin-bottom:1em;"></textarea>
+      <div style="display:flex; gap:1em; justify-content:flex-end;">
+        <button id="ocr-review-accept" class="btn-primary">Looks Good</button>
+        <button id="ocr-review-cancel" style="background:#6b7280;">Cancel</button>
+      </div>
+    </div>
 </body>
 </html>

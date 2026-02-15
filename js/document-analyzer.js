@@ -298,7 +298,8 @@ class DocumentAnalyzer {
   }
 
   showStatus(msg) {
-    document.getElementById('analyzer-status').innerText = msg;
+    const statusEl = document.getElementById('analyzer-status');
+    if (statusEl) statusEl.innerText = msg;
   }
 
   saveDocuments() {
