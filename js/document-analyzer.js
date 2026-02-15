@@ -38,10 +38,118 @@ class DocumentAnalyzer {
               <strong>${doc.name}</strong> (${doc.type})<br>
               <em>${doc.summary || 'No summary yet'}</em>
               <div>${doc.tags ? doc.tags.map(t => `<span class=\"tag\">${t}</span>`).join(' ') : ''}</div>
+              ${doc.extractedFields ? `<details style='margin-top:0.5em;'><summary>Show Extracted Fields</summary><pre style='background:#fff; border:1px solid #ddd; border-radius:4px; padding:0.5em; font-size:0.95em;'>${JSON.stringify(doc.extractedFields, null, 2)}</pre><button class='btn-secondary' style='margin-top:0.5em;' onclick='window.documentAnalyzer.autoFillWithExtracted(${i})'>Auto-Fill Forms with This</button></details>` : ''}
             </div>
           `).join('')}
         </div>
       </div>
+        // Auto-fill forms with extracted fields (stub for integration)
+        autoFillWithExtracted(index) {
+          const doc = this.documents[index];
+          if (!doc || !doc.extractedFields) {
+            alert('No extracted fields available for this document.');
+            return;
+          }
+          // Merge extracted fields into user profile
+          if (window.userDataManager) {
+            const currentProfile = window.userDataManager.getProfile() || {};
+            const mergedProfile = this.mergeExtractedFieldsIntoProfile(currentProfile, doc.extractedFields);
+            window.userDataManager.saveProfile(mergedProfile);
+            // Check for missing required fields
+            const missingFields = this.getMissingRequiredFields(mergedProfile);
+            if (missingFields.length > 0) {
+              this.promptForMissingFields(mergedProfile, missingFields);
+            } else {
+              alert('✅ All available info from your document has been used to auto-fill your profile and forms!');
+            }
+          } else {
+            alert('UserDataManager not available.');
+          }
+        }
+
+        // Merge extracted fields into the user profile structure
+        mergeExtractedFieldsIntoProfile(profile, extracted) {
+          // Map extracted fields to profile structure as best as possible
+          profile = profile || {};
+          profile.personalInfo = profile.personalInfo || {};
+          profile.medicalInfo = profile.medicalInfo || {};
+          profile.contactInfo = profile.contactInfo || {};
+          if (extracted['Full Name']) profile.personalInfo.first_name = extracted['Full Name'];
+          if (extracted['Date of Birth']) profile.personalInfo.dob = extracted['Date of Birth'];
+          if (extracted['Address']) profile.contactInfo.address = extracted['Address'];
+          if (extracted['Phone Number']) profile.contactInfo.phone = extracted['Phone Number'];
+          if (extracted['Diagnosis']) profile.medicalInfo.primary_condition = extracted['Diagnosis'];
+          if (extracted['Medications']) profile.medicalInfo.medications = extracted['Medications'];
+          if (extracted['Allergies']) profile.medicalInfo.allergies = extracted['Allergies'];
+          if (extracted['Procedures']) profile.medicalInfo.procedures = extracted['Procedures'];
+          if (extracted['Insurance Policy Number']) profile.medicalInfo.insurance_policy = extracted['Insurance Policy Number'];
+          if (extracted['Provider Name']) profile.medicalInfo.provider = extracted['Provider Name'];
+          if (extracted['Medical Record Number']) profile.medicalInfo.medical_record_number = extracted['Medical Record Number'];
+          if (extracted['Document Date']) profile.medicalInfo.document_date = extracted['Document Date'];
+          // Mark as incomplete until user reviews
+          profile.complete = false;
+          return profile;
+        }
+
+        // Identify required fields missing from the profile
+        getMissingRequiredFields(profile) {
+          const required = [
+            { path: ['personalInfo', 'first_name'], label: 'Full Name' },
+            { path: ['personalInfo', 'dob'], label: 'Date of Birth' },
+            { path: ['contactInfo', 'address'], label: 'Address' },
+            { path: ['contactInfo', 'phone'], label: 'Phone Number' },
+            { path: ['medicalInfo', 'primary_condition'], label: 'Diagnosis' }
+          ];
+          const missing = [];
+          for (const field of required) {
+            let val = profile;
+            for (const key of field.path) {
+              val = val && val[key];
+            }
+            if (!val) missing.push(field);
+          }
+          return missing;
+        }
+
+        // Prompt user for missing fields and update profile
+        promptForMissingFields(profile, missingFields) {
+          let prompts = '';
+          for (const field of missingFields) {
+            prompts += `${field.label}: <input id="missing-${field.path.join('-')}" type="text" style="width:90%;margin-bottom:0.5em;"><br>`;
+          }
+          const modal = document.createElement('div');
+          modal.style.position = 'fixed';
+          modal.style.top = '0';
+          modal.style.left = '0';
+          modal.style.width = '100vw';
+          modal.style.height = '100vh';
+          modal.style.background = 'rgba(0,0,0,0.6)';
+          modal.style.zIndex = '9999';
+          modal.innerHTML = `<div style="background:#fff;max-width:400px;margin:10vh auto;padding:2em;border-radius:10px;box-shadow:0 2px 16px #0003;">
+            <h3>Complete Your Profile</h3>
+            <p>Please provide the missing information so we can fill out all forms for you:</p>
+            ${prompts}
+            <button id="missing-fields-save" class="btn-primary" style="margin-top:1em;">Save</button>
+            <button id="missing-fields-cancel" class="btn-secondary" style="margin-top:1em;">Cancel</button>
+          </div>`;
+          document.body.appendChild(modal);
+          document.getElementById('missing-fields-save').onclick = () => {
+            for (const field of missingFields) {
+              const input = document.getElementById(`missing-${field.path.join('-')}`);
+              let obj = profile;
+              for (let i = 0; i < field.path.length - 1; i++) {
+                obj = obj[field.path[i]] = obj[field.path[i]] || {};
+              }
+              obj[field.path[field.path.length - 1]] = input.value;
+            }
+            window.userDataManager.saveProfile(profile);
+            document.body.removeChild(modal);
+            alert('✅ Your profile is now complete and all forms will be auto-filled!');
+          };
+          document.getElementById('missing-fields-cancel').onclick = () => {
+            document.body.removeChild(modal);
+          };
+        }
       <div id="ocr-review-modal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%,-20%); background:#fff; padding:2em; border-radius:8px; box-shadow:0 2px 12px #0002; z-index:1000; width:90vw; max-width:600px;">
         <h3>Review & Edit Extracted Text</h3>
         <p style="color:#555; font-size:0.95em; margin-bottom:0.5em;">Check the extracted info below. Edit if needed—this is what will be used to fill your forms.</p>
@@ -114,17 +222,32 @@ class DocumentAnalyzer {
           this.showStatus('Extraction review cancelled.');
           continue;
         }
+        let extractedFields = null;
         let summary = 'AI not configured.';
         if (window.dualAIMedicalTeam && window.dualAIMedicalTeam.getTeamResponse) {
-          this.showStatus('Summarizing with AI...');
+          this.showStatus('Extracting fields with AI...');
           try {
-            const ai = await window.dualAIMedicalTeam.getTeamResponse('Summarize this medical document:', { documentText: text });
-            summary = ai.response;
+            const prompt = `Extract the following key fields from this medical document. Respond ONLY in minified JSON (no explanation, no markdown, no extra text).\n\nFields to extract:\n- Full Name\n- Date of Birth\n- Medical Record Number\n- Document Date\n- Provider Name\n- Diagnosis\n- Medications\n- Allergies\n- Procedures\n- Insurance Policy Number\n- Address\n- Phone Number\n- Any other relevant patient info\n\nDocument text:\n"""${text}"""`;
+            const ai = await window.dualAIMedicalTeam.getTeamResponse(prompt, { documentText: text });
+            let aiText = ai.response;
+            // Try to extract JSON from AI response
+            let jsonStart = aiText.indexOf('{');
+            let jsonEnd = aiText.lastIndexOf('}');
+            if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+              try {
+                extractedFields = JSON.parse(aiText.substring(jsonStart, jsonEnd + 1));
+                summary = 'Extracted fields: ' + Object.keys(extractedFields).join(', ');
+              } catch (e) {
+                summary = 'AI returned invalid JSON. Raw output: ' + aiText;
+              }
+            } else {
+              summary = 'AI did not return JSON. Raw output: ' + aiText;
+            }
           } catch (e) {
             summary = 'AI error: ' + e.message;
           }
         }
-        this.documents.push({ name: file.name, type: file.type, summary, tags: [] });
+        this.documents.push({ name: file.name, type: file.type, summary, tags: [], extractedFields });
         this.saveDocuments();
         this.showStatus(`✅ ${file.name} processed successfully.`);
       } catch (err) {
