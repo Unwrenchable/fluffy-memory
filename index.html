@@ -957,7 +957,32 @@
     <script src="js/smart-search.js"></script>
     <script src="js/crypto-payment.js"></script>
     <script src="js/pwa-install.js"></script>
-    <script src="js/script.js"></script>
+        <script src="js/script.js"></script>
+        <script>
+        // Auto-inject AI API keys from environment variables (Vercel)
+        (function() {
+            // These will be replaced at build time by Vercel if set as env vars
+            const hfKey = window.NEXT_PUBLIC_HF_API_KEY || (typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_HF_API_KEY);
+            const xaiKey = window.NEXT_PUBLIC_XAI_API_KEY || (typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_XAI_API_KEY);
+            function setApiKeyIfPresent(id, key) {
+                if (key && document.getElementById(id)) {
+                    document.getElementById(id).value = key;
+                    document.getElementById(id).setAttribute('readonly', 'readonly');
+                    document.getElementById(id).style.background = '#e6ffe6';
+                }
+            }
+            setApiKeyIfPresent('hf-api-key', hfKey);
+            setApiKeyIfPresent('xai-api-key', xaiKey);
+            // Hide manual entry if both are present
+            if (hfKey && xaiKey) {
+                const configSection = document.querySelector('.config-grid');
+                if (configSection) configSection.style.display = 'none';
+                const msg = document.createElement('div');
+                msg.innerHTML = '<div style="background:#d4edda;color:#155724;padding:1em;border-radius:8px;margin:1em 0;">✅ AI API keys loaded from environment. Manual entry not required.</div>';
+                document.getElementById('ai-config').appendChild(msg);
+            }
+        })();
+        </script>
     <script>
         // Initialize user authentication UI
         function initUserAuth() {
