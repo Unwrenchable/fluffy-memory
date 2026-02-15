@@ -1789,59 +1789,58 @@ function autoFillForms(extractedData, report) {
     container.style.display = 'block';
     container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     
-    let html = '<div class="form-preview">';
-    html += '<h3>🎉 Forms Automatically Filled by AI!</h3>';
-    html += '<p>Review the auto-filled information below. Green fields were filled with high confidence.</p>';
-    
-    // Sample SSDI Application Form
-    html += '<h4 style="margin-top: 2rem;">Social Security Disability Application (Form SSA-16)</h4>';
-    html += '<div class="form-field">';
-    html += '<label>Full Legal Name <span class="confidence-indicator confidence-high">High Confidence</span></label>';
-    html += `<input type="text" class="auto-filled" value="${extractedData.personalInfo.fullName}" readonly>`;
-    html += '</div>';
-    
-    html += '<div class="form-field">';
-    html += '<label>Social Security Number <span class="confidence-indicator confidence-high">High Confidence</span></label>';
-    html += `<input type="text" class="auto-filled" value="${extractedData.personalInfo.ssn}" readonly>`;
-    html += '</div>';
-    
-    html += '<div class="form-field">';
-    html += '<label>Date of Birth <span class="confidence-indicator confidence-high">High Confidence</span></label>';
-    html += `<input type="date" class="auto-filled" value="${extractedData.personalInfo.dateOfBirth}" readonly>`;
-    html += '</div>';
-    
-    html += '<div class="form-field">';
-    html += '<label>Mailing Address <span class="confidence-indicator confidence-high">High Confidence</span></label>';
-    html += `<input type="text" class="auto-filled" value="${extractedData.personalInfo.address}" readonly>`;
-    html += '</div>';
-    
-    if (report && report.success) {
-        html += '<div class="form-field">';
-        html += '<label>Primary Disabling Conditions <span class="confidence-indicator confidence-high">AI Identified</span></label>';
-        const conditions = report.profile.conditions.map(c => c.name).join(', ');
-        html += `<textarea class="auto-filled" readonly>${conditions}</textarea>`;
+        let html = '<form class="form-preview" id="review-auto-filled-forms" autocomplete="off">';
+        html += '<h3>📝 Review & Edit Auto-Filled Forms</h3>';
+        html += '<p>Check the information below. <span style="color:#48bb78;">Green</span> fields are high confidence. <span style="color:#f59e42;">Orange</span> means you should review or complete.</p>';
+        // Helper to check missing/low-confidence
+        function field(val, label, type, opts = {}) {
+            const missing = !val || val === '';
+            const confidence = opts.confidence || (missing ? 'low' : 'high');
+            const color = confidence === 'high' ? '#f0fff4' : '#fff7ed';
+            const border = confidence === 'high' ? '#48bb78' : '#f59e42';
+            const style = `background:${color};border:2px solid ${border};margin-bottom:1em;`;
+            let input = '';
+            if (type === 'textarea') {
+                input = `<textarea name="${opts.name}" style="width:100%;${style}" rows="${opts.rows||3}" ${missing ? 'placeholder="Required"' : ''}>${val||''}</textarea>`;
+            } else {
+                input = `<input type="${type}" name="${opts.name}" style="width:100%;${style}" value="${val||''}" ${missing ? 'placeholder="Required"' : ''}>`;
+            }
+            return `<div class="form-field"><label>${label}${confidence==='high'?'<span class="confidence-indicator confidence-high">High Confidence</span>':'<span class="confidence-indicator confidence-low">Review</span>'}</label>${input}</div>`;
+        }
+        // Render fields
+        html += field(extractedData.personalInfo.fullName, 'Full Legal Name', 'text', {name:'fullName'});
+        html += field(extractedData.personalInfo.ssn, 'Social Security Number', 'text', {name:'ssn'});
+        html += field(extractedData.personalInfo.dateOfBirth, 'Date of Birth', 'date', {name:'dateOfBirth'});
+        html += field(extractedData.personalInfo.address, 'Mailing Address', 'text', {name:'address'});
+        if (report && report.success) {
+            const conditions = report.profile.conditions.map(c => c.name).join(', ');
+            html += field(conditions, 'Primary Disabling Conditions', 'textarea', {name:'conditions', rows:2});
+            html += field(
+                `My ${report.profile.conditions[0]?.category || 'medical'} condition(s) significantly limit my ability to perform work activities. I experience persistent symptoms that prevent me from maintaining regular employment and completing tasks consistently over an 8-hour workday.`,
+                'How do your conditions limit your ability to work?', 'textarea', {name:'limitations', rows:4}
+            );
+        }
+        html += '<div class="message message-success" style="margin-top: 2rem;">';
+        html += '<strong>✨ All forms filled automatically!</strong><br>';
+        html += 'AI has filled out your disability application, medical records requests, and other required forms based on your uploaded documents.';
         html += '</div>';
-        
-        html += '<div class="form-field">';
-        html += '<label>How do your conditions limit your ability to work? <span class="confidence-indicator confidence-medium">AI Suggested</span></label>';
-        html += `<textarea class="auto-filled" rows="4" readonly>My ${report.profile.conditions[0]?.category || 'medical'} condition(s) significantly limit my ability to perform work activities. I experience persistent symptoms that prevent me from maintaining regular employment and completing tasks consistently over an 8-hour workday.</textarea>`;
+        html += '<div style="margin-top: 2rem; display: flex; gap: 1rem;">';
+        html += '<button class="btn-primary" type="submit">✅ Confirm & Download All Forms</button>';
+        html += '<button class="btn-secondary" type="button" onclick="emailForms()">📧 Email Forms to Me</button>';
         html += '</div>';
-    }
-    
-    html += '<div class="message message-success" style="margin-top: 2rem;">';
-    html += '<strong>✨ All forms filled automatically!</strong><br>';
-    html += 'AI has filled out your disability application, medical records requests, and other required forms based on your uploaded documents.';
-    html += '</div>';
-    
-    html += '<div style="margin-top: 2rem; display: flex; gap: 1rem;">';
-    html += '<button class="btn-primary" onclick="downloadFilledForms()">📥 Download All Forms</button>';
-    html += '<button class="btn-secondary" onclick="emailForms()">📧 Email Forms to Me</button>';
-    html += '<button class="btn-secondary" onclick="editForms()">✏️ Edit Before Submitting</button>';
-    html += '</div>';
-    
-    html += '</div>';
-    
-    container.innerHTML = html;
+        html += '</form>';
+        container.innerHTML = html;
+        // Add submit handler for review
+        const reviewForm = document.getElementById('review-auto-filled-forms');
+        if (reviewForm) {
+            reviewForm.onsubmit = function(e) {
+                e.preventDefault();
+                // Gather reviewed data
+                const data = Object.fromEntries(new FormData(reviewForm).entries());
+                // TODO: Integrate with downloadFilledForms and emailForms
+                alert('✅ Your reviewed info is ready for download/email! (Integration pending)');
+            };
+        }
 }
 
 function updateProcessStep(stepNumber) {
