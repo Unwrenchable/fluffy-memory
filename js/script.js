@@ -1,3 +1,14 @@
+    // Load User Authentication Manager
+    if (window.UserAuthManager === undefined) {
+        const script7 = document.createElement('script');
+        script7.src = 'js/user-auth-manager.js';
+        script7.onload = () => {
+            window.userAuthManager = new UserAuthManager();
+        };
+        document.body.appendChild(script7);
+    } else {
+        window.userAuthManager = new UserAuthManager();
+    }
 // Medical Assistance Helper - JavaScript Functions
 
 // Sample data for demonstration purposes
@@ -2668,4 +2679,76 @@ function closeInfoModal() {
 // Initialize document library on page load
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document library features loaded');
+    // Initialize AI Configuration Panel
+    // Load AI Config Panel
+    if (window.AIConfigPanel === undefined) {
+        const script = document.createElement('script');
+        script.src = 'js/ai-config-panel.js';
+        script.onload = () => {
+            window.aiConfigPanel = new AIConfigPanel();
+        };
+        document.body.appendChild(script);
+    } else {
+        window.aiConfigPanel = new AIConfigPanel();
+    }
+
+    // Load Paperwork Wizard
+    if (window.PaperworkWizard === undefined) {
+        const script2 = document.createElement('script');
+        script2.src = 'js/paperwork-wizard.js';
+        script2.onload = () => {
+            window.paperworkWizard = new PaperworkWizard();
+        };
+        document.body.appendChild(script2);
+    } else {
+        window.paperworkWizard = new PaperworkWizard();
+    }
+
+    // Load Document Analyzer
+    if (window.DocumentAnalyzer === undefined) {
+        const script3 = document.createElement('script');
+        script3.src = 'js/document-analyzer.js';
+        script3.onload = () => {
+            window.documentAnalyzer = new DocumentAnalyzer();
+        };
+        document.body.appendChild(script3);
+    } else {
+        window.documentAnalyzer = new DocumentAnalyzer();
+    }
+
+    // Load Coverage Predictor & Appeal Letter Generator
+    if (window.CoverageAndAppealHelper === undefined) {
+        const script4 = document.createElement('script');
+        script4.src = 'js/coverage-appeal-helper.js';
+        script4.onload = () => {
+            window.coverageAndAppealHelper = new CoverageAndAppealHelper();
+        };
+        document.body.appendChild(script4);
+    } else {
+        window.coverageAndAppealHelper = new CoverageAndAppealHelper();
+    }
+
+    // Load Appointment Coordinator
+    if (window.AppointmentCoordinator === undefined) {
+        const script5 = document.createElement('script');
+        script5.src = 'js/appointment-coordinator.js';
+        script5.onload = () => {
+            window.appointmentCoordinator = new AppointmentCoordinator();
+        };
+        document.body.appendChild(script5);
+    } else {
+        window.appointmentCoordinator = new AppointmentCoordinator();
+    }
+
+    // Load Doctor/Program Search
+    if (window.DoctorProgramSearch === undefined) {
+        const script6 = document.createElement('script');
+        script6.src = 'js/doctor-program-search.js';
+        script6.onload = () => {
+            window.doctorProgramSearch = new DoctorProgramSearch();
+        };
+        document.body.appendChild(script6);
+    } else {
+        window.doctorProgramSearch = new DoctorProgramSearch();
+    }
 });
