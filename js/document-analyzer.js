@@ -381,6 +381,10 @@ class DocumentAnalyzer {
         document.body.appendChild(script);
       });
     }
+    // Set PDF.js workerSrc to CDN to avoid CSP/worker errors
+    if (window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
     const arrayBuffer = await file.arrayBuffer();
     let password = '';
     let pdf = null;
