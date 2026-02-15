@@ -33,14 +33,16 @@ class DocumentAnalyzer {
         <button id="analyze-docs" class="btn-primary" style="margin-bottom:1em;">Analyze Selected</button>
         <div id="analyzer-status" style="margin-bottom:1em;"></div>
         <div id="analyzed-documents">
-          ${this.documents.length === 0 ? '<em>No documents analyzed yet.</em>' : this.documents.map((doc, i) => `
-            <div class="analyzed-doc" style="background:#f0f4f8; margin-bottom:0.5em; padding:0.75em; border-radius:6px;">
-              <strong>${doc.name}</strong> (${doc.type})<br>
-              <em>${doc.summary || 'No summary yet'}</em>
-              <div>${doc.tags ? doc.tags.map(t => `<span class=\"tag\">${t}</span>`).join(' ') : ''}</div>
-              ${doc.extractedFields ? `<details style='margin-top:0.5em;'><summary>Show Extracted Fields</summary><pre style='background:#fff; border:1px solid #ddd; border-radius:4px; padding:0.5em; font-size:0.95em;'>${JSON.stringify(doc.extractedFields, null, 2)}</pre><button class='btn-secondary' style='margin-top:0.5em;' onclick='window.documentAnalyzer.autoFillWithExtracted(${i})'>Auto-Fill Forms with This</button></details>` : ''}
-            </div>
-          `).join('')}
+          " + (this.documents.length === 0 ? '<em>No documents analyzed yet.</em>' : this.documents.map(function(doc, i) {
+            var tagsHtml = doc.tags ? doc.tags.map(function(t) { return '<span class="tag">' + t + '</span>'; }).join(' ') : '';
+            var extractedHtml = doc.extractedFields ? "<details style='margin-top:0.5em;'><summary>Show Extracted Fields</summary><pre style='background:#fff; border:1px solid #ddd; border-radius:4px; padding:0.5em; font-size:0.95em;'>" + JSON.stringify(doc.extractedFields, null, 2) + "</pre><button class='btn-secondary' style='margin-top:0.5em;' onclick='window.documentAnalyzer.autoFillWithExtracted(" + i + ")'>Auto-Fill Forms with This</button></details>" : '';
+            return "<div class='analyzed-doc' style='background:#f0f4f8; margin-bottom:0.5em; padding:0.75em; border-radius:6px;'>" +
+              "<strong>" + doc.name + "</strong> (" + doc.type + ")<br>" +
+              "<em>" + (doc.summary || 'No summary yet') + "</em>" +
+              "<div>" + tagsHtml + "</div>" +
+              extractedHtml +
+            "</div>";
+          }).join('')) + "
         </div>
       </div>
         // Auto-fill forms with extracted fields (stub for integration)
@@ -113,11 +115,12 @@ class DocumentAnalyzer {
 
         // Prompt user for missing fields and update profile
         promptForMissingFields(profile, missingFields) {
-          let prompts = '';
-          for (const field of missingFields) {
-            prompts += `${field.label}: <input id="missing-${field.path.join('-')}" type="text" style="width:90%;margin-bottom:0.5em;"><br>`;
+          var prompts = '';
+          for (var i = 0; i < missingFields.length; i++) {
+            var field = missingFields[i];
+            prompts += field.label + ': <input id="missing-' + field.path.join('-') + '" type="text" style="width:90%;margin-bottom:0.5em;"><br>';
           }
-          const modal = document.createElement('div');
+          var modal = document.createElement('div');
           modal.style.position = 'fixed';
           modal.style.top = '0';
           modal.style.left = '0';
@@ -125,20 +128,22 @@ class DocumentAnalyzer {
           modal.style.height = '100vh';
           modal.style.background = 'rgba(0,0,0,0.6)';
           modal.style.zIndex = '9999';
-          modal.innerHTML = `<div style="background:#fff;max-width:400px;margin:10vh auto;padding:2em;border-radius:10px;box-shadow:0 2px 16px #0003;">
-            <h3>Complete Your Profile</h3>
-            <p>Please provide the missing information so we can fill out all forms for you:</p>
-            ${prompts}
-            <button id="missing-fields-save" class="btn-primary" style="margin-top:1em;">Save</button>
-            <button id="missing-fields-cancel" class="btn-secondary" style="margin-top:1em;">Cancel</button>
-          </div>`;
+          modal.innerHTML = '<div style="background:#fff;max-width:400px;margin:10vh auto;padding:2em;border-radius:10px;box-shadow:0 2px 16px #0003;">' +
+            '<h3>Complete Your Profile</h3>' +
+            '<p>Please provide the missing information so we can fill out all forms for you:</p>' +
+            prompts +
+            '<button id="missing-fields-save" class="btn-primary" style="margin-top:1em;">Save</button>' +
+            '<button id="missing-fields-cancel" class="btn-secondary" style="margin-top:1em;">Cancel</button>' +
+          '</div>';
           document.body.appendChild(modal);
-          document.getElementById('missing-fields-save').onclick = () => {
-            for (const field of missingFields) {
-              const input = document.getElementById(`missing-${field.path.join('-')}`);
-              let obj = profile;
-              for (let i = 0; i < field.path.length - 1; i++) {
-                obj = obj[field.path[i]] = obj[field.path[i]] || {};
+          document.getElementById('missing-fields-save').onclick = function() {
+            for (var i = 0; i < missingFields.length; i++) {
+              var field = missingFields[i];
+              var input = document.getElementById('missing-' + field.path.join('-'));
+              var obj = profile;
+              for (var j = 0; j < field.path.length - 1; j++) {
+                obj[field.path[j]] = obj[field.path[j]] || {};
+                obj = obj[field.path[j]];
               }
               obj[field.path[field.path.length - 1]] = input.value;
             }
@@ -146,7 +151,7 @@ class DocumentAnalyzer {
             document.body.removeChild(modal);
             alert('✅ Your profile is now complete and all forms will be auto-filled!');
           };
-          document.getElementById('missing-fields-cancel').onclick = () => {
+          document.getElementById('missing-fields-cancel').onclick = function() {
             document.body.removeChild(modal);
           };
         }
@@ -227,7 +232,8 @@ class DocumentAnalyzer {
         if (window.dualAIMedicalTeam && window.dualAIMedicalTeam.getTeamResponse) {
           this.showStatus('Extracting fields with AI...');
           try {
-            const prompt = `Extract the following key fields from this medical document. Respond ONLY in minified JSON (no explanation, no markdown, no extra text).\n\nFields to extract:\n- Full Name\n- Date of Birth\n- Medical Record Number\n- Document Date\n- Provider Name\n- Diagnosis\n- Medications\n- Allergies\n- Procedures\n- Insurance Policy Number\n- Address\n- Phone Number\n- Any other relevant patient info\n\nDocument text:\n"""${text}"""`;
+            const prompt =
+              'Extract ONLY factual, real data from this medical document. Do NOT use example, placeholder, or generic values. Respond ONLY in minified JSON (no explanation, no markdown, no extra text). If a field is not present, leave it blank.\n\nFields to extract:\n- Full Name\n- Date of Birth\n- Medical Record Number\n- Document Date\n- Provider Name\n- Diagnosis\n- Medications\n- Allergies\n- Procedures\n- Insurance Policy Number\n- Address\n- Phone Number\n- Any other relevant patient info\n\nDocument text:\n"""' + text + '"""';
             const ai = await window.dualAIMedicalTeam.getTeamResponse(prompt, { documentText: text });
             let aiText = ai.response;
             // Try to extract JSON from AI response
@@ -236,7 +242,20 @@ class DocumentAnalyzer {
             if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
               try {
                 extractedFields = JSON.parse(aiText.substring(jsonStart, jsonEnd + 1));
-                summary = 'Extracted fields: ' + Object.keys(extractedFields).join(', ');
+                // Validate for generic/placeholder values
+                const genericPatterns = [/john smith/i, /example/i, /placeholder/i, /sample/i, /1234/i, /0000/i, /test/i];
+                let hasGeneric = false;
+                for (const key in extractedFields) {
+                  const val = extractedFields[key];
+                  if (typeof val === 'string' && genericPatterns.some(p => p.test(val))) {
+                    hasGeneric = true;
+                  }
+                }
+                if (hasGeneric) {
+                  summary = '⚠️ AI returned generic/placeholder values. Please try a different document or check extraction.';
+                } else {
+                  summary = 'Extracted fields: ' + Object.keys(extractedFields).join(', ');
+                }
               } catch (e) {
                 summary = 'AI returned invalid JSON. Raw output: ' + aiText;
               }
@@ -353,6 +372,7 @@ class DocumentAnalyzer {
   async extractPDFTextWithPassword(file) {
     // Load PDF.js if not already loaded
     if (!window.pdfjsLib) {
+      console.log('[DocumentAnalyzer] Loading PDF.js library...');
       await new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
@@ -365,16 +385,26 @@ class DocumentAnalyzer {
     let password = '';
     let pdf = null;
     let error = null;
+    let passwordAttempts = 0;
     while (true) {
       try {
+        console.log('[DocumentAnalyzer] Attempting to open PDF (password length:', password ? password.length : 0, ')');
         pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer, password }).promise;
         break;
       } catch (e) {
+        console.error('[DocumentAnalyzer] PDF.js error:', e);
         if (e.name === 'PasswordException') {
+          passwordAttempts++;
+          this.showStatus('🔒 PDF is password-protected. Prompting for password... (Attempt ' + passwordAttempts + ')');
           password = await this.promptForPDFPassword();
-          if (password === null) return null; // User cancelled
+          if (password === null) {
+            this.showStatus('❌ PDF extraction cancelled by user.');
+            alert('PDF extraction cancelled. No password entered.');
+            return null; // User cancelled
+          }
         } else {
-          this.showStatus('PDF error: ' + e.message);
+          this.showStatus('❌ PDF error: ' + e.message);
+          alert('PDF extraction failed: ' + e.message);
           return null;
         }
       }
@@ -382,9 +412,15 @@ class DocumentAnalyzer {
     // Extract text from all pages
     let text = '';
     for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      text += content.items.map(item => item.str).join(' ') + '\n';
+      try {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        text += content.items.map(item => item.str).join(' ') + '\n';
+      } catch (pageErr) {
+        console.error('[DocumentAnalyzer] Error extracting text from page', i, pageErr);
+        this.showStatus('❌ Error extracting text from page ' + i + ': ' + pageErr.message);
+        alert('Error extracting text from page ' + i + ': ' + pageErr.message);
+      }
     }
     return text;
   }
@@ -396,11 +432,22 @@ class DocumentAnalyzer {
       const submit = document.getElementById('pdf-password-submit');
       const cancel = document.getElementById('pdf-password-cancel');
       const errorDiv = document.getElementById('pdf-password-error');
+      if (!modal || !input || !submit || !cancel) {
+        console.error('[DocumentAnalyzer] Password modal elements missing!');
+        alert('PDF password modal is missing from the page. Please contact support.');
+        resolve(null);
+        return;
+      }
       modal.style.display = 'block';
       input.value = '';
       errorDiv.textContent = '';
       input.focus();
       submit.onclick = () => {
+        if (!input.value) {
+          errorDiv.textContent = 'Please enter a password.';
+          input.focus();
+          return;
+        }
         modal.style.display = 'none';
         resolve(input.value);
       };
@@ -408,6 +455,13 @@ class DocumentAnalyzer {
         modal.style.display = 'none';
         resolve(null);
       };
+      // Extra: allow Enter/Escape keys
+      input.onkeydown = (e) => {
+        if (e.key === 'Enter') submit.onclick();
+        if (e.key === 'Escape') cancel.onclick();
+      };
+      // Log modal display
+      console.log('[DocumentAnalyzer] PDF password modal shown to user.');
     });
   }
 
