@@ -1,3 +1,37 @@
+        <!-- 🩺 Doctor Finder Search UI -->
+        <div id="doctor-finder-ui" style="margin:2em 0; padding:2em; background:#f0f9ff; border-radius:12px; box-shadow:0 2px 8px #2563eb22; max-width:600px;">
+            <h2 style="color:#2563eb; margin-bottom:1em;">Find a Doctor (with Phone Number)</h2>
+            <form id="doctor-search-form" style="display:flex; flex-wrap:wrap; gap:1em; align-items:flex-end;">
+                <div style="flex:1; min-width:150px;">
+                    <label>Specialty<br><input type="text" id="doctor-specialty" placeholder="e.g. Neurologist" style="width:100%; padding:0.5em;"></label>
+                </div>
+                <div style="flex:1; min-width:120px;">
+                    <label>City<br><input type="text" id="doctor-city" placeholder="e.g. Boston" style="width:100%; padding:0.5em;"></label>
+                </div>
+                <div style="flex:1; min-width:80px;">
+                    <label>State<br><input type="text" id="doctor-state" maxlength="2" placeholder="e.g. MA" style="width:100%; padding:0.5em;"></label>
+                </div>
+                <button type="submit" class="btn-primary" style="padding:0.7em 2em; background:#2563eb; color:#fff; border:none; border-radius:8px; font-size:1em; cursor:pointer;">Search</button>
+            </form>
+            <div id="doctor-search-results" style="margin-top:2em;"></div>
+        </div>
+        <script>
+        // Doctor Finder UI logic
+        document.getElementById('doctor-search-form').onsubmit = async function(e) {
+            e.preventDefault();
+            const specialty = document.getElementById('doctor-specialty').value.trim();
+            const city = document.getElementById('doctor-city').value.trim();
+            const state = document.getElementById('doctor-state').value.trim().toUpperCase();
+            if (!specialty || !city || !state) {
+                document.getElementById('doctor-search-results').innerHTML = '<div class="message message-error">Please enter specialty, city, and state.</div>';
+                return;
+            }
+            document.getElementById('doctor-search-results').innerHTML = '<div class="message message-info">Searching for doctors...</div>';
+            if (!window.doctorFinder) window.doctorFinder = new window.DisabilityDoctorFinder();
+            const doctors = await window.doctorFinder.searchDoctors(specialty, city, state);
+            window.doctorFinder.renderDoctorResults(doctors, 'doctor-search-results');
+        };
+        </script>
 <!DOCTYPE html>
 <html lang="en">
 <head>

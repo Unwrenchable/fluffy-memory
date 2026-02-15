@@ -2,6 +2,53 @@
 // Helps patients find supportive doctors and articulate their limitations
 
 class DisabilityDoctorFinder {
+        // Search real doctors by specialty and location using NPI Registry API
+        async searchDoctors(specialty, city, state) {
+            const params = new URLSearchParams({
+                taxonomy_description: specialty,
+                city: city,
+                state: state,
+                limit: 10
+            });
+            const url = `https://npiregistry.cms.hhs.gov/api/?version=2.1&${params.toString()}`;
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (!data.results) return [];
+                return data.results.map(doc => ({
+                    name: doc.basic?.name || `${doc.basic?.first_name || ''} ${doc.basic?.last_name || ''}`.trim(),
+                    phone: doc.addresses?.find(a => a.telephone)?.telephone || '',
+                    address: doc.addresses?.find(a => a.address_purpose === 'LOCATION') || doc.addresses?.[0] || {},
+                    npi: doc.number,
+                    specialty: doc.taxonomies?.[0]?.desc || ''
+                }));
+            } catch (e) {
+                return [];
+            }
+        }
+
+        // Render doctor search results with phone numbers
+        renderDoctorResults(doctors, containerId = 'doctor-search-results') {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            if (!doctors.length) {
+                container.innerHTML = '<div class="message message-error">No doctors found. Try a different specialty or location.</div>';
+                return;
+            }
+            let html = '<h4>Doctors Found</h4>';
+            html += '<ul style="list-style:none; padding:0;">';
+            doctors.forEach(doc => {
+                html += `<li style="margin-bottom:1.5em; padding:1em; border:1px solid #e2e8f0; border-radius:8px; background:#f9fafb;">
+                    <strong>${doc.name}</strong><br>
+                    <span style="color:#2563eb;">${doc.specialty}</span><br>
+                    <span>${doc.address?.address_1 || ''} ${doc.address?.city || ''}, ${doc.address?.state || ''} ${doc.address?.postal_code || ''}</span><br>
+                    <span style="color:#059669;">${doc.phone ? '📞 ' + doc.phone : ''}</span><br>
+                    <span style="font-size:0.9em; color:#888;">NPI: ${doc.npi}</span>
+                </li>`;
+            });
+            html += '</ul>';
+            container.innerHTML = html;
+        }
     constructor() {
         // Database of doctor specialties known for supporting disability claims
         this.disabilitySupportiveDoctors = {

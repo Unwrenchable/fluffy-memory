@@ -81,20 +81,39 @@ class DocumentAnalyzer {
       try {
         if (file.type === 'application/pdf') {
           text = await this.extractPDFTextWithPassword(file);
-          if (text === null) continue;
+          if (text === null) {
+            this.showStatus('PDF password required or extraction cancelled.');
+            continue;
+          }
           if (!text.trim()) {
             this.showStatus('No text found in PDF, running OCR...');
             text = await this.ocrPDF(file);
+            if (!text.trim()) {
+              this.showStatus('OCR failed to extract any text. Please check your document.');
+              continue;
+            }
           }
         } else if (file.type.startsWith('image/')) {
           this.showStatus('Extracting text from image...');
           text = await this.ocrImage(file);
+          if (!text.trim()) {
+            this.showStatus('OCR failed to extract any text from image.');
+            continue;
+          }
         } else {
           this.showStatus('Reading document...');
           text = await this.readFile(file);
+          if (!text.trim()) {
+            this.showStatus('No text found in document.');
+            continue;
+          }
         }
+        // Always show review modal for user to check/correct extracted text
         text = await this.reviewExtractedText(text);
-        if (text === null) continue;
+        if (text === null) {
+          this.showStatus('Extraction review cancelled.');
+          continue;
+        }
         let summary = 'AI not configured.';
         if (window.dualAIMedicalTeam && window.dualAIMedicalTeam.getTeamResponse) {
           this.showStatus('Summarizing with AI...');
