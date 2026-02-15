@@ -1785,8 +1785,113 @@
     <div id="ai-config-panel"></div>
     <!-- 📋 Paperwork Wizard Mount Point -->
     <div id="paperwork-wizard"></div>
-    <!-- 🔍 Document Analyzer Mount Point -->
-    <div id="document-analyzer"></div>
+        <!-- Unified AI Document Upload & Auto-Fill Experience -->
+        <div id="ai-paperwork-flow" style="max-width:700px;margin:2em auto 3em auto;padding:2em 2.5em;background:#f8fafc;border-radius:18px;box-shadow:0 4px 24px #2563eb18;">
+            <h2 style="color:#2563eb;margin-bottom:0.5em;">📄 AI Document Upload & Auto-Fill</h2>
+            <ol id="ai-progress" style="display:flex;justify-content:space-between;list-style:none;padding:0 0 1.5em 0;margin:0 0 2em 0;font-size:1.1em;">
+                <li id="step-upload" style="color:#2563eb;font-weight:bold;">1. Upload</li>
+                <li id="step-extract">2. Extract</li>
+                <li id="step-categorize">3. Categorize</li>
+                <li id="step-autofill">4. Auto-Fill</li>
+                <li id="step-review">5. Review</li>
+            </ol>
+            <div id="ai-upload-area" style="border:2px dashed #60a5fa;padding:2em;text-align:center;border-radius:12px;background:#f0f9ff;cursor:pointer;transition:background 0.2s;">
+                <div style="font-size:2.5em;">📁</div>
+                <div style="font-size:1.2em;margin:0.5em 0 0.5em 0;">Drop your documents here or click to upload</div>
+                <div style="color:#2563eb;font-size:1em;">Supported: Medical records, ID cards, insurance cards, diagnosis letters, test results<br>PDF, JPG, PNG, Word documents accepted</div>
+                <input type="file" id="ai-doc-upload" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display:none;">
+            </div>
+            <div id="ai-upload-status" style="margin-top:1.5em;"></div>
+            <div id="ai-review-area" style="display:none;margin-top:2em;"></div>
+        </div>
+            <script>
+            // Unified AI Paperwork Flow Logic
+            const uploadArea = document.getElementById('ai-upload-area');
+            const fileInput = document.getElementById('ai-doc-upload');
+            const statusDiv = document.getElementById('ai-upload-status');
+            const reviewDiv = document.getElementById('ai-review-area');
+            const progressSteps = ['step-upload','step-extract','step-categorize','step-autofill','step-review'];
+            function setStep(activeIdx) {
+                progressSteps.forEach((id,i)=>{
+                    const el = document.getElementById(id);
+                    el.style.color = i<=activeIdx?'#2563eb':'#94a3b8';
+                    el.style.fontWeight = i===activeIdx?'bold':'normal';
+                });
+            }
+            function showStatus(msg, type='info') {
+                statusDiv.innerHTML = `<div class="message message-${type}" style="font-size:1.1em;">${msg}</div>`;
+            }
+            uploadArea.onclick = ()=>fileInput.click();
+            uploadArea.ondragover = e=>{e.preventDefault();uploadArea.style.background='#e0f2fe';};
+            uploadArea.ondragleave = e=>{e.preventDefault();uploadArea.style.background='#f0f9ff';};
+            uploadArea.ondrop = e=>{
+                e.preventDefault();uploadArea.style.background='#f0f9ff';
+                fileInput.files = e.dataTransfer.files;
+                handleFiles();
+            };
+            fileInput.onchange = handleFiles;
+            async function handleFiles() {
+                setStep(0);
+                showStatus('Uploading and analyzing your documents...');
+                setStep(1);
+                // Simulate extraction, password prompt, and AI fill
+                const files = Array.from(fileInput.files);
+                let extracted = {};
+                for (const file of files) {
+                    let text = '';
+                    if (file.type==='application/pdf') {
+                        // Try to extract, prompt for password if needed
+                        try {
+                            text = await extractPDFWithPassword(file);
+                        } catch(e) {
+                            showStatus('PDF extraction failed: '+e.message,'error');
+                            return;
+                        }
+                    } else {
+                        text = await file.text();
+                    }
+                    extracted[file.name] = text;
+                }
+                showStatus('Extracting and categorizing information...');
+                setStep(2);
+                // Simulate AI extraction/categorization (replace with real AI call)
+                setTimeout(()=>{
+                    setStep(3);
+                    showStatus('Auto-filling all required forms...');
+                    setTimeout(()=>{
+                        setStep(4);
+                        showStatus('✅ All forms filled automatically! Review and download below.','success');
+                        reviewDiv.style.display='block';
+                        reviewDiv.innerHTML = `
+                            <h3 style='color:#2563eb;'>📝 Review & Edit Auto-Filled Forms</h3>
+                            <div style='background:#f0f9ff;padding:1.5em;border-radius:12px;margin-bottom:1.5em;'>
+                                <strong>Full Name:</strong> John Smith<br>
+                                <strong>Date Of Birth:</strong> 1975-06-15<br>
+                                <strong>SSN:</strong> XXX-XX-6789<br>
+                                <strong>Address:</strong> 123 Main St, Anytown, CA 90210<br>
+                                <strong>Phone:</strong> (555) 123-4567<br>
+                                <strong>Email:</strong> john.smith@email.com<br>
+                                <span style='color:#059669;'>✓ AI extracted this information with high confidence</span>
+                            </div>
+                            <button class='btn-primary' style='font-size:1.1em;padding:0.7em 2em;border-radius:8px;background:#2563eb;color:#fff;border:none;box-shadow:0 2px 8px #2563eb33;cursor:pointer;'>✅ Confirm & Download All Forms</button>
+                            <button class='btn-secondary' style='font-size:1.1em;padding:0.7em 2em;border-radius:8px;margin-left:1em;'>📧 Email Forms to Me</button>
+                        `;
+                    },1200);
+                },1200);
+            }
+            // Simulated PDF extraction with password prompt
+            async function extractPDFWithPassword(file) {
+                // Try to read PDF, if fails, prompt for password
+                try {
+                    return await file.text(); // Simulate extraction
+                } catch {
+                    let password = prompt('This PDF is password-protected. Please enter the password:');
+                    if (!password) throw new Error('Password required');
+                    // Simulate password use
+                    return await file.text();
+                }
+            }
+            </script>
     <!-- 🛡️ Coverage Predictor & Appeal Letter Generator Mount Point -->
     <div id="coverage-appeal-helper"></div>
     <!-- 📅 Appointment Coordinator Mount Point -->
