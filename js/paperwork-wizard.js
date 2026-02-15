@@ -28,39 +28,37 @@ class PaperworkWizard {
   }
 
   loadSteps() {
-    // Example: Steps for disability paperwork (can be dynamic)
+    // Clean, simple steps for user data collection
     this.steps = [
       { title: 'Personal Information', fields: ['Full Name', 'Date of Birth', 'Address', 'Phone', 'Email'] },
-      { title: 'Medical Conditions', fields: ['Primary Condition', 'Other Conditions', 'When did it start?', 'Is it getting worse?'] },
-      { title: 'Doctors & Treatment', fields: ['Doctor Name', 'Specialist Types', 'Treatments Tried', 'Medication Side Effects'] },
       { title: 'Daily Limitations', fields: ['Physical Limitations', 'Cognitive Problems', 'How many bad days per week?', 'How often do you need to rest?'] },
-      { title: 'Work & Income', fields: ['Last Job', 'Work End Date', 'Income Sources'] },
-      { title: 'Review & Generate Forms', fields: [] }
+      { title: 'Work & Income', fields: ['Last Job', 'Work End Date', 'Income Sources'] }
     ];
   }
 
-  render() {
-    const root = document.getElementById(this.rootId);
-    if (!root) return;
-    const step = this.steps[this.currentStep];
-    root.innerHTML = `
-      <div class="paperwork-wizard-container">
-        <h2>📋 Paperwork Wizard</h2>
-        <div class="wizard-progress">Step ${this.currentStep + 1} of ${this.steps.length}: <strong>${step.title}</strong></div>
-        <form id="wizard-form">
-          ${step.fields.map(field => `
-            <label>${field}<input type="text" name="${field}" value="${this.userData[field] || ''}" autocomplete="off"></label>
-          `).join('')}
-          <div class="wizard-buttons">
-            ${this.currentStep > 0 ? '<button type="button" id="wizard-prev">Back</button>' : ''}
-            ${this.currentStep < this.steps.length - 1 ? '<button type="button" id="wizard-next">Next</button>' : '<button type="button" id="wizard-finish">Finish & Generate</button>'}
-          </div>
-        </form>
-        <div id="wizard-status"></div>
-      </div>
-    `;
-    this.attachEvents();
-  }
+    // Helper: get all paperwork the user requested
+    getRequestedPaperwork() {
+      // Example: collect from wizard steps or user selections
+      // For now, return all available forms (can be improved to use real user selection)
+      let docLib = window.documentLibrary || (window.DocumentLibrary && new window.DocumentLibrary());
+      if (!docLib) return [];
+      return docLib.getAllDocuments ? docLib.getAllDocuments() : [];
+    }
+
+    // Helper: render all filled paperwork for review
+    renderFilledPaperwork(aiFilledResults) {
+      const container = document.getElementById('paperwork-wizard');
+      if (!container) return;
+      let html = '<h3 style="margin-bottom:1.5em; color:#2563eb;">📝 Your AI-Filled Paperwork</h3>';
+      aiFilledResults.forEach(({ doc, aiFilled }) => {
+        html += `<div class="ai-paperwork-block" style="margin-bottom:2em; padding:1.5em; border:2px solid #60a5fa; border-radius:12px; background:#f0f9ff; box-shadow:0 2px 8px #2563eb22;">
+          <h4 style="margin-bottom:0.5em; color:#1e293b;">${doc.name}</h4>
+          <pre style="white-space:pre-wrap; background:#e0f2fe; padding:1em; border-radius:8px; font-size:1.05em; color:#0f172a;">${aiFilled?.response || 'No response'}</pre>
+        </div>`;
+      });
+      html += '<div style="margin-top:2em; text-align:center;"><button class="btn-primary" style="font-size:1.1em; padding:0.75em 2em; border-radius:8px; background:#2563eb; color:#fff; border:none; box-shadow:0 2px 8px #2563eb33; cursor:pointer;" onclick="window.location.reload()">Done</button></div>';
+      container.innerHTML = html;
+    }
 
   attachEvents() {
     if (this.currentStep > 0) {

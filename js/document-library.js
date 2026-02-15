@@ -2,6 +2,16 @@
 // Provides actual documents, forms, and templates directly to users
 
 class DocumentLibrary {
+        // Return all available documents (flat array)
+        getAllDocuments() {
+            const all = [];
+            for (const section of Object.values(this.documents)) {
+                if (section.documents && Array.isArray(section.documents)) {
+                    all.push(...section.documents);
+                }
+            }
+            return all;
+        }
     constructor() {
         // Complete document library with forms, templates, and checklists
         this.documents = {
