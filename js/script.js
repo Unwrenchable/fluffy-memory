@@ -1540,7 +1540,7 @@ function openAITool(toolType) {
             content = generateDocumentAutoFillTool();
             break;
         case 'form-filler':
-            content = generateFormFillerTool();
+            content = generateDocumentAutoFillTool();
             break;
         case 'chat-assistant':
             content = generateChatAssistantTool();
@@ -1565,8 +1565,8 @@ function openAITool(toolType) {
 
 function generateDocumentAutoFillTool() {
     return `
-        <h2>📄 AI Document Upload & Auto-Fill</h2>
-        <p class="section-description">Upload your documents and let AI automatically extract information and fill out forms for you!</p>
+        <h2>📄 AI Document Upload & Smart Form Filler</h2>
+        <p class="section-description">Upload your documents and let AI automatically extract information and fill out all your forms!</p>
         
         <div class="process-navigation">
             <div class="process-steps">
