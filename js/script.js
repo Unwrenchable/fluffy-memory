@@ -578,8 +578,8 @@ function generateCoveragePredictorTool() {
         
         <div class="wizard-step">
             <h4>Treatment Information</h4>
-            <input type="text" placeholder="Procedure or Treatment Name">
-            <select>
+            <input type="text" id="coverage-procedure" placeholder="Procedure or Treatment Name">
+            <select id="coverage-category">
                 <option value="">Select Category</option>
                 <option value="surgery">Surgery</option>
                 <option value="medication">Medication</option>
@@ -587,14 +587,14 @@ function generateCoveragePredictorTool() {
                 <option value="diagnostic">Diagnostic Test</option>
                 <option value="equipment">Medical Equipment</option>
             </select>
-            <input type="text" placeholder="Estimated Cost (if known)">
+            <input type="text" id="coverage-cost" placeholder="Estimated Cost (if known)">
         </div>
         
         <div class="wizard-step">
             <h4>Insurance Information</h4>
-            <input type="text" placeholder="Insurance Provider">
-            <input type="text" placeholder="Plan Type">
-            <input type="text" placeholder="Deductible Remaining">
+            <input type="text" id="coverage-provider" placeholder="Insurance Provider">
+            <input type="text" id="coverage-plan" placeholder="Plan Type">
+            <input type="text" id="coverage-deductible" placeholder="Deductible Remaining">
         </div>
         
         <button class="btn-primary" onclick="predictCoverage()">Predict Coverage</button>
@@ -610,21 +610,21 @@ function generateAppealGeneratorTool() {
         
         <div class="wizard-step">
             <h4>Denial Information</h4>
-            <select>
+            <select id="appeal-type">
                 <option value="">What was denied?</option>
-                <option value="insurance-claim">Insurance Claim</option>
-                <option value="disability">Disability Application</option>
-                <option value="prior-auth">Prior Authorization</option>
-                <option value="coverage">Coverage Request</option>
+                <option value="Claim">Insurance Claim</option>
+                <option value="Disability Application">Disability Application</option>
+                <option value="Prior Authorization">Prior Authorization</option>
+                <option value="Coverage Request">Coverage Request</option>
             </select>
-            <textarea placeholder="Reason given for denial"></textarea>
-            <input type="date" placeholder="Date of Denial">
+            <textarea id="appeal-denial-reason" placeholder="Reason given for denial"></textarea>
+            <input type="date" id="appeal-denial-date" placeholder="Date of Denial">
         </div>
         
         <div class="wizard-step">
             <h4>Supporting Information</h4>
-            <textarea placeholder="Medical justification and additional information"></textarea>
-            <textarea placeholder="List supporting documents you're including"></textarea>
+            <textarea id="appeal-medical-justification" placeholder="Medical justification and additional information"></textarea>
+            <textarea id="appeal-supporting-docs" placeholder="List supporting documents you're including"></textarea>
         </div>
         
         <button class="btn-primary" onclick="generateAppealLetter()">Generate Appeal Letter</button>
@@ -634,84 +634,120 @@ function generateAppealGeneratorTool() {
 }
 
 function generateAppointmentCoordinatorTool() {
+    const appointments = JSON.parse(localStorage.getItem('medhelper_appointments') || '[]');
+    const now = new Date();
+    const upcoming = appointments.filter(a => new Date(a.date) >= now).sort((a, b) => new Date(a.date) - new Date(b.date));
+    const past = appointments.filter(a => new Date(a.date) < now).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    const renderAppt = (a) => `
+        <div style="padding:0.75rem;background:#f7fafc;border-radius:8px;margin-bottom:0.5rem;border-left:4px solid #667eea;">
+            <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:0.5rem;">
+                <div>
+                    <strong>${escapeHtml(a.doctor)}</strong> — <em>${escapeHtml(a.type)}</em><br>
+                    <span style="color:#4a5568;">📅 ${new Date(a.date).toLocaleDateString()} at ${escapeHtml(a.time)}</span><br>
+                    ${a.notes ? `<span style="color:#718096;font-size:0.9rem;">📝 ${escapeHtml(a.notes)}</span>` : ''}
+                </div>
+                <button class="btn-secondary" style="padding:0.25rem 0.75rem;font-size:0.8rem;" onclick="deleteAppointment('${a.id}')">✕ Remove</button>
+            </div>
+        </div>`;
+
     return `
         <h2>📅 Appointment Coordinator</h2>
-        <p>Manage and coordinate all your medical appointments in one place.</p>
-        
+        <p>Manage all your medical appointments in one place.</p>
+
         <div class="wizard-step">
             <h4>Add New Appointment</h4>
-            <input type="text" placeholder="Doctor/Provider Name">
-            <input type="date" placeholder="Appointment Date">
-            <input type="time" placeholder="Appointment Time">
-            <select>
+            <input type="text" id="appt-doctor" placeholder="Doctor/Provider Name" style="width:100%;margin-bottom:0.5rem;">
+            <input type="date" id="appt-date" style="width:100%;margin-bottom:0.5rem;">
+            <input type="time" id="appt-time" style="width:100%;margin-bottom:0.5rem;">
+            <select id="appt-type" style="width:100%;margin-bottom:0.5rem;">
                 <option value="">Appointment Type</option>
-                <option value="initial">Initial Consultation</option>
-                <option value="follow-up">Follow-up</option>
-                <option value="procedure">Procedure</option>
-                <option value="test">Diagnostic Test</option>
-                <option value="therapy">Therapy Session</option>
+                <option value="Initial Consultation">Initial Consultation</option>
+                <option value="Follow-up">Follow-up</option>
+                <option value="Procedure">Procedure</option>
+                <option value="Diagnostic Test">Diagnostic Test</option>
+                <option value="Therapy Session">Therapy Session</option>
             </select>
-            <textarea placeholder="Notes or preparation needed"></textarea>
+            <textarea id="appt-notes" placeholder="Notes or preparation needed" style="width:100%;margin-bottom:0.5rem;min-height:80px;"></textarea>
         </div>
-        
+
         <button class="btn-primary" onclick="saveAppointment()">Save Appointment</button>
-        
-        <div style="margin-top: 2rem;">
-            <h4>Upcoming Appointments</h4>
-            <div class="message message-info">
-                No appointments scheduled yet. Add your first appointment above!
-            </div>
+
+        <div style="margin-top:2rem;">
+            <h4>📆 Upcoming Appointments (${upcoming.length})</h4>
+            ${upcoming.length ? upcoming.map(renderAppt).join('') : '<div class="message message-info">No upcoming appointments. Add one above!</div>'}
         </div>
+
+        ${past.length ? `
+        <div style="margin-top:1.5rem;">
+            <h4>⏮ Past Appointments (${past.length})</h4>
+            ${past.map(renderAppt).join('')}
+        </div>` : ''}
     `;
 }
 
 // Helper Functions for AI Tools
 function processAIForm() {
-    alert('AI is analyzing your information and will help fill out your forms. This is a demo - in production, this would use real AI processing.');
+    const panel = document.getElementById('ai-assistant-panel');
+    if (panel) {
+        panel.style.display = 'flex';
+        const input = document.getElementById('ai-user-input');
+        if (input) {
+            input.value = 'Please help me understand and fill out my medical assistance forms step by step.';
+            input.focus();
+        }
+    }
 }
 
-function sendChatMessage() {
+async function sendChatMessage() {
     const input = document.getElementById('chat-input');
     const messagesDiv = document.getElementById('chat-messages');
-    
+
     if (!input || !input.value.trim()) return;
-    
+
     const userMessage = input.value.trim();
     input.value = '';
-    
-    // Add user message to chat
+
     if (messagesDiv) {
         const userMsgDiv = document.createElement('div');
         userMsgDiv.className = 'chat-message user';
         userMsgDiv.innerHTML = `<strong>You:</strong> ${escapeHtml(userMessage)}`;
-        userMsgDiv.style.cssText = 'margin-top: 1rem; padding: 0.75rem; background: white; border-radius: 8px; border-left: 3px solid #8b5cf6;';
+        userMsgDiv.style.cssText = 'margin-top:1rem;padding:0.75rem;background:white;border-radius:8px;border-left:3px solid #8b5cf6;';
         messagesDiv.appendChild(userMsgDiv);
-        
-        // Show typing indicator
+
         const typingDiv = document.createElement('div');
-        typingDiv.id = 'typing-indicator';
-        typingDiv.className = 'chat-message assistant';
-        typingDiv.innerHTML = '<strong>🤖 Assistant:</strong> <em>Typing...</em>';
-        typingDiv.style.cssText = 'margin-top: 1rem; padding: 0.75rem; background: #f0f0f0; border-radius: 8px;';
+        typingDiv.id = 'chat-typing-indicator';
+        typingDiv.innerHTML = '<strong>🤖 Assistant:</strong> <em>Typing…</em>';
+        typingDiv.style.cssText = 'margin-top:1rem;padding:0.75rem;background:#f0f0f0;border-radius:8px;';
         messagesDiv.appendChild(typingDiv);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        
-        // Generate AI response with document context
-        setTimeout(() => {
-            const response = generateAIResponse(userMessage);
-            
-            // Remove typing indicator
-            const typing = document.getElementById('typing-indicator');
-            if (typing) typing.remove();
-            
-            // Add AI response
-            const aiMsgDiv = document.createElement('div');
-            aiMsgDiv.className = 'chat-message assistant';
-            aiMsgDiv.innerHTML = `<strong>🤖 Assistant:</strong> ${response}`;
-            aiMsgDiv.style.cssText = 'margin-top: 1rem; padding: 0.75rem; background: #e6f7ff; border-radius: 8px; border-left: 3px solid #48bb78;';
-            messagesDiv.appendChild(aiMsgDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }, 1000);
+
+        let responseText = '';
+        try {
+            if (window.aiTeam && window.appConfig && window.appConfig.getStatus().anyConfigured) {
+                const result = await window.aiTeam.getTeamResponse(userMessage);
+                responseText = result.response || '';
+            }
+            if (!responseText && window.aiAssistant) {
+                const result = await window.aiAssistant.getIntelligentGuidance(userMessage);
+                responseText = result.response || '';
+            }
+            if (!responseText) {
+                responseText = generateAIResponse(userMessage);
+            }
+        } catch (e) {
+            responseText = generateAIResponse(userMessage);
+        }
+
+        const typing = document.getElementById('chat-typing-indicator');
+        if (typing) typing.remove();
+
+        const aiMsgDiv = document.createElement('div');
+        aiMsgDiv.className = 'chat-message assistant';
+        aiMsgDiv.innerHTML = `<strong>🤖 Assistant:</strong> ${responseText}`;
+        aiMsgDiv.style.cssText = 'margin-top:1rem;padding:0.75rem;background:#e6f7ff;border-radius:8px;border-left:3px solid #48bb78;';
+        messagesDiv.appendChild(aiMsgDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 }
 
@@ -802,8 +838,13 @@ function askQuestion(topic) {
         aiMsgDiv.style.cssText = 'margin-top: 1rem; padding: 0.75rem; background: #e6f7ff; border-radius: 8px; border-left: 3px solid #48bb78;';
         messagesDiv.appendChild(aiMsgDiv);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    } else {
-        alert(responses[topic] || 'Question received');
+    } else if (messagesDiv) {
+        const aiMsgDiv = document.createElement('div');
+        aiMsgDiv.className = 'chat-message assistant';
+        aiMsgDiv.innerHTML = `<strong>🤖 Assistant:</strong> ${responses[topic] || 'How can I help you today?'}`;
+        aiMsgDiv.style.cssText = 'margin-top: 1rem; padding: 0.75rem; background: #e6f7ff; border-radius: 8px; border-left: 3px solid #48bb78;';
+        messagesDiv.appendChild(aiMsgDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 }
 
@@ -827,18 +868,21 @@ function generateDocumentsSummary() {
 function analyzeDocuments() {
     const resultsDiv = document.getElementById('analysis-results');
     if (resultsDiv) {
-        resultsDiv.innerHTML = `
-            <div class="message message-success">
-                <strong>Analysis Complete:</strong>
-                <p>This is a demo. In production, AI would analyze your documents and provide:</p>
-                <ul style="margin-left: 20px;">
-                    <li>Key information extraction</li>
-                    <li>Coverage analysis</li>
-                    <li>Cost breakdowns</li>
-                    <li>Recommended actions</li>
-                </ul>
-            </div>
-        `;
+        const uploadedDocs = getUserUploadedDocuments();
+        if (uploadedDocs.length === 0) {
+            resultsDiv.innerHTML = `<div class="message message-info"><strong>No documents uploaded yet.</strong><p>Please upload your documents above to begin analysis.</p></div>`;
+            return;
+        }
+        resultsDiv.innerHTML = `<div class="message message-info"><strong>🤖 Analyzing your documents…</strong><p>Opening the AI Assistant to discuss your uploaded documents.</p></div>`;
+        const panel = document.getElementById('ai-assistant-panel');
+        if (panel) {
+            panel.style.display = 'flex';
+            const input = document.getElementById('ai-user-input');
+            if (input) {
+                input.value = `Please analyze my ${uploadedDocs.length} uploaded document(s) and summarize the key medical information, conditions, and any recommended next steps.`;
+                sendToAI();
+            }
+        }
     }
 }
 
@@ -899,11 +943,49 @@ async function processDocumentFiles(files) {
         const file = files[i];
         
         try {
-            // Read file for storage (in production, would upload to backend)
-            const fileData = await readFileAsDataURL(file);
-            
-            // Extract text content simulation (in production, would use OCR/AI)
-            const extractedContent = await simulateTextExtraction(file);
+            let extractedContent = '';
+
+            if (window.documentAnalyzer) {
+                // Use real DocumentAnalyzer for text extraction (same as AI assistant tool)
+                if (file.type === 'application/pdf') {
+                    extractedContent = await window.documentAnalyzer.extractPDFTextWithPassword(file);
+                    if (extractedContent === null) {
+                        if (progressDiv) progressDiv.innerHTML = `<div class="message message-error">PDF extraction cancelled.</div>`;
+                        continue;
+                    }
+                    if (!extractedContent.trim()) {
+                        if (progressDiv) progressDiv.innerHTML = `<div class="message message-info">No text found in PDF, running OCR...</div>`;
+                        extractedContent = await window.documentAnalyzer.ocrPDF(file);
+                    }
+                } else if (file.type.startsWith('image/')) {
+                    extractedContent = await window.documentAnalyzer.ocrImage(file);
+                } else {
+                    extractedContent = await window.documentAnalyzer.readFile(file);
+                }
+
+                // Show review modal so user can verify extracted text; null means user cancelled
+                extractedContent = await window.documentAnalyzer.reviewExtractedText(extractedContent || '');
+                if (extractedContent === null) {
+                    continue;
+                }
+            } else {
+                // Fallback if DocumentAnalyzer is not available
+                extractedContent = await simulateTextExtraction(file);
+            }
+
+            // Use AI for additional analysis if available (same as AI assistant tool)
+            // Truncate to avoid exceeding model context limits
+            let aiSummary = '';
+            if (window.dualAIMedicalTeam && window.dualAIMedicalTeam.getTeamResponse && extractedContent) {
+                try {
+                    const aiResult = await window.dualAIMedicalTeam.getTeamResponse(
+                        'Briefly summarize this medical document and identify key information: ' + extractedContent.substring(0, 2000)
+                    );
+                    aiSummary = aiResult.response || '';
+                } catch (e) {
+                    console.error('AI analysis error:', e);
+                }
+            }
             
             // Generate unique ID with fallback for older browsers
             const docId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
@@ -918,8 +1000,7 @@ async function processDocumentFiles(files) {
                 uploadedAt: new Date().toISOString(),
                 analyzed: true,
                 extractedContent: extractedContent,
-                // Note: fileData not stored in demo - would be stored on backend in production
-                filePreview: fileData.slice(0, 50) // Store minimal preview for demo only
+                aiSummary: aiSummary
             };
             
             newDocs.push(docMetadata);
@@ -948,7 +1029,7 @@ async function processDocumentFiles(files) {
         progressDiv.innerHTML = `
             <div class="message message-success">
                 <strong>✓ Upload Complete!</strong>
-                <p>${files.length} document(s) have been uploaded and analyzed.</p>
+                <p>${newDocs.length} of ${files.length} document(s) successfully analyzed.</p>
             </div>
         `;
     }
@@ -958,7 +1039,7 @@ async function processDocumentFiles(files) {
             <div class="message message-success">
                 <strong>🤖 AI Analysis Results:</strong>
                 <ul style="margin-left: 20px; margin-top: 0.5rem;">
-                    <li><strong>Documents processed:</strong> ${files.length}</li>
+                    <li><strong>Documents successfully analyzed:</strong> ${newDocs.length} of ${files.length}</li>
                     <li><strong>Information extracted:</strong> Medical records, conditions, medications</li>
                     <li><strong>AI Status:</strong> Ready to answer questions about your documents</li>
                 </ul>
@@ -1049,6 +1130,11 @@ function viewDocumentAnalysis(docId) {
                 <p><strong>Uploaded:</strong> ${new Date(doc.uploadedAt).toLocaleString()}</p>
                 <p><strong>Size:</strong> ${formatFileSize(doc.size)}</p>
                 <hr style="margin: 1rem 0; border: none; border-top: 1px solid #e2e8f0;">
+                ${doc.aiSummary ? `<p><strong>🤖 AI Summary:</strong></p>
+                <p style="background: #f0fff4; padding: 1rem; border-radius: 4px; margin-top: 0.5rem; border-left: 3px solid #48bb78;">
+                    ${doc.aiSummary}
+                </p>
+                <hr style="margin: 1rem 0; border: none; border-top: 1px solid #e2e8f0;">` : ''}
                 <p><strong>Extracted Content:</strong></p>
                 <p style="background: #f7fafc; padding: 1rem; border-radius: 4px; margin-top: 0.5rem;">
                     ${doc.extractedContent || 'No content extracted'}
@@ -1079,41 +1165,110 @@ function deleteUploadedDocument(docId) {
     }
 }
 
-function predictCoverage() {
+async function predictCoverage() {
+    const procedure = (document.getElementById('coverage-procedure') || {}).value || '';
+    const category = (document.getElementById('coverage-category') || {}).value || '';
+    const cost = (document.getElementById('coverage-cost') || {}).value || '';
+    const provider = (document.getElementById('coverage-provider') || {}).value || '';
+    const plan = (document.getElementById('coverage-plan') || {}).value || '';
+    const deductible = (document.getElementById('coverage-deductible') || {}).value || '';
+
     const resultsDiv = document.getElementById('prediction-results');
-    if (resultsDiv) {
-        resultsDiv.innerHTML = `
-            <div class="message message-success">
-                <h4>Coverage Prediction Results:</h4>
-                <p><strong>Estimated Coverage:</strong> 70-80% likely to be covered</p>
-                <p><strong>Estimated Out-of-Pocket:</strong> $500-$1,200</p>
-                <p><strong>Confidence Level:</strong> High</p>
-                <p><strong>Recommendation:</strong> Prior authorization recommended to maximize coverage</p>
-            </div>
-        `;
+    if (!resultsDiv) return;
+
+    if (!procedure && !provider) {
+        resultsDiv.innerHTML = `<div class="message message-error">Please enter at least a procedure/treatment name and your insurance provider.</div>`;
+        return;
+    }
+
+    resultsDiv.innerHTML = `<div class="message message-info"><strong>🤖 Analyzing coverage…</strong><p>Please wait while AI evaluates your coverage likelihood.</p></div>`;
+
+    const prompt = `You are a medical insurance expert. Analyze the following and provide: 1) Coverage likelihood (%), 2) Estimated out-of-pocket cost range, 3) Whether prior authorization is needed, 4) Tips to maximize coverage, 5) What to do if denied.
+
+Procedure/Treatment: ${procedure}
+Category: ${category}
+Estimated Cost: ${cost}
+Insurance Provider: ${provider}
+Plan Type: ${plan}
+Deductible Remaining: ${deductible}
+
+Provide a clear, helpful response a patient can act on.`;
+
+    try {
+        let response = '';
+        if (window.aiTeam && window.appConfig && window.appConfig.getStatus().anyConfigured) {
+            const result = await window.aiTeam.getTeamResponse(prompt);
+            response = result.response || '';
+        }
+        if (!response && window.aiAssistant) {
+            const result = await window.aiAssistant.getIntelligentGuidance(prompt);
+            response = result.response || '';
+        }
+        if (response) {
+            resultsDiv.innerHTML = `<div class="message message-success"><h4>📊 Coverage Analysis</h4><div style="white-space:pre-wrap;margin-top:0.5rem;">${escapeHtml(response)}</div></div>`;
+        } else {
+            resultsDiv.innerHTML = `<div class="message message-info"><strong>AI not configured.</strong><p>Please set up your API keys in the AI Configuration section to get real coverage predictions. In the meantime, contact your insurance provider directly at the number on your insurance card.</p></div>`;
+        }
+    } catch (e) {
+        resultsDiv.innerHTML = `<div class="message message-error">Analysis failed: ${escapeHtml(e.message)}. Please try again.</div>`;
     }
 }
 
-function generateAppealLetter() {
+async function generateAppealLetter() {
+    const type = (document.getElementById('appeal-type') || {}).value || 'Claim';
+    const reason = (document.getElementById('appeal-denial-reason') || {}).value || '';
+    const date = (document.getElementById('appeal-denial-date') || {}).value || '';
+    const justification = (document.getElementById('appeal-medical-justification') || {}).value || '';
+    const docs = (document.getElementById('appeal-supporting-docs') || {}).value || '';
     const previewDiv = document.getElementById('letter-preview');
-    if (previewDiv) {
-        // Get user data if logged in
-        const user = window.authSystem && window.authSystem.isLoggedIn() ? window.authSystem.getCurrentUser() : null;
-        
-        previewDiv.innerHTML = `
-            <div style="background: white; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 5px;">
-                <h4>Preview of Generated Appeal Letter:</h4>
-                <p style="color: #718096; margin-top: 1rem;">
-                    [Your generated professional appeal letter would appear here with proper formatting, 
-                    medical justification, and supporting arguments based on your input]
-                </p>
-                <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                    <button class="btn-primary" onclick="downloadLetter()">💾 Download Letter</button>
-                    <button class="btn-secondary" onclick="editLetter()">✏️ Edit Letter</button>
-                    ${user ? '<button class="btn-secondary" onclick="saveAndEmailLetter()">📧 Save & Email</button>' : ''}
-                </div>
-            </div>
-        `;
+    if (!previewDiv) return;
+
+    if (!reason && !justification) {
+        previewDiv.innerHTML = `<div class="message message-error">Please fill in the denial reason and medical justification before generating the letter.</div>`;
+        return;
+    }
+
+    previewDiv.innerHTML = `<div class="message message-info"><strong>✍️ Generating your appeal letter…</strong><p>AI is drafting a professional letter based on your information.</p></div>`;
+
+    const user = window.authSystem && window.authSystem.isLoggedIn() ? window.authSystem.getCurrentUser() : null;
+    const userName = user ? user.name : '[Your Full Name]';
+
+    const prompt = `Write a professional, persuasive medical appeal letter for the following situation. Use formal letter format with today's date (${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}), patient name "${userName}", and all the details provided. The letter should be compelling, cite relevant medical necessity standards, and request prompt reconsideration.
+
+Type of denial: ${type}
+Reason for denial: ${reason}
+Date of denial: ${date}
+Medical justification: ${justification}
+Supporting documents being included: ${docs}
+
+Write the complete letter ready to send.`;
+
+    try {
+        let letterText = '';
+        if (window.aiTeam && window.appConfig && window.appConfig.getStatus().anyConfigured) {
+            const result = await window.aiTeam.getTeamResponse(prompt);
+            letterText = result.response || '';
+        }
+        if (!letterText && window.aiAssistant) {
+            const result = await window.aiAssistant.getIntelligentGuidance(prompt);
+            letterText = result.response || '';
+        }
+        if (letterText) {
+            previewDiv.innerHTML = `
+                <div style="background:white;padding:2rem;border:1px solid #e2e8f0;border-radius:5px;">
+                    <h4>✉️ Your Appeal Letter</h4>
+                    <div id="appeal-letter-content" contenteditable="true" style="white-space:pre-wrap;margin-top:1rem;padding:1rem;border:1px solid #e2e8f0;border-radius:4px;min-height:200px;font-family:serif;line-height:1.7;">${escapeHtml(letterText)}</div>
+                    <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+                        <button class="btn-primary" onclick="downloadLetter()">💾 Download Letter</button>
+                        ${user ? '<button class="btn-secondary" onclick="saveAndEmailLetter()">📧 Save & Email</button>' : ''}
+                    </div>
+                    <p style="margin-top:0.75rem;color:#718096;font-size:0.85rem;">✏️ You can click the letter text above to edit before downloading.</p>
+                </div>`;
+        } else {
+            previewDiv.innerHTML = `<div class="message message-info"><strong>AI not configured.</strong><p>Please set up your API keys in the AI Configuration section to generate real appeal letters. You can also use our letter templates in the Document Library section.</p></div>`;
+        }
+    } catch (e) {
+        previewDiv.innerHTML = `<div class="message message-error">Letter generation failed: ${escapeHtml(e.message)}. Please try again.</div>`;
     }
 }
 
@@ -1169,11 +1324,48 @@ function saveProgress() {
 }
 
 function saveAppointment() {
-    if (window.authSystem && window.authSystem.isLoggedIn()) {
-        alert('✓ Appointment saved! In production, this would sync with your calendar and send reminders.');
-    } else {
-        alert('⚠️ Login to save appointments to your account.');
+    const doctor = (document.getElementById('appt-doctor') || {}).value || '';
+    const date = (document.getElementById('appt-date') || {}).value || '';
+    const time = (document.getElementById('appt-time') || {}).value || '';
+    const type = (document.getElementById('appt-type') || {}).value || 'Appointment';
+    const notes = (document.getElementById('appt-notes') || {}).value || '';
+
+    if (!doctor || !date) {
+        const container = document.getElementById('ai-tool-container');
+        if (container) {
+            const err = document.createElement('div');
+            err.className = 'message message-error';
+            err.style.marginTop = '0.5rem';
+            err.textContent = 'Please enter at least the provider name and date.';
+            container.appendChild(err);
+            setTimeout(() => err.remove(), 3000);
+        }
+        return;
     }
+
+    const appointments = JSON.parse(localStorage.getItem('medhelper_appointments') || '[]');
+    appointments.push({
+        id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'appt_' + Date.now(),
+        doctor, date, time, type, notes,
+        savedAt: new Date().toISOString()
+    });
+    localStorage.setItem('medhelper_appointments', JSON.stringify(appointments));
+
+    if (window.authSystem && window.authSystem.isLoggedIn()) {
+        window.authSystem.saveDocument({ type: 'appointment', name: `Appointment: ${doctor} on ${date}`, metadata: appointments[appointments.length - 1] });
+    }
+
+    // Refresh the tool view
+    const container = document.getElementById('ai-tool-container');
+    if (container) container.innerHTML = generateAppointmentCoordinatorTool();
+}
+
+function deleteAppointment(id) {
+    let appointments = JSON.parse(localStorage.getItem('medhelper_appointments') || '[]');
+    appointments = appointments.filter(a => a.id !== id);
+    localStorage.setItem('medhelper_appointments', JSON.stringify(appointments));
+    const container = document.getElementById('ai-tool-container');
+    if (container) container.innerHTML = generateAppointmentCoordinatorTool();
 }
 
 function downloadLetter() {
@@ -1191,12 +1383,33 @@ function downloadLetter() {
 }
 
 function editLetter() {
-    alert('You would be able to edit the letter before finalizing.');
+    const letterContent = document.getElementById('appeal-letter-content');
+    if (letterContent) {
+        letterContent.contentEditable = 'true';
+        letterContent.focus();
+        letterContent.style.border = '2px solid #667eea';
+    }
 }
 
 // Form Submission Functions
 function submitForm(formType) {
-    alert(`${formType.charAt(0).toUpperCase() + formType.slice(1)} form submitted successfully! In a production environment, this would process your application.`);
+    const formNames = {
+        insurance: 'Insurance Application',
+        records: 'Medical Records Request',
+        financial: 'Financial Assistance Application',
+        authorization: 'Treatment Authorization Request'
+    };
+    const name = formNames[formType] || formType;
+    const content = `${name}\nGenerated: ${new Date().toLocaleString()}\n\nThank you for completing this form. Please print or download this confirmation and submit it along with any required supporting documents to the appropriate agency.\n\nFor assistance: use the AI Chat Assistant on the main page.`;
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${formType}-form-${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 // External Link Handler
@@ -1207,10 +1420,8 @@ function externalLink(site) {
         'medicaid.gov': 'https://www.medicaid.gov',
         'medicare.gov': 'https://www.medicare.gov'
     };
-    
     if (urls[site]) {
-        alert(`This would open ${urls[site]} in a new window. Click OK to continue.`);
-        // In production: window.open(urls[site], '_blank');
+        window.open(urls[site], '_blank', 'noopener,noreferrer');
     }
     return false;
 }
@@ -1235,6 +1446,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (targetSection) {
                 targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
+
+            // Close mobile nav menu when a link is clicked
+            closeNavMenu();
         });
     });
     
@@ -1246,9 +1460,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    // Hamburger menu toggle
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', function() {
+            const isOpen = navMenu.classList.toggle('nav-open');
+            navToggle.setAttribute('aria-expanded', isOpen);
+            navToggle.textContent = isOpen ? '✕' : '☰';
+        });
+    }
+
     // Initialize AI Assistant, Condition Categorizer, and Intake System
     if (typeof MedicalAIAssistant !== 'undefined') {
         window.aiAssistant = new MedicalAIAssistant();
+    }
+    if (typeof DocumentAnalyzer !== 'undefined') {
+        window.documentAnalyzer = new DocumentAnalyzer();
     }
     if (typeof MedicalConditionCategorizer !== 'undefined') {
         window.conditionCategorizer = new MedicalConditionCategorizer();
@@ -1266,6 +1494,17 @@ document.addEventListener('DOMContentLoaded', function() {
         window.locationServices = new LocationBasedServices();
     }
 });
+
+// Close mobile nav menu
+function closeNavMenu() {
+    const navMenu = document.getElementById('nav-menu');
+    const navToggle = document.getElementById('nav-toggle');
+    if (navMenu) navMenu.classList.remove('nav-open');
+    if (navToggle) {
+        navToggle.setAttribute('aria-expanded', 'false');
+        navToggle.textContent = '☰';
+    }
+}
 
 // ========================================
 // AI ASSISTANT WIDGET FUNCTIONS
@@ -1521,7 +1760,15 @@ function displayRoadmap(roadmap) {
 }
 
 function startProcessNavigation() {
-    alert('AI will now guide you step-by-step through the process. Each form and action will have AI assistance.');
+    const panel = document.getElementById('ai-assistant-panel');
+    if (panel) {
+        panel.style.display = 'flex';
+        const input = document.getElementById('ai-user-input');
+        if (input) {
+            input.value = 'I need help navigating the medical assistance process step by step. Where should I start?';
+            sendToAI();
+        }
+    }
     document.getElementById('ai-tools').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -1628,47 +1875,91 @@ function generateDocumentAutoFillTool() {
 // Handle file upload and process with AI
 async function handleFileUpload(event) {
     const files = event.target.files;
-    if (files.length === 0) return;
-    
-    // Show processing status
+    if (!files || files.length === 0) return;
+
     const statusDiv = document.getElementById('upload-status');
-    statusDiv.style.display = 'block';
-    
-    // Update process navigation
+    if (statusDiv) statusDiv.style.display = 'block';
     updateProcessStep(2);
-    
-    // Simulate AI processing (in production, would send to backend/HuggingFace API)
-    setTimeout(() => {
-        processUploadedDocuments(files);
-    }, 2000);
+
+    // Ensure documentAnalyzer is available
+    if (!window.documentAnalyzer && typeof DocumentAnalyzer !== 'undefined') {
+        window.documentAnalyzer = new DocumentAnalyzer();
+    }
+
+    const allExtracted = {};
+    for (const file of Array.from(files)) {
+        try {
+            let text = '';
+            if (window.documentAnalyzer) {
+                if (file.type === 'application/pdf') {
+                    text = await window.documentAnalyzer.extractPDFTextWithPassword(file);
+                    if (text === null) { updateProcessStep(1); return; }
+                    if (!text.trim()) text = await window.documentAnalyzer.ocrPDF(file);
+                } else if (file.type.startsWith('image/')) {
+                    text = await window.documentAnalyzer.ocrImage(file);
+                } else {
+                    text = await window.documentAnalyzer.readFile(file);
+                }
+                text = await window.documentAnalyzer.reviewExtractedText(text || '');
+                if (text === null) { updateProcessStep(1); return; }
+            }
+            allExtracted[file.name] = text || '';
+        } catch (e) {
+            console.error('Error extracting', file.name, e);
+        }
+    }
+
+    processUploadedDocuments(files, allExtracted);
 }
 
-function processUploadedDocuments(files) {
-    // Simulate extracted information from documents
-    const extractedData = simulateDocumentExtraction(files);
-    
-    // Display extracted information
+async function processUploadedDocuments(files, allExtracted) {
+    const allText = Object.values(allExtracted || {}).join('\n');
+
+    let extractedData = {
+        personalInfo: { fullName: '', dateOfBirth: '', ssn: '', address: '', phone: '', email: '' },
+        medicalText: allText,
+        filesProcessed: Array.from(files).map(f => f.name).join(', ')
+    };
+
+    // Use AI to extract structured info
+    if (window.dualAIMedicalTeam && window.dualAIMedicalTeam.getTeamResponse && allText) {
+        try {
+            const prompt = 'Extract the following from this medical document text and respond in JSON only (no explanation): fullName, dateOfBirth, ssn (if present), address, phone, email, conditions, medications. Document text:\n' + allText.substring(0, 3000);
+            const aiResult = await window.dualAIMedicalTeam.getTeamResponse(prompt);
+            const raw = aiResult.response || '';
+            const jsonStart = raw.indexOf('{');
+            const jsonEnd = raw.lastIndexOf('}');
+            if (jsonStart !== -1 && jsonEnd > jsonStart) {
+                const parsed = JSON.parse(raw.substring(jsonStart, jsonEnd + 1));
+                if (parsed.fullName) extractedData.personalInfo.fullName = parsed.fullName;
+                if (parsed.dateOfBirth) extractedData.personalInfo.dateOfBirth = parsed.dateOfBirth;
+                if (parsed.ssn) extractedData.personalInfo.ssn = parsed.ssn;
+                if (parsed.address) extractedData.personalInfo.address = parsed.address;
+                if (parsed.phone) extractedData.personalInfo.phone = parsed.phone;
+                if (parsed.email) extractedData.personalInfo.email = parsed.email;
+                if (parsed.conditions) extractedData.medicalText = parsed.conditions + '\n' + allText;
+            }
+        } catch (e) {
+            console.error('AI extraction error:', e);
+        }
+    }
+
     displayExtractedInfo(extractedData);
-    
-    // Update process step
     updateProcessStep(3);
-    
-    // Categorize patient based on conditions
+
     setTimeout(() => {
         if (window.conditionCategorizer) {
             const report = window.conditionCategorizer.generatePatientReport(extractedData.medicalText);
             displayConditionCategorization(report);
-            
-            // Update process step
             updateProcessStep(4);
-            
-            // Auto-fill forms
             setTimeout(() => {
                 autoFillForms(extractedData, report);
                 updateProcessStep(5);
-            }, 1500);
+            }, 1000);
+        } else {
+            updateProcessStep(5);
         }
-    }, 1500);
+    }, 1000);
 }
 
 function simulateDocumentExtraction(files) {
@@ -1798,10 +2089,7 @@ function autoFillForms(extractedData, report) {
         if (reviewForm) {
             reviewForm.onsubmit = function(e) {
                 e.preventDefault();
-                // Gather reviewed data
-                const data = Object.fromEntries(new FormData(reviewForm).entries());
-                // TODO: Integrate with downloadFilledForms and emailForms
-                alert('✅ Your reviewed info is ready for download/email! (Integration pending)');
+                downloadFilledForms();
             };
         }
 }
@@ -1848,11 +2136,36 @@ function downloadFilledForms() {
 }
 
 function emailForms() {
-    alert('✅ Forms would be emailed to your registered email address. In production, this sends the completed forms.');
+    const reviewForm = document.getElementById('review-auto-filled-forms');
+    let body = 'Medical Assistance Helper - Filled Forms\n\n';
+    if (reviewForm) {
+        const inputs = reviewForm.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            const label = reviewForm.querySelector(`label[for="${input.id}"]`) ||
+                          input.closest('.form-field')?.querySelector('label');
+            const labelText = label ? label.textContent.trim() : (input.id || input.name || 'Field');
+            body += labelText + ': ' + (input.value || '(not filled)') + '\n';
+        });
+    }
+    const maxLen = 1800;
+    let encoded = encodeURIComponent(body);
+    if (encoded.length > maxLen) {
+        // Truncate unencoded body and re-encode until within limit
+        let truncated = body.substring(0, 500) + '\n\n[Content truncated. Use the Download button for the full document.]';
+        while (encodeURIComponent(truncated).length > maxLen && truncated.length > 100) {
+            truncated = truncated.substring(0, truncated.length - 50);
+        }
+        encoded = encodeURIComponent(truncated);
+    }
+    window.open('mailto:?subject=My%20Medical%20Assistance%20Forms&body=' + encoded);
 }
 
 function editForms() {
-    alert('Opening form editor... You can review and edit any field before final submission.');
+    const reviewForm = document.getElementById('review-auto-filled-forms');
+    if (reviewForm) {
+        reviewForm.querySelectorAll('input, textarea, select').forEach(el => el.removeAttribute('disabled'));
+        reviewForm.scrollIntoView({ behavior: 'smooth' });
+    }
 }
 
 // ========================================
@@ -2260,15 +2573,24 @@ function displayLimitationDocumentation(documentation) {
 
 function generateDoctorLetter() {
     if (!window.limitationDocumentor) {
-        alert('System not loaded');
+        console.warn('Limitation documentor not loaded');
         return;
     }
-    
+
     const patientName = currentIntakeData.first_name || 'Patient';
     const condition = currentIntakeData.primary_condition || 'my medical condition';
     const letter = window.limitationDocumentor.generateDoctorLetter(patientName, condition, {});
-    
-    alert('Doctor letter generated! In production, this would create a downloadable PDF letter to give your doctor.\n\nThe letter explains exactly what you need documented for your disability application.');
+
+    const letterText = typeof letter === 'string' ? letter : JSON.stringify(letter, null, 2);
+    const blob = new Blob([letterText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `doctor-letter-${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 function downloadLimitationDoc() {
@@ -2691,18 +3013,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(script2);
     } else {
         window.paperworkWizard = new PaperworkWizard();
-    }
-
-    // Load Document Analyzer
-    if (window.DocumentAnalyzer === undefined) {
-        const script3 = document.createElement('script');
-        script3.src = 'js/document-analyzer.js';
-        script3.onload = () => {
-            window.documentAnalyzer = new DocumentAnalyzer();
-        };
-        document.body.appendChild(script3);
-    } else {
-        window.documentAnalyzer = new DocumentAnalyzer();
     }
 
     // Load Coverage Predictor & Appeal Letter Generator
