@@ -1810,6 +1810,11 @@ function openAITool(toolType) {
     modal.style.display = 'block';
 }
 
+function closeAITool() {
+    const modal = document.getElementById('ai-tool-modal');
+    if (modal) modal.style.display = 'none';
+}
+
 function generateDocumentAutoFillTool() {
     return `
         <h2>📄 AI Document Upload & Smart Form Filler</h2>

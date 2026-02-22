@@ -19,6 +19,23 @@ class DocumentAnalyzer {
   render() {
     const root = document.getElementById(this.rootId);
     if (!root) return;
+    const docsHtml = this.documents.length === 0
+      ? '<em>No documents analyzed yet.</em>'
+      : this.documents.map((doc, i) => {
+          const tagsHtml = doc.tags ? doc.tags.map(t => '<span class="tag">' + t + '</span>').join(' ') : '';
+          const extractedHtml = doc.extractedFields
+            ? '<details style="margin-top:0.5em;"><summary>Show Extracted Fields</summary>' +
+              '<pre style="background:#fff; border:1px solid #ddd; border-radius:4px; padding:0.5em; font-size:0.95em;">' +
+              JSON.stringify(doc.extractedFields, null, 2) +
+              '</pre><button class="btn-secondary" style="margin-top:0.5em;" onclick="window.documentAnalyzer.autoFillWithExtracted(' + i + ')">Auto-Fill Forms with This</button></details>'
+            : '';
+          return '<div class="analyzed-doc" style="background:#f0f4f8; margin-bottom:0.5em; padding:0.75em; border-radius:6px;">' +
+            '<strong>' + doc.name + '</strong> (' + doc.type + ')<br>' +
+            '<em>' + (doc.summary || 'No summary yet') + '</em>' +
+            '<div>' + tagsHtml + '</div>' +
+            extractedHtml +
+            '</div>';
+        }).join('');
     root.innerHTML = `
       <div class="document-analyzer-container">
         <h2>🔍 Medical Document Analyzer</h2>
@@ -32,131 +49,111 @@ class DocumentAnalyzer {
         <input type="file" id="doc-upload" multiple accept=".pdf,.txt,.doc,.docx,.jpg,.png" style="margin-bottom:1em;">
         <button id="analyze-docs" class="btn-primary" style="margin-bottom:1em;">Analyze Selected</button>
         <div id="analyzer-status" style="margin-bottom:1em;"></div>
-        <div id="analyzed-documents">
-          " + (this.documents.length === 0 ? '<em>No documents analyzed yet.</em>' : this.documents.map(function(doc, i) {
-            var tagsHtml = doc.tags ? doc.tags.map(function(t) { return '<span class="tag">' + t + '</span>'; }).join(' ') : '';
-            var extractedHtml = doc.extractedFields ? "<details style='margin-top:0.5em;'><summary>Show Extracted Fields</summary><pre style='background:#fff; border:1px solid #ddd; border-radius:4px; padding:0.5em; font-size:0.95em;'>" + JSON.stringify(doc.extractedFields, null, 2) + "</pre><button class='btn-secondary' style='margin-top:0.5em;' onclick='window.documentAnalyzer.autoFillWithExtracted(" + i + ")'>Auto-Fill Forms with This</button></details>" : '';
-            return "<div class='analyzed-doc' style='background:#f0f4f8; margin-bottom:0.5em; padding:0.75em; border-radius:6px;'>" +
-              "<strong>" + doc.name + "</strong> (" + doc.type + ")<br>" +
-              "<em>" + (doc.summary || 'No summary yet') + "</em>" +
-              "<div>" + tagsHtml + "</div>" +
-              extractedHtml +
-            "</div>";
-          }).join('')) + "
-        </div>
+        <div id="analyzed-documents">${docsHtml}</div>
       </div>
-        // Auto-fill forms with extracted fields (stub for integration)
-        autoFillWithExtracted(index) {
-          const doc = this.documents[index];
-          if (!doc || !doc.extractedFields) {
-            alert('No extracted fields available for this document.');
-            return;
-          }
-          // Merge extracted fields into user profile
-          if (window.userDataManager) {
-            const currentProfile = window.userDataManager.getProfile() || {};
-            const mergedProfile = this.mergeExtractedFieldsIntoProfile(currentProfile, doc.extractedFields);
-            window.userDataManager.saveProfile(mergedProfile);
-            // Check for missing required fields
-            const missingFields = this.getMissingRequiredFields(mergedProfile);
-            if (missingFields.length > 0) {
-              this.promptForMissingFields(mergedProfile, missingFields);
-            } else {
-              alert('✅ All available info from your document has been used to auto-fill your profile and forms!');
-            }
-          } else {
-            alert('UserDataManager not available.');
-          }
-        }
-
-        // Merge extracted fields into the user profile structure
-        mergeExtractedFieldsIntoProfile(profile, extracted) {
-          // Map extracted fields to profile structure as best as possible
-          profile = profile || {};
-          profile.personalInfo = profile.personalInfo || {};
-          profile.medicalInfo = profile.medicalInfo || {};
-          profile.contactInfo = profile.contactInfo || {};
-          if (extracted['Full Name']) profile.personalInfo.first_name = extracted['Full Name'];
-          if (extracted['Date of Birth']) profile.personalInfo.dob = extracted['Date of Birth'];
-          if (extracted['Address']) profile.contactInfo.address = extracted['Address'];
-          if (extracted['Phone Number']) profile.contactInfo.phone = extracted['Phone Number'];
-          if (extracted['Diagnosis']) profile.medicalInfo.primary_condition = extracted['Diagnosis'];
-          if (extracted['Medications']) profile.medicalInfo.medications = extracted['Medications'];
-          if (extracted['Allergies']) profile.medicalInfo.allergies = extracted['Allergies'];
-          if (extracted['Procedures']) profile.medicalInfo.procedures = extracted['Procedures'];
-          if (extracted['Insurance Policy Number']) profile.medicalInfo.insurance_policy = extracted['Insurance Policy Number'];
-          if (extracted['Provider Name']) profile.medicalInfo.provider = extracted['Provider Name'];
-          if (extracted['Medical Record Number']) profile.medicalInfo.medical_record_number = extracted['Medical Record Number'];
-          if (extracted['Document Date']) profile.medicalInfo.document_date = extracted['Document Date'];
-          // Mark as incomplete until user reviews
-          profile.complete = false;
-          return profile;
-        }
-
-        // Identify required fields missing from the profile
-        getMissingRequiredFields(profile) {
-          const required = [
-            { path: ['personalInfo', 'first_name'], label: 'Full Name' },
-            { path: ['personalInfo', 'dob'], label: 'Date of Birth' },
-            { path: ['contactInfo', 'address'], label: 'Address' },
-            { path: ['contactInfo', 'phone'], label: 'Phone Number' },
-            { path: ['medicalInfo', 'primary_condition'], label: 'Diagnosis' }
-          ];
-          const missing = [];
-          for (const field of required) {
-            let val = profile;
-            for (const key of field.path) {
-              val = val && val[key];
-            }
-            if (!val) missing.push(field);
-          }
-          return missing;
-        }
-
-        // Prompt user for missing fields and update profile
-        promptForMissingFields(profile, missingFields) {
-          var prompts = '';
-          for (var i = 0; i < missingFields.length; i++) {
-            var field = missingFields[i];
-            prompts += field.label + ': <input id="missing-' + field.path.join('-') + '" type="text" style="width:90%;margin-bottom:0.5em;"><br>';
-          }
-          var modal = document.createElement('div');
-          modal.style.position = 'fixed';
-          modal.style.top = '0';
-          modal.style.left = '0';
-          modal.style.width = '100vw';
-          modal.style.height = '100vh';
-          modal.style.background = 'rgba(0,0,0,0.6)';
-          modal.style.zIndex = '9999';
-          modal.innerHTML = '<div style="background:#fff;max-width:400px;margin:10vh auto;padding:2em;border-radius:10px;box-shadow:0 2px 16px #0003;">' +
-            '<h3>Complete Your Profile</h3>' +
-            '<p>Please provide the missing information so we can fill out all forms for you:</p>' +
-            prompts +
-            '<button id="missing-fields-save" class="btn-primary" style="margin-top:1em;">Save</button>' +
-            '<button id="missing-fields-cancel" class="btn-secondary" style="margin-top:1em;">Cancel</button>' +
-          '</div>';
-          document.body.appendChild(modal);
-          document.getElementById('missing-fields-save').onclick = function() {
-            for (var i = 0; i < missingFields.length; i++) {
-              var field = missingFields[i];
-              var input = document.getElementById('missing-' + field.path.join('-'));
-              var obj = profile;
-              for (var j = 0; j < field.path.length - 1; j++) {
-                obj[field.path[j]] = obj[field.path[j]] || {};
-                obj = obj[field.path[j]];
-              }
-              obj[field.path[field.path.length - 1]] = input.value;
-            }
-            window.userDataManager.saveProfile(profile);
-            document.body.removeChild(modal);
-            alert('✅ Your profile is now complete and all forms will be auto-filled!');
-          };
-          document.getElementById('missing-fields-cancel').onclick = function() {
-            document.body.removeChild(modal);
-          };
-        }
     `;
     this.attachEvents();
+  }
+
+  autoFillWithExtracted(index) {
+    const doc = this.documents[index];
+    if (!doc || !doc.extractedFields) {
+      alert('No extracted fields available for this document.');
+      return;
+    }
+    if (window.userDataManager) {
+      const currentProfile = window.userDataManager.getProfile() || {};
+      const mergedProfile = this.mergeExtractedFieldsIntoProfile(currentProfile, doc.extractedFields);
+      window.userDataManager.saveProfile(mergedProfile);
+      const missingFields = this.getMissingRequiredFields(mergedProfile);
+      if (missingFields.length > 0) {
+        this.promptForMissingFields(mergedProfile, missingFields);
+      } else {
+        alert('✅ All available info from your document has been used to auto-fill your profile and forms!');
+      }
+    } else {
+      alert('UserDataManager not available.');
+    }
+  }
+
+  mergeExtractedFieldsIntoProfile(profile, extracted) {
+    profile = profile || {};
+    profile.personalInfo = profile.personalInfo || {};
+    profile.medicalInfo = profile.medicalInfo || {};
+    profile.contactInfo = profile.contactInfo || {};
+    if (extracted['Full Name']) profile.personalInfo.first_name = extracted['Full Name'];
+    if (extracted['Date of Birth']) profile.personalInfo.dob = extracted['Date of Birth'];
+    if (extracted['Address']) profile.contactInfo.address = extracted['Address'];
+    if (extracted['Phone Number']) profile.contactInfo.phone = extracted['Phone Number'];
+    if (extracted['Diagnosis']) profile.medicalInfo.primary_condition = extracted['Diagnosis'];
+    if (extracted['Medications']) profile.medicalInfo.medications = extracted['Medications'];
+    if (extracted['Allergies']) profile.medicalInfo.allergies = extracted['Allergies'];
+    if (extracted['Procedures']) profile.medicalInfo.procedures = extracted['Procedures'];
+    if (extracted['Insurance Policy Number']) profile.medicalInfo.insurance_policy = extracted['Insurance Policy Number'];
+    if (extracted['Provider Name']) profile.medicalInfo.provider = extracted['Provider Name'];
+    if (extracted['Medical Record Number']) profile.medicalInfo.medical_record_number = extracted['Medical Record Number'];
+    if (extracted['Document Date']) profile.medicalInfo.document_date = extracted['Document Date'];
+    profile.complete = false;
+    return profile;
+  }
+
+  getMissingRequiredFields(profile) {
+    const required = [
+      { path: ['personalInfo', 'first_name'], label: 'Full Name' },
+      { path: ['personalInfo', 'dob'], label: 'Date of Birth' },
+      { path: ['contactInfo', 'address'], label: 'Address' },
+      { path: ['contactInfo', 'phone'], label: 'Phone Number' },
+      { path: ['medicalInfo', 'primary_condition'], label: 'Diagnosis' }
+    ];
+    const missing = [];
+    for (const field of required) {
+      let val = profile;
+      for (const key of field.path) {
+        val = val && val[key];
+      }
+      if (!val) missing.push(field);
+    }
+    return missing;
+  }
+
+  promptForMissingFields(profile, missingFields) {
+    let prompts = '';
+    for (const field of missingFields) {
+      prompts += field.label + ': <input id="missing-' + field.path.join('-') + '" type="text" style="width:90%;margin-bottom:0.5em;"><br>';
+    }
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100vw';
+    modal.style.height = '100vh';
+    modal.style.background = 'rgba(0,0,0,0.6)';
+    modal.style.zIndex = '9999';
+    modal.innerHTML = '<div style="background:#fff;max-width:400px;margin:10vh auto;padding:2em;border-radius:10px;box-shadow:0 2px 16px #0003;">' +
+      '<h3>Complete Your Profile</h3>' +
+      '<p>Please provide the missing information so we can fill out all forms for you:</p>' +
+      prompts +
+      '<button id="missing-fields-save" class="btn-primary" style="margin-top:1em;">Save</button>' +
+      '<button id="missing-fields-cancel" class="btn-secondary" style="margin-top:1em;">Cancel</button>' +
+      '</div>';
+    document.body.appendChild(modal);
+    document.getElementById('missing-fields-save').onclick = () => {
+      for (const field of missingFields) {
+        const input = document.getElementById('missing-' + field.path.join('-'));
+        let obj = profile;
+        for (let k = 0; k < field.path.length - 1; k++) {
+          obj[field.path[k]] = obj[field.path[k]] || {};
+          obj = obj[field.path[k]];
+        }
+        obj[field.path[field.path.length - 1]] = input.value;
+      }
+      window.userDataManager.saveProfile(profile);
+      document.body.removeChild(modal);
+      alert('✅ Your profile is now complete and all forms will be auto-filled!');
+    };
+    document.getElementById('missing-fields-cancel').onclick = () => {
+      document.body.removeChild(modal);
+    };
   }
 
   attachEvents() {
@@ -288,6 +285,9 @@ class DocumentAnalyzer {
         script.onerror = reject;
         document.body.appendChild(script);
       });
+    }
+    if (window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
     if (!window.Tesseract) {
       await new Promise((resolve, reject) => {
