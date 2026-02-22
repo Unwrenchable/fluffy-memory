@@ -421,41 +421,7 @@ function generateDoctorName() {
            lastNames[Math.floor(Math.random() * lastNames.length)];
 }
 
-// AI Tool Functions
-function openAITool(toolType) {
-    const modal = document.getElementById('ai-tool-modal');
-    const container = document.getElementById('ai-tool-container');
-    
-    let content = '';
-    
-    switch(toolType) {
-        case 'form-filler':
-            content = generateFormFillerTool();
-            break;
-        case 'chat-assistant':
-            content = generateChatAssistantTool();
-            break;
-        case 'document-analyzer':
-            content = generateDocumentAnalyzerTool();
-            break;
-        case 'coverage-predictor':
-            content = generateCoveragePredictorTool();
-            break;
-        case 'appeal-generator':
-            content = generateAppealGeneratorTool();
-            break;
-        case 'appointment-coordinator':
-            content = generateAppointmentCoordinatorTool();
-            break;
-    }
-    
-    container.innerHTML = content;
-    modal.style.display = 'block';
-}
 
-function closeAITool() {
-    document.getElementById('ai-tool-modal').style.display = 'none';
-}
 
 function generateFormFillerTool() {
     return `
@@ -1212,7 +1178,7 @@ function saveAppointment() {
 
 function downloadLetter() {
     const letterContent = document.getElementById('appeal-letter-content');
-    const content = letterContent ? letterContent.innerText || letterContent.textContent : 'No letter content found.';
+    const content = letterContent ? letterContent.textContent : 'No letter content found.';
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1451,19 +1417,6 @@ function handleSuggestionClick(action) {
 }
 
 // ========================================
-// AI GUIDED JOURNEY FUNCTIONS
-// ========================================
-
-async function startAIGuidedJourney() {
-    toggleAIAssistant();
-    setTimeout(() => {
-        addAIMessage("Hi! I'm here to help you get the medical assistance you need. Let's start by understanding your situation.", 'assistant');
-        setTimeout(() => {
-            addAIMessage("What brings you here today? Are you looking for insurance, disability benefits, or help with something else?", 'assistant');
-        }, 1000);
-    }, 500);
-}
-
 async function startAIAssessment() {
     const container = document.getElementById('ai-assessment-container');
     container.style.display = 'block';
@@ -2727,18 +2680,6 @@ function closeInfoModal() {
 // Initialize document library on page load
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document library features loaded');
-    // Initialize AI Configuration Panel
-    // Load AI Config Panel
-    if (window.AIConfigPanel === undefined) {
-        const script = document.createElement('script');
-        script.src = 'js/ai-config-panel.js';
-        script.onload = () => {
-            window.aiConfigPanel = new AIConfigPanel();
-        };
-        document.body.appendChild(script);
-    } else {
-        window.aiConfigPanel = new AIConfigPanel();
-    }
 
     // Load Paperwork Wizard
     if (window.PaperworkWizard === undefined) {

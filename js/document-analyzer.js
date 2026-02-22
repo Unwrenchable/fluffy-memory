@@ -155,25 +155,6 @@ class DocumentAnalyzer {
             document.body.removeChild(modal);
           };
         }
-      <div id="ocr-review-modal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%,-20%); background:#fff; padding:2em; border-radius:8px; box-shadow:0 2px 12px #0002; z-index:1000; width:90vw; max-width:600px;">
-        <h3>Review & Edit Extracted Text</h3>
-        <p style="color:#555; font-size:0.95em; margin-bottom:0.5em;">Check the extracted info below. Edit if needed—this is what will be used to fill your forms.</p>
-        <textarea id="ocr-review-text" style="width:100%;height:200px; margin-bottom:1em;"></textarea>
-        <div style="display:flex; gap:1em; justify-content:flex-end;">
-          <button id="ocr-review-accept" class="btn-primary">Looks Good</button>
-          <button id="ocr-review-cancel" class="btn-secondary">Cancel</button>
-        </div>
-      </div>
-      <div id="pdf-password-modal" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%,-50%); background:#fff; padding:2em; border-radius:8px; box-shadow:0 2px 12px #0002; z-index:1000;">
-        <h3>PDF Password Required</h3>
-        <p style="color:#555; font-size:0.95em;">Most medical documents use your date of birth as the password (e.g., <em>MMDDYYYY</em> or <em>YYYYMMDD</em>).</p>
-        <input type="password" id="pdf-password-input" placeholder="Enter PDF password" style="margin-bottom:0.5em;">
-        <div style="display:flex; gap:1em; justify-content:flex-end;">
-          <button id="pdf-password-submit" class="btn-primary">Unlock</button>
-          <button id="pdf-password-cancel" class="btn-secondary">Cancel</button>
-        </div>
-        <div id="pdf-password-error" style="color:red; margin-top:0.5em;"></div>
-      </div>
     `;
     this.attachEvents();
   }
@@ -442,7 +423,7 @@ class DocumentAnalyzer {
         resolve(null);
         return;
       }
-      modal.style.display = 'block';
+      modal.style.display = 'flex';
       input.value = '';
       errorDiv.textContent = '';
       input.focus();

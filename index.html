@@ -852,31 +852,6 @@
     <script src="js/crypto-payment.js"></script>
     <script src="js/pwa-install.js"></script>
         <script src="js/script.js"></script>
-        <script>
-        // Auto-inject AI API keys from environment variables (Vercel)
-        (function() {
-            // These will be replaced at build time by Vercel if set as env vars
-            const hfKey = window.NEXT_PUBLIC_HF_API_KEY || (typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_HF_API_KEY);
-            const xaiKey = window.NEXT_PUBLIC_XAI_API_KEY || (typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_XAI_API_KEY);
-            function setApiKeyIfPresent(id, key) {
-                if (key && document.getElementById(id)) {
-                    document.getElementById(id).value = key;
-                    document.getElementById(id).setAttribute('readonly', 'readonly');
-                    document.getElementById(id).style.background = '#e6ffe6';
-                }
-            }
-            setApiKeyIfPresent('hf-api-key', hfKey);
-            setApiKeyIfPresent('xai-api-key', xaiKey);
-            // Hide manual entry if both are present
-            if (hfKey && xaiKey) {
-                const configSection = document.querySelector('.config-grid');
-                if (configSection) configSection.style.display = 'none';
-                const msg = document.createElement('div');
-                msg.innerHTML = '<div style="background:#d4edda;color:#155724;padding:1em;border-radius:8px;margin:1em 0;">✅ AI API keys loaded from environment. Manual entry not required.</div>';
-                document.getElementById('ai-config').appendChild(msg);
-            }
-        })();
-        </script>
     <script>
         // Initialize user authentication UI
         function initUserAuth() {
@@ -1001,160 +976,7 @@
         // Initialize AI configuration system
         window.appConfig = new AppConfig();
         window.aiTeam = new DualAIMedicalTeam();
-        
-        function initAIConfig() {
-            // Ensure global access for script.js
-            if (!window.appConfig) {
-                window.appConfig = new AppConfig();
-            }
-            if (!window.aiTeam) {
-                window.aiTeam = new DualAIMedicalTeam();
-            }
-            
-            // Load saved configuration
-            const config = window.appConfig.getConfig();
-            
-            // Update UI based on saved settings
-            document.getElementById('xai-enabled').checked = config.xai.enabled;
-            document.getElementById('hf-enabled').checked = config.huggingface.enabled;
-            
-            // Set team mode radio button
-            const modeRadios = document.querySelectorAll('input[name="team-mode"]');
-            modeRadios.forEach(radio => {
-                if (radio.value === config.teamMode) {
-                    radio.checked = true;
-                }
-            });
-            
-            // Update status displays
-            updateConfigStatus();
-            
-            // If keys are already set, configure the AI team
-            if (appConfig.isConfigured('xai') || appConfig.isConfigured('huggingface')) {
-                aiTeam.setApiKeys(
-                    appConfig.getApiKey('xai'),
-                    appConfig.getApiKey('huggingface')
-                );
-                aiTeam.setTeamMode(appConfig.getTeamMode());
-            }
-        }
-        
-        // Save AI configuration
-        function saveAIConfig() {
-            const xaiKey = document.getElementById('xai-api-key').value.trim();
-            const hfKey = document.getElementById('hf-api-key').value.trim();
-            const xaiEnabled = document.getElementById('xai-enabled').checked;
-            const hfEnabled = document.getElementById('hf-enabled').checked;
-            const teamMode = document.querySelector('input[name="team-mode"]:checked').value;
-            
-            let hasError = false;
-            let errorMessage = '';
-            
-            // Validate X.AI key if provided
-            if (xaiKey) {
-                const validation = window.appConfig.validateApiKey('xai', xaiKey);
-                if (!validation.valid) {
-                    hasError = true;
-                    errorMessage += `X.AI: ${validation.error}\n`;
-                }
-            }
-            
-            // Validate HuggingFace key if provided
-            if (hfKey) {
-                const validation = window.appConfig.validateApiKey('huggingface', hfKey);
-                if (!validation.valid) {
-                    hasError = true;
-                    errorMessage += `HuggingFace: ${validation.error}\n`;
-                }
-            }
-            
-            // Check if at least one key is provided
-            if (!xaiKey && !hfKey) {
-                showConfigMessage('Please provide at least one API key to enable AI assistance.', 'warning');
-                return;
-            }
-            
-            if (hasError) {
-                showConfigMessage(errorMessage, 'error');
-                return;
-            }
-            
-            // Save API keys (in memory only)
-            window.appConfig.setApiKeys(xaiKey || null, hfKey || null);
-            
-            // Save preferences (without keys)
-            window.appConfig.setTeamMode(teamMode);
-            window.appConfig.config.xai.enabled = xaiEnabled;
-            window.appConfig.config.huggingface.enabled = hfEnabled;
-            window.appConfig.saveConfig();
-            
-            // Configure AI team
-            window.aiTeam.setApiKeys(
-                xaiKey || null,
-                hfKey || null
-            );
-            window.aiTeam.setTeamMode(teamMode);
-            
-            // Update window.aiAssistant to use the new dual AI system
-            if (window.aiAssistant) {
-                window.aiAssistant.dualAI = aiTeam;
-                window.aiAssistant.useDualAI = true;
-            }
-            
-            // Update status
-            updateConfigStatus();
-            
-            showConfigMessage('✅ AI configuration saved successfully! Your AI assistants are now active.', 'success');
-        }
-        
-        // Test AI configuration
-        async function testAIConfig() {
-            if (!window.aiTeam) {
-                showConfigMessage('Please configure your AI first.', 'warning');
-                return;
-            }
-            
-            const status = window.aiTeam.getStatus();
-            
-            if (!status.xaiConfigured && !status.huggingFaceConfigured) {
-                showConfigMessage('Please configure at least one API key first.', 'warning');
-                return;
-            }
-            
-            showConfigMessage('🧪 Testing AI connection...', 'info');
-            
-            try {
-                const testQuery = 'Hello, this is a test. Please respond briefly.';
-                const response = await window.aiTeam.getTeamResponse(testQuery);
-                
-                if (response && !response.error) {
-                    showConfigMessage(`✅ Test successful!\n\nSource: ${response.source}\nResponse: ${response.response.substring(0, 100)}...`, 'success');
-                } else {
-                    showConfigMessage(`❌ Test failed: ${response.response}`, 'error');
-                }
-            } catch (error) {
-                showConfigMessage(`❌ Test failed: ${error.message}`, 'error');
-            }
-        }
-        
-        // Clear AI configuration
-        function clearAIConfig() {
-            if (confirm('Are you sure you want to clear all AI API keys? This will only clear them from memory.')) {
-                document.getElementById('xai-api-key').value = '';
-                document.getElementById('hf-api-key').value = '';
-                
-                if (window.appConfig) {
-                    window.appConfig.clearApiKeys();
-                }
-                
-                if (window.aiTeam) {
-                    window.aiTeam.clearHistory();
-                }
-                
-                updateConfigStatus();
-                showConfigMessage('🗑️ API keys cleared from memory.', 'info');
-            }
-        }
+        window.dualAIMedicalTeam = window.aiTeam;
         
         // Update configuration status displays
         function updateConfigStatus() {
@@ -1694,16 +1516,11 @@
         
         // Initialize AI config when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            initAIConfig();
             initAutoFillSystem();
             initSmartSearch();
         });
     </script>
 
-    <!-- ⚙️ AI Configuration Panel Mount Point -->
-    <div id="ai-config-panel"></div>
-    <!-- 📋 Paperwork Wizard Mount Point -->
-    <div id="paperwork-wizard"></div>
         <!-- Unified AI Document Upload & Auto-Fill Experience -->
         <div id="ai-paperwork-flow" style="max-width:700px;margin:2em auto 3em auto;padding:2em 2.5em;background:#f8fafc;border-radius:18px;box-shadow:0 4px 24px #2563eb18;">
             <h2 style="color:#2563eb;margin-bottom:0.5em;">📄 AI Document Upload & Auto-Fill</h2>
@@ -1905,12 +1722,48 @@
               `;
             }
 
-            // Placeholder functions for download/email
+            // Download filled forms as text file
             function downloadFilledForms() {
-              alert('✅ Your reviewed forms are ready for download! (Integration pending)');
+                const form = document.getElementById('review-form');
+                let content = 'Medical Assistance Helper - Auto-Filled Forms\n';
+                content += '==============================================\n';
+                content += 'Generated: ' + new Date().toLocaleString() + '\n\n';
+                if (form) {
+                    const data = new FormData(form);
+                    for (const [key, value] of data.entries()) {
+                        const label = key.replace(/([_-])/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^\w/, c => c.toUpperCase()).trim();
+                        content += label + ':\n' + (value || '(not filled)') + '\n\n';
+                    }
+                } else {
+                    content += 'No form data available. Please complete the upload process first.';
+                }
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'filled-forms-' + new Date().toISOString().split('T')[0] + '.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
             }
             function emailForms() {
-              alert('📧 Your forms have been emailed to you! (Integration pending)');
+                const form = document.getElementById('review-form');
+                let body = 'Medical Assistance Helper - Auto-Filled Forms\n\n';
+                if (form) {
+                    const data = new FormData(form);
+                    for (const [key, value] of data.entries()) {
+                        const label = key.replace(/([_-])/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^\w/, c => c.toUpperCase()).trim();
+                        body += label + ': ' + (value || '(not filled)') + '\n';
+                    }
+                }
+                // Truncate body if it would exceed typical mailto URL limits (~1800 chars for body)
+                const maxBodyLen = 1800;
+                if (encodeURIComponent(body).length > maxBodyLen) {
+                    body = body.substring(0, 600) + '\n\n[Content truncated. Use "Download" for the full document.]';
+                }
+                const mailtoLink = 'mailto:?subject=My%20Medical%20Assistance%20Forms&body=' + encodeURIComponent(body);
+                window.open(mailtoLink);
             }
             </script>
     <!-- 🛡️ Coverage Predictor & Appeal Letter Generator Mount Point -->
