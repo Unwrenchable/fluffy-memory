@@ -21,7 +21,7 @@ header {
 
 .logo {
     color: white;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-weight: 700;
     white-space: nowrap;
     flex-shrink: 0;
@@ -39,7 +39,7 @@ header {
     color: white;
     text-decoration: none;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     transition: opacity 0.3s;
 }
 

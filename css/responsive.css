@@ -50,12 +50,17 @@
         font-size: 1rem;
     }
 
-    /* Compact smart search on mobile — hide descriptive text */
+    /* Compact smart search on mobile — condense descriptive text */
     .smart-search-container {
         padding: 0.75rem 0;
     }
 
-    .search-hero {
+    .search-hero h2 {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .search-hero p {
         display: none;
     }
 
