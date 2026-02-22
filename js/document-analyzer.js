@@ -298,12 +298,12 @@ class DocumentAnalyzer {
         document.body.appendChild(script);
       });
     }
-    const arrayBuffer = await file.arrayBuffer();
+    const fileData = new Uint8Array(await file.arrayBuffer());
     let password = '';
     let pdf = null;
     while (true) {
       try {
-        pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer, password }).promise;
+        pdf = await window.pdfjsLib.getDocument({ data: fileData.slice(0), password }).promise;
         break;
       } catch (e) {
         if (e.name === 'PasswordException') {
@@ -366,7 +366,7 @@ class DocumentAnalyzer {
     if (window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
       window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
-    const arrayBuffer = await file.arrayBuffer();
+    const fileData = new Uint8Array(await file.arrayBuffer());
     let password = '';
     let pdf = null;
     let error = null;
@@ -374,7 +374,7 @@ class DocumentAnalyzer {
     while (true) {
       try {
         console.log('[DocumentAnalyzer] Attempting to open PDF (password length:', password ? password.length : 0, ')');
-        pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer, password }).promise;
+        pdf = await window.pdfjsLib.getDocument({ data: fileData.slice(0), password }).promise;
         break;
       } catch (e) {
         console.error('[DocumentAnalyzer] PDF.js error:', e);
