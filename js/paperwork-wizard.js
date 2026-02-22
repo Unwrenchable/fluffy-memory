@@ -36,6 +36,41 @@ class PaperworkWizard {
     ];
   }
 
+  escapeHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  render() {
+    const container = document.getElementById(this.rootId);
+    if (!container) return;
+    const step = this.steps[this.currentStep];
+    if (!step) return;
+    const isFirst = this.currentStep === 0;
+    const isLast = this.currentStep === this.steps.length - 1;
+    const fieldsHtml = step.fields.map(field => {
+      const safeField = this.escapeHtml(field);
+      const saved = this.escapeHtml(this.userData[field] || '');
+      return `<div class="wizard-field" style="margin-bottom:1em;">
+        <label style="display:block;margin-bottom:0.25em;">${safeField}</label>
+        <input type="text" name="${safeField}" value="${saved}" placeholder="${safeField}" style="width:100%;padding:0.5em;border:1px solid #cbd5e1;border-radius:6px;" />
+      </div>`;
+    }).join('');
+    container.innerHTML = `
+      <div class="wizard-header" style="margin-bottom:1em;">
+        <strong>Step ${this.currentStep + 1} of ${this.steps.length}: ${this.escapeHtml(step.title)}</strong>
+      </div>
+      <form id="wizard-form">
+        ${fieldsHtml}
+        <div id="wizard-status" style="color:red;min-height:1.5em;margin-bottom:0.5em;"></div>
+        <div class="wizard-nav" style="display:flex;gap:0.5em;">
+          ${isFirst ? '' : '<button type="button" id="wizard-prev" class="btn-secondary">Back</button>'}
+          ${isLast ? '<button type="button" id="wizard-finish" class="btn-primary">Finish</button>' : '<button type="button" id="wizard-next" class="btn-primary">Next</button>'}
+        </div>
+      </form>
+    `;
+    this.attachEvents();
+  }
+
     // Helper: get all paperwork the user requested
     getRequestedPaperwork() {
       // Example: collect from wizard steps or user selections
