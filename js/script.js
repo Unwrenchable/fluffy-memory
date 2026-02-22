@@ -1217,7 +1217,7 @@ function downloadLetter() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'appeal-letter-' + new Date().toISOString().split('T')[0] + '.txt';
+    a.download = `appeal-letter-${new Date().toISOString().split('T')[0]}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -1874,9 +1874,10 @@ function downloadFilledForms() {
     if (reviewForm) {
         const inputs = reviewForm.querySelectorAll('input, textarea, select');
         inputs.forEach(input => {
-            const label = reviewForm.querySelector(`label[for="${input.name}"]`) || 
+            const label = reviewForm.querySelector(`label[for="${input.id}"]`) || 
+                          reviewForm.querySelector(`label[for="${input.name}"]`) || 
                           input.closest('.form-field')?.querySelector('label');
-            const labelText = label ? label.textContent.trim() : input.name;
+            const labelText = label ? label.textContent.trim() : (input.id || input.name || 'Unknown field');
             content += labelText + ':\n' + (input.value || '(not filled)') + '\n\n';
         });
     } else {
@@ -1886,7 +1887,7 @@ function downloadFilledForms() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'filled-forms-' + new Date().toISOString().split('T')[0] + '.txt';
+    a.download = `filled-forms-${new Date().toISOString().split('T')[0]}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -2330,7 +2331,7 @@ function downloadLimitationDoc() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'limitation-documentation-' + new Date().toISOString().split('T')[0] + '.txt';
+    a.download = `limitation-documentation-${new Date().toISOString().split('T')[0]}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
