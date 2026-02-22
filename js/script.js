@@ -899,11 +899,49 @@ async function processDocumentFiles(files) {
         const file = files[i];
         
         try {
-            // Read file for storage (in production, would upload to backend)
-            const fileData = await readFileAsDataURL(file);
-            
-            // Extract text content simulation (in production, would use OCR/AI)
-            const extractedContent = await simulateTextExtraction(file);
+            let extractedContent = '';
+
+            if (window.documentAnalyzer) {
+                // Use real DocumentAnalyzer for text extraction (same as AI assistant tool)
+                if (file.type === 'application/pdf') {
+                    extractedContent = await window.documentAnalyzer.extractPDFTextWithPassword(file);
+                    if (extractedContent === null) {
+                        if (progressDiv) progressDiv.innerHTML = `<div class="message message-error">PDF extraction cancelled.</div>`;
+                        continue;
+                    }
+                    if (!extractedContent.trim()) {
+                        if (progressDiv) progressDiv.innerHTML = `<div class="message message-info">No text found in PDF, running OCR...</div>`;
+                        extractedContent = await window.documentAnalyzer.ocrPDF(file);
+                    }
+                } else if (file.type.startsWith('image/')) {
+                    extractedContent = await window.documentAnalyzer.ocrImage(file);
+                } else {
+                    extractedContent = await window.documentAnalyzer.readFile(file);
+                }
+
+                // Show review modal so user can verify extracted text; null means user cancelled
+                extractedContent = await window.documentAnalyzer.reviewExtractedText(extractedContent || '');
+                if (extractedContent === null) {
+                    continue;
+                }
+            } else {
+                // Fallback if DocumentAnalyzer is not available
+                extractedContent = await simulateTextExtraction(file);
+            }
+
+            // Use AI for additional analysis if available (same as AI assistant tool)
+            // Truncate to avoid exceeding model context limits
+            let aiSummary = '';
+            if (window.dualAIMedicalTeam && window.dualAIMedicalTeam.getTeamResponse && extractedContent) {
+                try {
+                    const aiResult = await window.dualAIMedicalTeam.getTeamResponse(
+                        'Briefly summarize this medical document and identify key information: ' + extractedContent.substring(0, 2000)
+                    );
+                    aiSummary = aiResult.response || '';
+                } catch (e) {
+                    console.error('AI analysis error:', e);
+                }
+            }
             
             // Generate unique ID with fallback for older browsers
             const docId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
@@ -918,8 +956,7 @@ async function processDocumentFiles(files) {
                 uploadedAt: new Date().toISOString(),
                 analyzed: true,
                 extractedContent: extractedContent,
-                // Note: fileData not stored in demo - would be stored on backend in production
-                filePreview: fileData.slice(0, 50) // Store minimal preview for demo only
+                aiSummary: aiSummary
             };
             
             newDocs.push(docMetadata);
@@ -948,7 +985,7 @@ async function processDocumentFiles(files) {
         progressDiv.innerHTML = `
             <div class="message message-success">
                 <strong>✓ Upload Complete!</strong>
-                <p>${files.length} document(s) have been uploaded and analyzed.</p>
+                <p>${newDocs.length} of ${files.length} document(s) successfully analyzed.</p>
             </div>
         `;
     }
@@ -958,7 +995,7 @@ async function processDocumentFiles(files) {
             <div class="message message-success">
                 <strong>🤖 AI Analysis Results:</strong>
                 <ul style="margin-left: 20px; margin-top: 0.5rem;">
-                    <li><strong>Documents processed:</strong> ${files.length}</li>
+                    <li><strong>Documents successfully analyzed:</strong> ${newDocs.length} of ${files.length}</li>
                     <li><strong>Information extracted:</strong> Medical records, conditions, medications</li>
                     <li><strong>AI Status:</strong> Ready to answer questions about your documents</li>
                 </ul>
@@ -1049,6 +1086,11 @@ function viewDocumentAnalysis(docId) {
                 <p><strong>Uploaded:</strong> ${new Date(doc.uploadedAt).toLocaleString()}</p>
                 <p><strong>Size:</strong> ${formatFileSize(doc.size)}</p>
                 <hr style="margin: 1rem 0; border: none; border-top: 1px solid #e2e8f0;">
+                ${doc.aiSummary ? `<p><strong>🤖 AI Summary:</strong></p>
+                <p style="background: #f0fff4; padding: 1rem; border-radius: 4px; margin-top: 0.5rem; border-left: 3px solid #48bb78;">
+                    ${doc.aiSummary}
+                </p>
+                <hr style="margin: 1rem 0; border: none; border-top: 1px solid #e2e8f0;">` : ''}
                 <p><strong>Extracted Content:</strong></p>
                 <p style="background: #f7fafc; padding: 1rem; border-radius: 4px; margin-top: 0.5rem;">
                     ${doc.extractedContent || 'No content extracted'}
@@ -1249,6 +1291,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize AI Assistant, Condition Categorizer, and Intake System
     if (typeof MedicalAIAssistant !== 'undefined') {
         window.aiAssistant = new MedicalAIAssistant();
+    }
+    if (typeof DocumentAnalyzer !== 'undefined') {
+        window.documentAnalyzer = new DocumentAnalyzer();
     }
     if (typeof MedicalConditionCategorizer !== 'undefined') {
         window.conditionCategorizer = new MedicalConditionCategorizer();
@@ -2691,18 +2736,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(script2);
     } else {
         window.paperworkWizard = new PaperworkWizard();
-    }
-
-    // Load Document Analyzer
-    if (window.DocumentAnalyzer === undefined) {
-        const script3 = document.createElement('script');
-        script3.src = 'js/document-analyzer.js';
-        script3.onload = () => {
-            window.documentAnalyzer = new DocumentAnalyzer();
-        };
-        document.body.appendChild(script3);
-    } else {
-        window.documentAnalyzer = new DocumentAnalyzer();
     }
 
     // Load Coverage Predictor & Appeal Letter Generator
