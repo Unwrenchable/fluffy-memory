@@ -1,23 +1,70 @@
 /* Responsive Design */
 @media (max-width: 768px) {
-    .navbar .container {
-        flex-direction: column;
-        text-align: center;
+    /* Show hamburger button */
+    .nav-toggle {
+        display: flex;
     }
 
-    .nav-menu {
-        margin-top: 1rem;
-        flex-direction: column;
-        gap: 0.75rem;
+    .navbar {
+        position: relative;
     }
-    
+
+    .navbar .container {
+        flex-wrap: nowrap;
+        text-align: left;
+    }
+
+    /* Collapse nav menu by default on mobile; drop down absolutely below the navbar */
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        gap: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 0.25rem 0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+    }
+
+    /* Show menu when toggled open */
+    .nav-menu.nav-open {
+        display: flex;
+    }
+
+    .nav-menu li {
+        width: 100%;
+    }
+
     .nav-menu a,
     .nav-menu button {
-        min-height: 44px;
         display: flex;
+        width: 100%;
+        min-height: 44px;
         align-items: center;
         justify-content: center;
         padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+
+    /* Compact smart search on mobile — hide descriptive text */
+    .smart-search-container {
+        padding: 0.75rem 0;
+    }
+
+    .search-hero {
+        display: none;
+    }
+
+    .smart-search-box {
+        flex-direction: column;
+    }
+
+    .btn-search {
+        width: 100%;
     }
 
     .hero h2 {
@@ -27,7 +74,7 @@
     .section h2 {
         font-size: 1.5rem;
     }
-    
+
     .section {
         padding: 2rem 0;
     }
@@ -37,12 +84,12 @@
     .quick-links {
         grid-template-columns: 1fr;
     }
-    
+
     /* Add safe area insets for notched phones */
     body {
         padding-bottom: env(safe-area-inset-bottom);
     }
-    
+
     header {
         padding-top: env(safe-area-inset-top);
     }

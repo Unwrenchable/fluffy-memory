@@ -1277,6 +1277,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (targetSection) {
                 targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
+
+            // Close mobile nav menu when a link is clicked
+            closeNavMenu();
         });
     });
     
@@ -1287,6 +1290,17 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.style.display = 'none';
         }
     };
+
+    // Hamburger menu toggle
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', function() {
+            const isOpen = navMenu.classList.toggle('nav-open');
+            navToggle.setAttribute('aria-expanded', isOpen);
+            navToggle.textContent = isOpen ? '✕' : '☰';
+        });
+    }
 
     // Initialize AI Assistant, Condition Categorizer, and Intake System
     if (typeof MedicalAIAssistant !== 'undefined') {
@@ -1311,6 +1325,17 @@ document.addEventListener('DOMContentLoaded', function() {
         window.locationServices = new LocationBasedServices();
     }
 });
+
+// Close mobile nav menu
+function closeNavMenu() {
+    const navMenu = document.getElementById('nav-menu');
+    const navToggle = document.getElementById('nav-toggle');
+    if (navMenu) navMenu.classList.remove('nav-open');
+    if (navToggle) {
+        navToggle.setAttribute('aria-expanded', 'false');
+        navToggle.textContent = '☰';
+    }
+}
 
 // ========================================
 // AI ASSISTANT WIDGET FUNCTIONS
