@@ -1211,7 +1211,17 @@ function saveAppointment() {
 }
 
 function downloadLetter() {
-    alert('Letter would be downloaded as a Word or PDF document.');
+    const letterContent = document.getElementById('appeal-letter-content');
+    const content = letterContent ? letterContent.innerText || letterContent.textContent : 'No letter content found.';
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'appeal-letter-' + new Date().toISOString().split('T')[0] + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 function editLetter() {
@@ -1858,7 +1868,29 @@ function updateProcessStep(stepNumber) {
 }
 
 function downloadFilledForms() {
-    alert('✅ All filled forms would be downloaded as a PDF package. In production, this generates actual form PDFs with your information.');
+    const reviewForm = document.getElementById('review-auto-filled-forms');
+    let content = 'Medical Assistance Helper - Filled Forms\n';
+    content += '========================================\n\n';
+    if (reviewForm) {
+        const inputs = reviewForm.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            const label = reviewForm.querySelector(`label[for="${input.name}"]`) || 
+                          input.closest('.form-field')?.querySelector('label');
+            const labelText = label ? label.textContent.trim() : input.name;
+            content += labelText + ':\n' + (input.value || '(not filled)') + '\n\n';
+        });
+    } else {
+        content += 'Please complete the form before downloading.';
+    }
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'filled-forms-' + new Date().toISOString().split('T')[0] + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 function emailForms() {
@@ -2286,7 +2318,23 @@ function generateDoctorLetter() {
 }
 
 function downloadLimitationDoc() {
-    alert('✅ Your limitation documentation would be downloaded as a PDF. In production, this creates a professional document to give your doctor.');
+    const docContent = document.getElementById('limitation-documentation-content');
+    let content = 'Medical Limitations Documentation\n';
+    content += '==================================\n\n';
+    if (docContent) {
+        content += docContent.innerText || docContent.textContent;
+    } else {
+        content += 'Please complete the limitations questionnaire first.';
+    }
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'limitation-documentation-' + new Date().toISOString().split('T')[0] + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 // ========================================
