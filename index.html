@@ -1686,15 +1686,27 @@
               let conditions = fields['Diagnosis'] || '';
               let limitations = fields['How conditions limit work'] || '';
 
+              // Helper to escape HTML to prevent XSS
+              const escapeHtml = (str) => {
+                if (!str) return '';
+                return String(str)
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/"/g, '&quot;')
+                  .replace(/'/g, '&#39;');
+              };
+
               // Helper to generate field HTML with confidence coloring
-              const fieldHTML = (label, name, value, type = 'text') => {
+              const fieldHTML = (label, name, value, type = 'text', rows = 3) => {
                 const hasValue = value && value.toString().trim();
                 const borderColor = hasValue ? '#059669' : '#f59e42';
                 const confidence = hasValue ? '<span style="color:#059669;">✓ High Confidence</span>' : '<span style="color:#f59e42;">⚠ Review Needed</span>';
+                const escapedValue = escapeHtml(value);
                 const inputTag = type === 'textarea' 
-                  ? `<textarea name='${name}' rows='3' style='width:100%;padding:0.5em;border:2px solid ${borderColor};border-radius:6px;'>${value}</textarea>`
-                  : `<input type='${type}' name='${name}' value='${value}' style='width:100%;padding:0.5em;border:2px solid ${borderColor};border-radius:6px;'>`;
-                return `<div><label>${label} ${confidence}</label>${inputTag}</div>`;
+                  ? `<textarea name='${escapeHtml(name)}' rows='${rows}' style='width:100%;padding:0.5em;border:2px solid ${borderColor};border-radius:6px;'>${escapedValue}</textarea>`
+                  : `<input type='${escapeHtml(type)}' name='${escapeHtml(name)}' value='${escapedValue}' style='width:100%;padding:0.5em;border:2px solid ${borderColor};border-radius:6px;'>`;
+                return `<div><label>${escapeHtml(label)} ${confidence}</label>${inputTag}</div>`;
               };
 
               reviewDiv.innerHTML = `
@@ -1709,8 +1721,8 @@
                     ${fieldHTML('Phone', 'phone', personalInfo.phone, 'tel')}
                     ${fieldHTML('Email', 'email', personalInfo.email, 'email')}
                   </div>
-                  <div style='margin-top:1em;'><label>Primary Disabling Conditions ${conditions && conditions.trim() ? '<span style="color:#059669;">✓ High Confidence</span>' : '<span style="color:#f59e42;">⚠ Review Needed</span>'}</label><textarea name='conditions' rows='3' style='width:100%;padding:0.5em;border:2px solid ${conditions && conditions.trim() ? '#059669' : '#f59e42'};border-radius:6px;'>${conditions}</textarea></div>
-                  <div style='margin-top:1em;'><label>How do your conditions limit your ability to work? ${limitations && limitations.trim() ? '<span style="color:#059669;">✓ High Confidence</span>' : '<span style="color:#f59e42;">⚠ Review Needed</span>'}</label><textarea name='limitations' rows='4' style='width:100%;padding:0.5em;border:2px solid ${limitations && limitations.trim() ? '#059669' : '#f59e42'};border-radius:6px;'>${limitations}</textarea></div>
+                  <div style='margin-top:1em;'>${fieldHTML('Primary Disabling Conditions', 'conditions', conditions, 'textarea', 3)}</div>
+                  <div style='margin-top:1em;'>${fieldHTML('How do your conditions limit your ability to work?', 'limitations', limitations, 'textarea', 4)}</div>
                 </form>
                 <div style='text-align:center;'>
                   <button class='btn-primary' style='font-size:1.1em;padding:0.7em 2em;border-radius:8px;background:#2563eb;color:#fff;border:none;box-shadow:0 2px 8px #2563eb33;cursor:pointer;margin-right:1em;' onclick='downloadFilledForms()'>✅ Confirm & Download All Forms</button>
@@ -1754,7 +1766,7 @@
                 // Download filled text templates
                 templateIds.forEach(id => {
                     let content = docLib ? docLib.fillTemplate(id, userData) : null;
-                    if (!content) {
+                    if (content == null || content === '') {
                         // Fallback: just include the user data
                         content = `Medical Assistance Helper - ${templateNames[id]}\n${'='.repeat(50)}\nGenerated: ${new Date().toLocaleString()}\n\n`;
                         for (const [k, v] of Object.entries(userData)) {
