@@ -1636,7 +1636,8 @@
               if (window.dualAIMedicalTeam && window.dualAIMedicalTeam.getTeamResponse) {
                 try {
                   const allText = Object.values(extractedData).join('\n');
-                  aiReport = await window.dualAIMedicalTeam.getTeamResponse('Analyze this medical document and extract personal info, conditions, and categorize eligibility: ' + allText);
+                  const jsonPrompt = 'Extract ONLY factual, real data from these medical documents. Do NOT use example, placeholder, or generic values. Respond ONLY in minified JSON (no explanation, no markdown, no extra text). If a field is not present, leave it blank.\n\nFields to extract:\n- Full Name\n- Date of Birth\n- SSN\n- Address\n- Phone Number\n- Email\n- Diagnosis\n- Medications\n- Allergies\n- Procedures\n- Insurance Policy Number\n- Provider Name\n- Medical Record Number\n- How conditions limit work\n\nDocument text:\n"""' + allText + '"""';
+                  aiReport = await window.dualAIMedicalTeam.getTeamResponse(jsonPrompt, { documentText: allText });
                 } catch (e) {
                   aiReport = { response: 'AI analysis failed: ' + e.message };
                 }
@@ -1657,61 +1658,59 @@
             }
 
             function renderReviewScreen() {
-              // Parse extracted data using AI if available
-              let personalInfo = {
-                fullName: 'Unknown',
-                ssn: '',
-                dateOfBirth: '',
-                address: '',
-                phone: '',
-                email: ''
-              };
-              let conditions = 'Not extracted';
-              let limitations = 'Not extracted';
-
+              // Parse JSON response from AI
+              let fields = {};
               if (aiReport && aiReport.response) {
-                // Simple parsing - in production, use structured AI response
-                const response = aiReport.response.toLowerCase();
-                // Extract name
-                const nameMatch = response.match(/name[:\s]*([^\n,]+)/i);
-                if (nameMatch) personalInfo.fullName = nameMatch[1].trim();
-                // Extract SSN
-                const ssnMatch = response.match(/ssn[:\s]*([^\n,]+)/i) || response.match(/social security[:\s]*([^\n,]+)/i);
-                if (ssnMatch) personalInfo.ssn = ssnMatch[1].trim();
-                // Extract DOB
-                const dobMatch = response.match(/date of birth[:\s]*([^\n,]+)/i) || response.match(/dob[:\s]*([^\n,]+)/i);
-                if (dobMatch) personalInfo.dateOfBirth = dobMatch[1].trim();
-                // Extract address
-                const addrMatch = response.match(/address[:\s]*([^\n]+)/i);
-                if (addrMatch) personalInfo.address = addrMatch[1].trim();
-                // Extract phone
-                const phoneMatch = response.match(/phone[:\s]*([^\n,]+)/i);
-                if (phoneMatch) personalInfo.phone = phoneMatch[1].trim();
-                // Extract email
-                const emailMatch = response.match(/email[:\s]*([^\n,]+)/i);
-                if (emailMatch) personalInfo.email = emailMatch[1].trim();
-                // Extract conditions
-                const condMatch = response.match(/conditions?[:\s]*([^\n]+)/i);
-                if (condMatch) conditions = condMatch[1].trim();
-                // Extract limitations
-                const limMatch = response.match(/limitations?[:\s]*([^\n]+)/i) || response.match(/work limitations?[:\s]*([^\n]+)/i);
-                if (limMatch) limitations = limMatch[1].trim();
+                const jsonStart = aiReport.response.indexOf('{');
+                const jsonEnd = aiReport.response.lastIndexOf('}');
+                if (jsonStart !== -1 && jsonEnd > jsonStart) {
+                  try { 
+                    fields = JSON.parse(aiReport.response.substring(jsonStart, jsonEnd + 1)); 
+                  } catch(e) {
+                    console.warn('Failed to parse AI response as JSON:', e);
+                  }
+                }
               }
+
+              const hasField = (f) => fields[f] && fields[f].toString().trim();
+              
+              // Extract personal info with confidence tracking
+              let personalInfo = {
+                fullName: fields['Full Name'] || '',
+                ssn: fields['SSN'] || '',
+                dateOfBirth: fields['Date of Birth'] || '',
+                address: fields['Address'] || '',
+                phone: fields['Phone Number'] || '',
+                email: fields['Email'] || ''
+              };
+              let conditions = fields['Diagnosis'] || '';
+              let limitations = fields['How conditions limit work'] || '';
+
+              // Helper to generate field HTML with confidence coloring
+              const fieldHTML = (label, name, value, type = 'text') => {
+                const hasValue = value && value.toString().trim();
+                const borderColor = hasValue ? '#059669' : '#f59e42';
+                const confidence = hasValue ? '<span style="color:#059669;">✓ High Confidence</span>' : '<span style="color:#f59e42;">⚠ Review Needed</span>';
+                const inputTag = type === 'textarea' 
+                  ? `<textarea name='${name}' rows='3' style='width:100%;padding:0.5em;border:2px solid ${borderColor};border-radius:6px;'>${value}</textarea>`
+                  : `<input type='${type}' name='${name}' value='${value}' style='width:100%;padding:0.5em;border:2px solid ${borderColor};border-radius:6px;'>`;
+                return `<div><label>${label} ${confidence}</label>${inputTag}</div>`;
+              };
 
               reviewDiv.innerHTML = `
                 <h3 style='color:#2563eb;margin-bottom:1em;'>📝 Review & Edit Auto-Filled Forms</h3>
                 <p style='margin-bottom:1.5em;'>Check the information below. <span style='color:#059669;'>Green</span> fields are high confidence. <span style='color:#f59e42;'>Orange</span> means review or complete.</p>
                 <form id='review-form' style='background:#f0f9ff;padding:1.5em;border-radius:12px;margin-bottom:1.5em;'>
                   <div style='display:grid;grid-template-columns:1fr 1fr;gap:1em;'>
-                    <div><label>Full Legal Name <span style='color:#059669;'>✓ High Confidence</span></label><input type='text' name='fullName' value='${personalInfo.fullName}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
-                    <div><label>Social Security Number <span style='color:#059669;'>✓ High Confidence</span></label><input type='text' name='ssn' value='${personalInfo.ssn}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
-                    <div><label>Date of Birth <span style='color:#059669;'>✓ High Confidence</span></label><input type='date' name='dateOfBirth' value='${personalInfo.dateOfBirth}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
-                    <div><label>Mailing Address <span style='color:#059669;'>✓ High Confidence</span></label><input type='text' name='address' value='${personalInfo.address}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
-                    <div><label>Phone <span style='color:#059669;'>✓ High Confidence</span></label><input type='tel' name='phone' value='${personalInfo.phone}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
-                    <div><label>Email <span style='color:#059669;'>✓ High Confidence</span></label><input type='email' name='email' value='${personalInfo.email}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
+                    ${fieldHTML('Full Legal Name', 'fullName', personalInfo.fullName)}
+                    ${fieldHTML('Social Security Number', 'ssn', personalInfo.ssn)}
+                    ${fieldHTML('Date of Birth', 'dateOfBirth', personalInfo.dateOfBirth, 'date')}
+                    ${fieldHTML('Mailing Address', 'address', personalInfo.address)}
+                    ${fieldHTML('Phone', 'phone', personalInfo.phone, 'tel')}
+                    ${fieldHTML('Email', 'email', personalInfo.email, 'email')}
                   </div>
-                  <div style='margin-top:1em;'><label>Primary Disabling Conditions <span style='color:#059669;'>✓ High Confidence</span></label><textarea name='conditions' rows='3' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'>${conditions}</textarea></div>
-                  <div style='margin-top:1em;'><label>How do your conditions limit your ability to work? <span style='color:#059669;'>✓ High Confidence</span></label><textarea name='limitations' rows='4' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'>${limitations}</textarea></div>
+                  <div style='margin-top:1em;'><label>Primary Disabling Conditions ${conditions && conditions.trim() ? '<span style="color:#059669;">✓ High Confidence</span>' : '<span style="color:#f59e42;">⚠ Review Needed</span>'}</label><textarea name='conditions' rows='3' style='width:100%;padding:0.5em;border:2px solid ${conditions && conditions.trim() ? '#059669' : '#f59e42'};border-radius:6px;'>${conditions}</textarea></div>
+                  <div style='margin-top:1em;'><label>How do your conditions limit your ability to work? ${limitations && limitations.trim() ? '<span style="color:#059669;">✓ High Confidence</span>' : '<span style="color:#f59e42;">⚠ Review Needed</span>'}</label><textarea name='limitations' rows='4' style='width:100%;padding:0.5em;border:2px solid ${limitations && limitations.trim() ? '#059669' : '#f59e42'};border-radius:6px;'>${limitations}</textarea></div>
                 </form>
                 <div style='text-align:center;'>
                   <button class='btn-primary' style='font-size:1.1em;padding:0.7em 2em;border-radius:8px;background:#2563eb;color:#fff;border:none;box-shadow:0 2px 8px #2563eb33;cursor:pointer;margin-right:1em;' onclick='downloadFilledForms()'>✅ Confirm & Download All Forms</button>
@@ -1720,30 +1719,68 @@
               `;
             }
 
-            // Download filled forms as text file
+            // Download all filled forms as separate files
             function downloadFilledForms() {
                 const form = document.getElementById('review-form');
-                let content = 'Medical Assistance Helper - Auto-Filled Forms\n';
-                content += '==============================================\n';
-                content += 'Generated: ' + new Date().toLocaleString() + '\n\n';
-                if (form) {
-                    const data = new FormData(form);
-                    for (const [key, value] of data.entries()) {
-                        const label = key.replace(/([_-])/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^\w/, c => c.toUpperCase()).trim();
-                        content += label + ':\n' + (value || '(not filled)') + '\n\n';
-                    }
-                } else {
-                    content += 'No form data available. Please complete the upload process first.';
+                if (!form) { 
+                    alert('Please complete the upload and review step first.'); 
+                    return; 
                 }
-                const blob = new Blob([content], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'filled-forms-' + new Date().toISOString().split('T')[0] + '.txt';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
+                
+                const data = new FormData(form);
+                const userData = {
+                    name: data.get('fullName') || '',
+                    ssn: data.get('ssn') || '',
+                    dob: data.get('dateOfBirth') || '',
+                    address: data.get('address') || '',
+                    phone: data.get('phone') || '',
+                    email: data.get('email') || '',
+                    conditions: data.get('conditions') || '',
+                    primaryCondition: data.get('conditions') || '',
+                    physicalLimitations: data.get('limitations') || '',
+                };
+                
+                // Ensure DocumentLibrary is available
+                const docLib = window.documentLibrary || (window.DocumentLibrary ? new window.DocumentLibrary() : null);
+                
+                const templateIds = ['appeal-letter', 'doctor-request', 'rfc-request', 'medical-records-request'];
+                const templateNames = {
+                    'appeal-letter': 'Appeal-Letter',
+                    'doctor-request': 'Doctor-Request',
+                    'rfc-request': 'RFC-Request',
+                    'medical-records-request': 'Medical-Records-Request'
+                };
+                
+                // Download filled text templates
+                templateIds.forEach(id => {
+                    let content = docLib ? docLib.fillTemplate(id, userData) : null;
+                    if (!content) {
+                        // Fallback: just include the user data
+                        content = `Medical Assistance Helper - ${templateNames[id]}\n${'='.repeat(50)}\nGenerated: ${new Date().toLocaleString()}\n\n`;
+                        for (const [k, v] of Object.entries(userData)) {
+                            content += k + ': ' + (v || '(not provided)') + '\n';
+                        }
+                    }
+                    const blob = new Blob([content], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = templateNames[id] + '-' + new Date().toISOString().split('T')[0] + '.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
+                
+                // Open official SSA form PDFs in new tabs
+                const ssaForms = [
+                    { name: 'SSA-16 Adult Disability Report', url: 'https://www.ssa.gov/forms/ssa-16.pdf' },
+                    { name: 'SSA-3368 Disability Report', url: 'https://www.ssa.gov/forms/ssa-3368.pdf' },
+                    { name: 'SSA-827 Authorization to Release', url: 'https://www.ssa.gov/forms/ssa-827.pdf' },
+                ];
+                ssaForms.forEach(f => window.open(f.url, '_blank'));
+                
+                showStatus(`✅ Downloaded ${templateIds.length} filled forms and opened ${ssaForms.length} official SSA forms!`, 'success');
             }
             function emailForms() {
                 const form = document.getElementById('review-form');
