@@ -2022,6 +2022,7 @@ or appeal, along with supporting medical records and RFC forms from my treating 
             </div>
             <div id="ai-upload-status" style="margin-top:1.5em;"></div>
             <div id="ai-review-area" style="display:none;margin-top:2em;"></div>
+            <div id="ai-doctor-panel" style="display:none;margin-top:2em;"></div>
         </div>
             <script>
             // Unified AI Paperwork Flow Logic
@@ -2214,6 +2215,163 @@ or appeal, along with supporting medical records and RFC forms from my treating 
                   <button class='btn-secondary' style='font-size:1.1em;padding:0.7em 2em;border-radius:8px;background:#6b7280;color:#fff;border:none;box-shadow:0 2px 8px #6b728033;cursor:pointer;' onclick='emailForms()'>📧 Email Forms to Me</button>
                 </div>
               `;
+              // After the review form is rendered, show doctor recommendations
+              renderDoctorRecommendations(conditions, personalInfo.address);
+            }
+
+            // Map diagnosis text to specialist types for NPI Registry search
+            function getSpecialtiesForDiagnosis(diagnosisText) {
+              if (!diagnosisText) return ['Internal Medicine'];
+              const t = diagnosisText.toLowerCase();
+              const specialties = new Set();
+              if (/cancer|tumor|carcinoma|leukemia|lymphoma|melanoma|sarcoma|malignant|mesothelioma|oncol/.test(t))
+                specialties.add('Hematology & Oncology');
+              if (/brain|glio|glioblastoma/.test(t)) {
+                specialties.add('Neurology');
+                specialties.add('Neurological Surgery');
+              }
+              if (/\bneurol|multiple sclerosis|\bms\b|parkinson|epilep|seizure|\bals\b|amyotrophic|huntington|alzheimer|dementia|neuropath/.test(t))
+                specialties.add('Neurology');
+              if (/heart|cardiac|cardio|coronary|chf|congestive|ejection fraction|arrhythmia|atrial/.test(t))
+                specialties.add('Cardiovascular Disease (Cardiology)');
+              if (/arthritis|rheumatoid|lupus|fibromyalgia|autoimmune|sjogren|scleroderma|vasculitis/.test(t))
+                specialties.add('Rheumatology');
+              if (/copd|emphysema|\blung\b|pulmonary|asthma|respiratory|bronchitis|fibrosis/.test(t))
+                specialties.add('Pulmonary Disease');
+              if (/depress|anxiety|bipolar|schizophren|ptsd|post.traumatic|panic|psychiatric|ocd/.test(t))
+                specialties.add('Psychiatry');
+              if (/diabet|endocrin|thyroid|adrenal|hormone/.test(t))
+                specialties.add('Endocrinology, Diabetes & Metabolism');
+              if (/kidney|renal|nephro|dialysis|glomerulo/.test(t))
+                specialties.add('Nephrology');
+              if (/\bhiv\b|aids|hepatitis c|infectious/.test(t))
+                specialties.add('Infectious Disease');
+              if (/spine|spinal|back pain|herniated disc|scoliosis|orthoped/.test(t))
+                specialties.add('Orthopedic Surgery');
+              if (/crohn|colitis|\bibs\b|gastrointestinal|gastro|\bliver\b|hepat|pancrea|celiac/.test(t))
+                specialties.add('Gastroenterology');
+              if (/chronic pain|pain syndrome|fibromyalgia|neuropath/.test(t))
+                specialties.add('Pain Medicine');
+              if (specialties.size === 0) specialties.add('Internal Medicine');
+              return [...specialties].slice(0, 3);
+            }
+
+            // Parse a ZIP or "City, ST" string into components
+            function parseDoctorLocation(raw) {
+              const s = (raw || '').trim();
+              const zipOnly = s.match(/^(\d{5})(-\d{4})?$/);
+              if (zipOnly) return { zip: zipOnly[1], city: '', state: '' };
+              const zipInAddr = s.match(/\b(\d{5})(-\d{4})?\b/);
+              if (zipInAddr) return { zip: zipInAddr[1], city: '', state: '' };
+              const cityState = s.match(/^([a-zA-Z\s]+),\s*([A-Z]{2})$/i);
+              if (cityState) return { zip: '', city: cityState[1].trim(), state: cityState[2].toUpperCase() };
+              return { zip: '', city: '', state: '' };
+            }
+
+            // Escape HTML for inline use inside template literals
+            function escDr(str) {
+              if (!str) return '';
+              return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+            }
+
+            // Render the doctor-finder panel below the review form
+            function renderDoctorRecommendations(conditionsText, addressText) {
+              const panel = document.getElementById('ai-doctor-panel');
+              if (!panel) return;
+              const specialties = getSpecialtiesForDiagnosis(conditionsText);
+              const loc = parseDoctorLocation(addressText);
+              const prefill = loc.zip || (loc.city ? loc.city + (loc.state ? ', ' + loc.state : '') : '');
+              panel.style.display = 'block';
+              panel.innerHTML = `
+                <div style="background:#f0f9ff;border:2px solid #2563eb;border-radius:12px;padding:1.5em;margin-top:0.5em;">
+                  <h3 style="color:#2563eb;margin-bottom:.5em;">👨‍⚕️ Find Specialists Near You</h3>
+                  <p style="margin-bottom:.75em;color:#374151;">Based on your extracted conditions, we found the right specialist types. Enter your ZIP code or city to find real doctors in your area.</p>
+                  ${specialties.length ? `<p style="margin-bottom:1em;color:#374151;"><strong>Specialists matched to your conditions:</strong> ${specialties.map(s=>`<span style="display:inline-block;background:#dbeafe;color:#1d4ed8;border-radius:4px;padding:.1em .5em;margin:.15em;">${escDr(s)}</span>`).join(' ')}</p>` : ''}
+                  <div style="display:flex;gap:.75em;flex-wrap:wrap;margin-bottom:1em;align-items:flex-end;">
+                    <div style="flex:1;min-width:180px;">
+                      <label for="dr-location-input" style="display:block;font-weight:bold;margin-bottom:.25em;">Your ZIP Code or City, State</label>
+                      <input type="text" id="dr-location-input" placeholder="e.g. 90210 or Boston, MA"
+                        value="${escDr(prefill)}"
+                        style="width:100%;padding:.5em;border:1px solid #cbd5e1;border-radius:6px;box-sizing:border-box;">
+                    </div>
+                    <button onclick="searchRecommendedDoctors()" class="btn-primary" style="padding:.5em 1.5em;white-space:nowrap;">🔍 Find Doctors</button>
+                  </div>
+                  <div id="doctor-results-panel"></div>
+                </div>`;
+            }
+
+            // Query NPI Registry and display results
+            async function searchRecommendedDoctors() {
+              const form = document.getElementById('review-form');
+              const conditionsVal = form ? (form.querySelector('[name="conditions"]') || {}).value || '' : '';
+              const locationInput = ((document.getElementById('dr-location-input') || {}).value || '').trim();
+              const resultsDiv = document.getElementById('doctor-results-panel');
+              if (!resultsDiv) return;
+
+              const specialties = getSpecialtiesForDiagnosis(conditionsVal);
+              if (!locationInput) {
+                resultsDiv.innerHTML = '<div class="message message-error">Please enter your ZIP code or city and state.</div>';
+                return;
+              }
+
+              const loc = parseDoctorLocation(locationInput);
+              const zip = /^\d{5}$/.test(locationInput) ? locationInput : loc.zip;
+              const city = loc.city;
+              const state = loc.state;
+
+              if (!zip && !(city && state)) {
+                resultsDiv.innerHTML = '<div class="message message-error">Please use format "90210" (ZIP) or "Boston, MA" (City, State).</div>';
+                return;
+              }
+
+              resultsDiv.innerHTML = '<div class="message message-info">🔍 Searching the NPI Registry for specialists near you…</div>';
+
+              let allDoctors = [];
+              for (const specialty of specialties) {
+                try {
+                  const params = new URLSearchParams({ version: '2.1', taxonomy_description: specialty, limit: '5' });
+                  if (zip) { params.set('postal_code', zip); }
+                  else { params.set('city', city); params.set('state', state); }
+                  const res = await fetch('https://npiregistry.cms.hhs.gov/api/?' + params.toString());
+                  const data = await res.json();
+                  const docs = (data.results || []).map(doc => ({
+                    name: doc.basic?.name || (((doc.basic?.first_name || '') + ' ' + (doc.basic?.last_name || '')).trim()),
+                    phone: (doc.addresses || []).map(a => a.telephone_number).filter(Boolean)[0] || '',
+                    address: (doc.addresses || []).find(a => a.address_purpose === 'LOCATION') || (doc.addresses || [])[0] || {},
+                    npi: doc.number || '',
+                    specialty: (doc.taxonomies || [])[0]?.desc || specialty
+                  }));
+                  allDoctors.push(...docs);
+                } catch (e) {
+                  console.error('NPI search error:', specialty, e);
+                }
+              }
+
+              // Deduplicate by NPI
+              const seen = new Set();
+              allDoctors = allDoctors.filter(d => { if (!d.npi || seen.has(d.npi)) return false; seen.add(d.npi); return true; });
+
+              if (!allDoctors.length) {
+                resultsDiv.innerHTML = `<div class="message message-info">No specialists found in that area. Try a nearby city or broader ZIP. You can also call <strong>211</strong> for local healthcare referrals or <strong>1-800-772-1213</strong> (SSA) for specialist recommendations.</div>`;
+                return;
+              }
+
+              let html = `<p style="margin:.5em 0 1em;color:#374151;"><strong>${allDoctors.length} specialist(s) found</strong> near ${escDr(locationInput)}</p>`;
+              html += '<ul style="list-style:none;padding:0;margin:0;display:grid;gap:.75em;">';
+              allDoctors.forEach(doc => {
+                const addr = doc.address;
+                const addrStr = [addr.address_1, addr.city, addr.state, addr.postal_code].filter(Boolean).join(', ');
+                html += `<li style="padding:1em;border:1px solid #e2e8f0;border-radius:8px;background:#fff;">
+                  <strong style="font-size:1.05em;">${escDr(doc.name)}</strong><br>
+                  <span style="color:#2563eb;">${escDr(doc.specialty)}</span><br>
+                  ${addrStr ? `<span style="color:#374151;">📍 ${escDr(addrStr)}</span><br>` : ''}
+                  ${doc.phone ? `<span style="color:#059669;">📞 ${escDr(doc.phone)}</span><br>` : ''}
+                  <span style="font-size:0.82em;color:#9ca3af;">NPI: ${escDr(String(doc.npi))}</span>
+                </li>`;
+              });
+              html += '</ul>';
+              html += `<p style="margin-top:1em;font-size:.9em;color:#6b7280;">💡 When calling, ask: <em>"Do you have experience with Social Security disability cases and will you complete RFC forms?"</em></p>`;
+              resultsDiv.innerHTML = html;
             }
 
             // Download all filled forms as separate files
