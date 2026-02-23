@@ -2244,7 +2244,7 @@ or appeal, along with supporting medical records and RFC forms from my treating 
                 specialties.add('Endocrinology, Diabetes & Metabolism');
               if (/kidney|renal|nephro|dialysis|glomerulo/.test(t))
                 specialties.add('Nephrology');
-              if (/\bhiv\b|aids|hepatitis c|infectious/.test(t))
+              if (/\bhiv\b|aids|hepatitis\s+c|infectious/.test(t))
                 specialties.add('Infectious Disease');
               if (/spine|spinal|back pain|herniated disc|scoliosis|orthoped/.test(t))
                 specialties.add('Orthopedic Surgery');
@@ -2315,7 +2315,7 @@ or appeal, along with supporting medical records and RFC forms from my treating 
               }
 
               const loc = parseDoctorLocation(locationInput);
-              const zip = /^\d{5}$/.test(locationInput) ? locationInput : loc.zip;
+              const zip = loc.zip;
               const city = loc.city;
               const state = loc.state;
 
@@ -2335,7 +2335,7 @@ or appeal, along with supporting medical records and RFC forms from my treating 
                   const res = await fetch('https://npiregistry.cms.hhs.gov/api/?' + params.toString());
                   const data = await res.json();
                   const docs = (data.results || []).map(doc => ({
-                    name: doc.basic?.name || (((doc.basic?.first_name || '') + ' ' + (doc.basic?.last_name || '')).trim()),
+                    name: doc.basic?.name || ((doc.basic?.first_name || '') + ' ' + (doc.basic?.last_name || '')).trim(),
                     phone: (doc.addresses || []).map(a => a.telephone_number).filter(Boolean)[0] || '',
                     address: (doc.addresses || []).find(a => a.address_purpose === 'LOCATION') || (doc.addresses || [])[0] || {},
                     npi: doc.number || '',
