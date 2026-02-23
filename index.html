@@ -1766,7 +1766,7 @@
                 // Download filled text templates
                 templateIds.forEach(id => {
                     let content = docLib ? docLib.fillTemplate(id, userData) : null;
-                    if (content == null || content === '') {
+                    if (content === null || content === '') {
                         // Fallback: just include the user data
                         content = `Medical Assistance Helper - ${templateNames[id]}\n${'='.repeat(50)}\nGenerated: ${new Date().toLocaleString()}\n\n`;
                         for (const [k, v] of Object.entries(userData)) {
