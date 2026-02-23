@@ -308,9 +308,9 @@ function generateAuthorizationWizard() {
 }
 
 // Disability Support Search
-function searchDisabilitySupport() {
-    const conditionInput = document.getElementById('rare-condition-input').value;
-    const disabilityType = document.getElementById('disability-type').value;
+async function searchDisabilitySupport() {
+    const conditionInput = (document.getElementById('rare-condition-input') || {}).value || '';
+    const disabilityType = (document.getElementById('disability-type') || {}).value || '';
     const resultsContainer = document.getElementById('disability-results');
 
     if (!conditionInput && !disabilityType) {
@@ -318,44 +318,183 @@ function searchDisabilitySupport() {
         return;
     }
 
-    resultsContainer.innerHTML = '<div class="loading"><div class="spinner"></div><p>Finding resources...</p></div>';
+    resultsContainer.innerHTML = '<div class="loading"><div class="spinner"></div><p>Checking your condition against SSA listings and rare disease database…</p></div>';
 
-    setTimeout(() => {
-        let html = '<h3>Disability Support Resources:</h3>';
-        
+    // Helper to escape HTML
+    const esc = (s) => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
+
+    const helper = window.coveredConditionsHelper;
+    let html = '';
+
+    if (conditionInput && helper) {
+        // Check Compassionate Allowances + Blue Book
+        const matches = helper.checkCondition(conditionInput);
+        // Check rare disease database
+        const rareMatches = helper.checkRareCondition ? helper.checkRareCondition(conditionInput) : [];
+
+        if (matches.cal.length) {
+            html += `<div class="message message-success" style="margin-bottom:1.5em;">
+                <h3>⚡ COMPASSIONATE ALLOWANCE — Fast Track Approval</h3>
+                <p>Your condition may qualify for <strong>expedited SSA review</strong> — typically decided in days to weeks instead of months.</p>`;
+            matches.cal.forEach(c => {
+                html += `<div style="margin-top:1em;padding:1em;background:#fff;border-radius:8px;border-left:4px solid #059669;">
+                    <strong>${esc(c.label)}</strong> <span style="font-size:.85em;color:#6b7280;">(Listing ${esc(c.listing)})</span>
+                    <p style="margin:.5em 0 .5em;font-size:.95em;font-weight:bold;color:#059669;">Required Documentation:</p>
+                    <ul style="margin:0;padding-left:1.5em;">${c.docs.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>
+                </div>`;
+            });
+            html += '</div>';
+        }
+
+        if (matches.blueBook.length) {
+            html += `<div class="message message-info" style="margin-bottom:1.5em;">
+                <h3>✅ SSA Blue Book Listed Condition</h3>
+                <p>Your condition has a specific SSA listing. Meeting the criteria means automatic approval.</p>`;
+            matches.blueBook.forEach(c => {
+                html += `<div style="margin-top:1em;padding:1em;background:#fff;border-radius:8px;border-left:4px solid #2563eb;">
+                    <strong>${esc(c.label)}</strong> <span style="font-size:.85em;color:#6b7280;">(Listing ${esc(c.listing)})</span>
+                    <p style="margin:.5em 0 .25em;font-size:.9em;"><strong>Approval criteria:</strong> ${esc(c.criteria)}</p>
+                    <p style="margin:.5em 0 .5em;font-size:.95em;font-weight:bold;color:#2563eb;">Required Documentation:</p>
+                    <ul style="margin:0;padding-left:1.5em;">${c.docs.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>
+                </div>`;
+            });
+            html += '</div>';
+        }
+
+        if (rareMatches.length) {
+            html += `<div style="margin-bottom:1.5em;padding:1.25em;background:#fef9e7;border:2px solid #f59e0b;border-radius:12px;">
+                <h3 style="color:#92400e;margin-bottom:.5em;">🔬 Rare / Complex Condition Detected</h3>
+                <p style="margin-bottom:1em;color:#78350f;">This condition may be harder to get approved because SSA examiners are often unfamiliar with it. Here is exactly what you and your doctor need to do.</p>`;
+            rareMatches.forEach(c => {
+                html += `<div style="margin-bottom:1.5em;padding:1em;background:#fff;border-radius:8px;border-left:4px solid #f59e0b;">
+                    <strong style="font-size:1.05em;">${esc(c.label)}</strong>
+                    <span style="display:inline-block;margin-left:.5em;font-size:.82em;background:#fef3c7;color:#92400e;padding:.1em .5em;border-radius:4px;">SSA: ${esc(c.listing)}</span>
+                    <div style="margin:.75em 0;padding:.75em;background:#fef2f2;border-radius:6px;font-size:.9em;">${esc(c.coverageAlert)}</div>
+                    <p style="font-weight:bold;color:#1d4ed8;margin:.5em 0 .25em;">📋 What your doctor MUST document:</p>
+                    <ul style="margin:0;padding-left:1.5em;font-size:.92em;">${c.doctorTalkingPoints.map(p=>`<li style="margin-bottom:.25em;">${esc(p)}</li>`).join('')}</ul>
+                    <p style="font-weight:bold;color:#059669;margin:.75em 0 .25em;">🗣️ What to tell the SSA examiner:</p>
+                    <ul style="margin:0;padding-left:1.5em;font-size:.92em;">${c.ssaTalkingPoints.map(p=>`<li style="margin-bottom:.25em;">${esc(p)}</li>`).join('')}</ul>
+                    <p style="font-weight:bold;margin:.75em 0 .25em;">📁 Evidence to submit:</p>
+                    <ul style="margin:0;padding-left:1.5em;font-size:.92em;">${c.docs.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>
+                    <p style="font-weight:bold;margin:.75em 0 .25em;">👨‍⚕️ Specialists to see:</p>
+                    <p style="margin:0;font-size:.92em;">${c.specialists.map(s=>`<span style="display:inline-block;background:#ede9fe;color:#5b21b6;padding:.1em .5em;border-radius:4px;margin:.15em;">${esc(s)}</span>`).join(' ')}</p>
+                    <p style="font-weight:bold;color:#374151;margin:.75em 0 .25em;">📖 SSA Strategy:</p>
+                    <p style="margin:0;font-size:.92em;">${esc(c.ssaStrategy)}</p>
+                </div>`;
+            });
+
+            // AI-powered packet generation button
+            html += `<div style="margin-top:1em;text-align:center;">
+                <button onclick="generateRareConditionPacketUI()" class="btn-primary" style="padding:.6em 1.5em;">
+                    🤖 Generate AI Documentation Packet for Doctor &amp; SSA
+                </button>
+                <p style="font-size:.85em;color:#6b7280;margin-top:.5em;">AI will write a detailed letter for your doctor and an advocacy statement for SSA.</p>
+            </div>`;
+
+            html += '</div>';
+        }
+
+        if (!matches.cal.length && !matches.blueBook.length && !rareMatches.length) {
+            // Generic resources + AI guidance
+            html += `<div class="message message-info" style="margin-bottom:1.5em;">
+                <h3>📋 Disability Resources for "${esc(conditionInput)}"</h3>
+                <p>Your specific condition wasn't matched in our database, but you may still qualify. Here's how to build your case:</p>
+                <ol style="margin-left:1.5em;margin-top:.75em;">
+                    <li style="margin-bottom:.5em;">Ask your doctor to complete a <strong>Residual Functional Capacity (RFC)</strong> form describing exactly what you cannot do</li>
+                    <li style="margin-bottom:.5em;">Get records from <strong>every</strong> doctor and specialist who has treated you</li>
+                    <li style="margin-bottom:.5em;">Keep a <strong>symptom diary</strong> documenting bad days, activity limitations, and medication effects</li>
+                    <li style="margin-bottom:.5em;">Contact <strong>NORD (National Organization for Rare Disorders)</strong> at 1-800-999-6673 for condition-specific advocacy</li>
+                    <li style="margin-bottom:.5em;">Consult a <strong>disability attorney</strong> — they work on contingency (no upfront cost)</li>
+                </ol>
+            </div>`;
+        }
+
+        // NORD resource always shown for rare/unknown conditions
+        if (!matches.cal.length && !matches.blueBook.length) {
+            html += `<div style="padding:1em;background:#f0f9ff;border-radius:8px;border-left:4px solid #2563eb;margin-bottom:1em;">
+                <strong>🦋 NORD — National Organization for Rare Disorders</strong><br>
+                Free patient advocacy, financial assistance programs, and expert referrals for rare disease patients.<br>
+                <strong>Phone: 1-800-999-6673</strong> | Ask about their Patient Assistance Programs
+            </div>`;
+        }
+    }
+
+    // Standard SSDI/SSI program resources
+    if (disabilityType || !conditionInput) {
+        html += '<h3 style="margin-top:1.5em;">Disability Program Resources:</h3>';
         disabilityResources.forEach(resource => {
             if (!disabilityType || resource.type.toLowerCase().includes(disabilityType.toLowerCase())) {
-                html += `
-                    <div class="result-item">
-                        <h4>${resource.name}</h4>
-                        <p>${resource.description}</p>
-                        <p><strong>Type:</strong> ${resource.type}</p>
-                        <p><strong>Requirements:</strong> ${resource.requirements}</p>
-                        <div class="tags">
-                            <span class="tag">${resource.type}</span>
-                            ${conditionInput ? '<span class="tag">Relevant for Your Condition</span>' : ''}
-                        </div>
-                    </div>
-                `;
+                html += `<div class="result-item">
+                    <h4>${esc(resource.name)}</h4>
+                    <p>${esc(resource.description)}</p>
+                    <p><strong>Type:</strong> ${esc(resource.type)}</p>
+                    <p><strong>Requirements:</strong> ${esc(resource.requirements)}</p>
+                    <div class="tags"><span class="tag">${esc(resource.type)}</span></div>
+                </div>`;
             }
         });
+    }
 
-        html += `
-            <div class="message message-success">
-                <strong>Application Strategy:</strong>
-                <ol style="margin-left: 20px; margin-top: 10px;">
-                    <li>Gather all medical documentation and test results</li>
-                    <li>Get supporting statements from your doctors</li>
-                    <li>Document how your condition affects daily activities</li>
-                    <li>Consider working with a disability advocate or attorney</li>
-                    <li>Be prepared for initial denial - many applications require appeals</li>
-                </ol>
-            </div>
-        `;
-
-        resultsContainer.innerHTML = html;
-    }, 1500);
+    if (!html) html = '<div class="message message-info">Please enter a condition name to get specific guidance.</div>';
+    resultsContainer.innerHTML = html;
 }
+
+async function generateRareConditionPacketUI() {
+    const conditionInput = (document.getElementById('rare-condition-input') || {}).value || '';
+    const resultsContainer = document.getElementById('disability-results');
+    const helper = window.coveredConditionsHelper;
+    if (!helper || !conditionInput) return;
+
+    const rareMatches = helper.checkRareCondition ? helper.checkRareCondition(conditionInput) : [];
+    if (!rareMatches.length) return;
+
+    const packetArea = document.getElementById('rare-ai-packet') || (() => {
+        const d = document.createElement('div');
+        d.id = 'rare-ai-packet';
+        d.style.cssText = 'margin-top:1.5em;padding:1em;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;';
+        resultsContainer.appendChild(d);
+        return d;
+    })();
+    packetArea.innerHTML = '<div class="message message-info">🤖 AI is generating your documentation packet — this may take 15–30 seconds…</div>';
+
+    const userData = {};
+    try {
+        if (window.userDataManager && window.userDataManager.hasProfile()) {
+            Object.assign(userData, window.userDataManager.getUserData() || {});
+        }
+    } catch (e) {}
+
+    const packet = await helper.generateRareConditionPacket(rareMatches, userData);
+    if (packet) {
+        const esc2 = (s) => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
+        packetArea.innerHTML = `
+            <h4 style="color:#2563eb;margin-bottom:.5em;">🤖 AI-Generated Documentation Packet</h4>
+            <div style="white-space:pre-wrap;font-size:.9em;line-height:1.6;background:#fff;padding:1em;border-radius:6px;border:1px solid #e2e8f0;max-height:400px;overflow-y:auto;">${esc2(packet)}</div>
+            <div style="margin-top:1em;display:flex;gap:.75em;flex-wrap:wrap;">
+                <button onclick="downloadRareConditionPacket()" class="btn-primary">💾 Download Packet</button>
+                <button onclick="document.getElementById('rare-ai-packet').innerHTML=''" class="btn-secondary">✕ Close</button>
+            </div>`;
+    } else {
+        packetArea.innerHTML = '<div class="message message-error">AI is not configured or unavailable. Please set up API keys in the AI Configuration section.</div>';
+    }
+}
+
+function downloadRareConditionPacket() {
+    const area = document.getElementById('rare-ai-packet');
+    if (!area) return;
+    const preEl = area.querySelector('div[style*="pre-wrap"]');
+    const text = preEl ? preEl.innerText : area.innerText;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'rare-condition-documentation-packet-' + new Date().toISOString().split('T')[0] + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
 
 // Doctor Search Function
 function searchDoctors() {

@@ -557,7 +557,7 @@
                                     <p style="margin: 0; font-size: 0.9rem; color: #666;">Main SSDI application form. Start here if applying for disability benefits.</p>
                                     <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #667eea;"><strong>16 pages • Fillable PDF</strong></p>
                                 </div>
-                                <button aria-label="Download PDF" onclick="window.open('https://www.ssa.gov/forms/ssa-16.pdf', '_blank')" class="btn-primary" style="min-width: 150px;">Download Form</button>
+                                <button aria-label="View step-by-step instructions for SSA-16" onclick="showSSAFormGuide('ssa-16')" class="btn-primary" style="min-width: 150px;">📋 View Instructions</button>
                             </div>
                         </div>
 
@@ -568,7 +568,7 @@
                                     <p style="margin: 0; font-size: 0.9rem; color: #666;">Detailed information about your medical conditions, treatments, and limitations.</p>
                                     <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #667eea;"><strong>15 pages • Fillable PDF</strong></p>
                                 </div>
-                                <button aria-label="Download PDF" onclick="window.open('https://www.ssa.gov/forms/ssa-3368.pdf', '_blank')" class="btn-primary" style="min-width: 150px;">Download Form</button>
+                                <button aria-label="View step-by-step instructions for SSA-3368" onclick="showSSAFormGuide('ssa-3368')" class="btn-primary" style="min-width: 150px;">📋 View Instructions</button>
                             </div>
                         </div>
 
@@ -579,7 +579,7 @@
                                     <p style="margin: 0; font-size: 0.9rem; color: #666;"><strong>CRITICAL:</strong> Fill one out for EACH doctor/hospital. SSA needs this to get your medical records!</p>
                                     <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #e53e3e;"><strong>Required • 2 pages • Fillable PDF</strong></p>
                                 </div>
-                                <button aria-label="Download PDF" onclick="window.open('https://www.ssa.gov/forms/ssa-827.pdf', '_blank')" class="btn-primary" style="min-width: 150px;">Download Form</button>
+                                <button aria-label="View step-by-step instructions for SSA-827" onclick="showSSAFormGuide('ssa-827')" class="btn-primary" style="min-width: 150px;">📋 View Instructions</button>
                             </div>
                         </div>
 
@@ -590,7 +590,7 @@
                                     <p style="margin: 0; font-size: 0.9rem; color: #666;"><strong>For Appeals:</strong> Use this if your application was denied. File within 60 days!</p>
                                     <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #d97706;"><strong>Appeal Form • 4 pages • Urgent if Denied</strong></p>
                                 </div>
-                                <button aria-label="Download PDF" onclick="window.open('https://www.ssa.gov/forms/ssa-561.pdf', '_blank')" class="btn-primary" style="min-width: 150px;">Download Form</button>
+                                <button aria-label="View step-by-step instructions for SSA-561" onclick="showSSAFormGuide('ssa-561')" class="btn-primary" style="min-width: 150px;">📋 View Instructions</button>
                             </div>
                         </div>
                     </div>
@@ -609,7 +609,7 @@
                                     <p style="margin: 0; font-size: 0.9rem; color: #666;">For documenting physical limitations: lifting, walking, standing, sitting, reaching.</p>
                                     <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #10b981;"><strong>For Your Doctor • 8 pages • Free Template</strong></p>
                                 </div>
-                                <button aria-label="Download form (opens in new tab)" onclick="window.open('https://www.disabilitysecrets.com/resources/disability/how-qualify-disability/physical-residual-functional-capacity-form.htm', '_blank')" class="btn-primary" style="min-width: 150px;">Get Template</button>
+                                <button aria-label="Download Physical RFC questionnaire" onclick="downloadRFCTemplate('physical')" class="btn-primary" style="min-width: 150px;">📥 Download Template</button>
                             </div>
                         </div>
 
@@ -620,7 +620,7 @@
                                     <p style="margin: 0; font-size: 0.9rem; color: #666;">For documenting mental/cognitive limitations: memory, concentration, social interaction.</p>
                                     <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #10b981;"><strong>For Your Doctor • 6 pages • Free Template</strong></p>
                                 </div>
-                                <button aria-label="Download form (opens in new tab)" onclick="window.open('https://www.disabilitysecrets.com/resources/disability/disability-and-social-security/mental-residual', '_blank')" class="btn-primary" style="min-width: 150px;">Get Template</button>
+                                <button aria-label="Download Mental RFC questionnaire" onclick="downloadRFCTemplate('mental')" class="btn-primary" style="min-width: 150px;">📥 Download Template</button>
                             </div>
                         </div>
 
@@ -698,7 +698,7 @@
                         <div style="padding: 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; color: white;">
                             <h4 style="margin: 0 0 0.5rem 0;">📚 SSDI Application Guide</h4>
                             <p style="margin: 0 0 1rem 0; font-size: 0.9rem; opacity: 0.9;">Complete walkthrough of the disability application process</p>
-                            <button aria-label="Download form (opens in new tab)" onclick="window.open('https://www.ssa.gov/benefits/disability/apply.html', '_blank')" class="btn-secondary" style="width: 100%; background: white; color: #667eea;">View Guide</button>
+                            <button aria-label="View SSDI step-by-step guide" onclick="showInlineGuide('ssdi-guide')" class="btn-secondary" style="width: 100%; background: white; color: #667eea;">📖 View Step-by-Step Guide</button>
                         </div>
 
                         <div style="padding: 1.5rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 8px; color: white;">
@@ -722,19 +722,19 @@
             <div class="container">
                 <h2>🔗 Quick Access Resources</h2>
                 <div class="quick-links">
-                    <a href="#" class="quick-link-card" onclick="externalLink('healthcare.gov')">
+                    <a href="#" class="quick-link-card" onclick="showResourceInfo('healthcare.gov');return false;">
                         <h4>Healthcare.gov</h4>
                         <p>Federal health insurance marketplace</p>
                     </a>
-                    <a href="#" class="quick-link-card" onclick="externalLink('ssa.gov')">
+                    <a href="#" class="quick-link-card" onclick="showResourceInfo('ssa.gov');return false;">
                         <h4>Social Security</h4>
                         <p>Disability benefits and SSI</p>
                     </a>
-                    <a href="#" class="quick-link-card" onclick="externalLink('medicaid.gov')">
+                    <a href="#" class="quick-link-card" onclick="showResourceInfo('medicaid.gov');return false;">
                         <h4>Medicaid</h4>
                         <p>State health coverage programs</p>
                     </a>
-                    <a href="#" class="quick-link-card" onclick="externalLink('medicare.gov')">
+                    <a href="#" class="quick-link-card" onclick="showResourceInfo('medicare.gov');return false;">
                         <h4>Medicare</h4>
                         <p>Federal health insurance</p>
                     </a>
@@ -846,6 +846,7 @@
     <script src="js/ai-assistant.js"></script>
     <script src="js/disability-doctor-finder.js"></script>
     <script src="js/document-library.js"></script>
+    <script src="js/covered-conditions.js"></script>
     <script src="js/smart-search.js"></script>
     <script src="js/crypto-payment.js"></script>
     <script src="js/pwa-install.js"></script>
@@ -1475,33 +1476,74 @@
         // Execute an action based on the action type
         function executeAction(action) {
             console.log('Executing action:', action);
-            
             switch(action) {
                 case 'start_intake':
                     startComprehensiveIntake();
                     break;
                 case 'show_document_library':
-                    if (window.documentLibrary) {
-                        window.documentLibrary.showLibrary();
-                    }
+                    document.getElementById('document-library').scrollIntoView({ behavior: 'smooth' });
                     break;
                 case 'show_doctor_finder':
                     if (window.disabilityDoctorFinder) {
                         window.disabilityDoctorFinder.showFinder();
+                    } else {
+                        document.getElementById('doctors').scrollIntoView({ behavior: 'smooth' });
                     }
                     break;
                 case 'show_location_services':
                     if (window.locationServices) {
                         window.locationServices.findNearbyServices();
+                    } else {
+                        document.getElementById('location').scrollIntoView({ behavior: 'smooth' });
                     }
                     break;
                 case 'open_ai_chat':
                     if (window.aiAssistant) {
                         window.aiAssistant.openChat();
+                    } else {
+                        openAITool('chat-assistant');
                     }
                     break;
+                case 'show_dental_pathway':
+                    showDentalPathway();
+                    break;
+                case 'show_denial_help':
+                    showDenialHelp();
+                    break;
+                case 'show_appeal_tools':
+                    openAITool('appeal-generator');
+                    break;
+                case 'show_uninsured_pathway':
+                    showUninsuredPathway();
+                    break;
+                case 'show_disability_help':
+                    showInlineGuide('ssdi-guide');
+                    break;
+                case 'show_disability_docs':
+                    document.getElementById('document-library').scrollIntoView({ behavior: 'smooth' });
+                    break;
+                case 'show_condition_help':
+                    document.getElementById('document-library').scrollIntoView({ behavior: 'smooth' });
+                    break;
+                case 'show_medicare_info':
+                    showResourceInfo('medicare.gov');
+                    break;
+                case 'show_medicaid_info':
+                    showResourceInfo('medicaid.gov');
+                    break;
+                case 'show_insurance_search':
+                    showResourceInfo('healthcare.gov');
+                    break;
+                case 'show_limitation_tool':
+                    showLimitationTool();
+                    break;
+                case 'show_document_upload':
+                    document.getElementById('auto-fill-documents') ?
+                        document.getElementById('auto-fill-documents').scrollIntoView({ behavior: 'smooth' }) :
+                        openAITool('document-autofill');
+                    break;
                 default:
-                    alert(`Action "${action}" will be implemented soon. This would trigger the ${action} feature.`);
+                    console.warn('Unknown action:', action);
             }
         }
         
@@ -1517,6 +1559,449 @@
             initAutoFillSystem();
             initSmartSearch();
         });
+
+        // ── Action handler: Dental Care Pathway ─────────────────────────────
+        function showDentalPathway() {
+            showGuideModal('🦷 Free & Low-Cost Dental Care — Step by Step', `<div style="font-size:.95rem;line-height:1.7">
+                <div style="background:#e0f2fe;padding:1em;border-radius:8px;margin-bottom:1.5em">
+                    <strong>Good news:</strong> Free dental care programs exist even if you have no insurance and no money. Here are every option, in order from fastest to access.
+                </div>
+                <h3>Option 1 — Federally Qualified Health Centers (FQHC)</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em"><strong>Find your nearest FQHC:</strong> Call <strong>1-877-464-4772</strong> — this is the HRSA helpline. Tell them you need dental care and your ZIP code. They will give you the nearest sliding-scale clinic.</li>
+                  <li style="margin-bottom:.6em"><strong>What to bring:</strong> Any form of ID (even expired), proof of income if you have it (pay stub, benefits letter, or just tell them verbally). No income = free care.</li>
+                  <li style="margin-bottom:.6em"><strong>What they cover:</strong> Cleanings, fillings, extractions, root canals, dentures, emergency dental. Most services are free or $20–$40 maximum.</li>
+                  <li style="margin-bottom:.6em"><strong>Call ahead:</strong> Ask for the next available dental appointment. Some offer same-day emergency slots.</li>
+                </ol>
+                <h3>Option 2 — Dental Schools (Free or Near-Free)</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em"><strong>Find a nearby dental school:</strong> Search "[your city] dental school clinic" — all accredited dental schools operate public clinics where supervised students do the work at 80–90% lower cost.</li>
+                  <li style="margin-bottom:.6em"><strong>Call and say:</strong> "I need dental treatment and I am a low-income patient. Do you have a sliding scale or charity care program?" Most say yes.</li>
+                  <li style="margin-bottom:.6em"><strong>What they cover:</strong> Full dental care including cleanings, fillings, extractions, crowns, dentures, implants. Quality is excellent — students are supervised by licensed dentists.</li>
+                </ol>
+                <h3>Option 3 — Medicaid Dental (if you qualify)</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em">If you receive Medicaid, dental is covered in most states. Call the member services number on your Medicaid card and ask: "What dental services are covered and how do I find a Medicaid dentist near me?"</li>
+                  <li style="margin-bottom:.6em">If you don't have Medicaid yet, click "Medicaid" in the Quick Links section of this page for step-by-step enrollment instructions.</li>
+                </ol>
+                <h3>Option 4 — Emergency Dental Programs</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em"><strong>Dental Lifeline Network:</strong> Free comprehensive dental care for elderly, disabled, and medically fragile adults. Call <strong>1-303-534-5360</strong> or have a social worker refer you.</li>
+                  <li style="margin-bottom:.6em"><strong>United Way 211:</strong> Dial <strong>211</strong> from any phone — 24/7 — and ask specifically for "free emergency dental care in [your city/county]." They maintain a live database of local programs.</li>
+                  <li style="margin-bottom:.6em"><strong>Hospital emergency rooms:</strong> For dental infections or severe pain, ERs must treat you regardless of ability to pay. They can prescribe antibiotics and pain relief, and connect you with follow-up dental care.</li>
+                </ol>
+                <div style="background:#fef3c7;padding:1em;border-radius:8px;margin-top:1em">
+                    <strong>📞 Key Numbers:</strong><br>
+                    • HRSA Free Clinic Finder: <strong>1-877-464-4772</strong><br>
+                    • United Way (24/7 resource line): <strong>211</strong><br>
+                    • Dental Lifeline Network: <strong>1-303-534-5360</strong>
+                </div>
+            </div>`);
+        }
+
+        // ── Action handler: Denial / Appeal Help ─────────────────────────────
+        function showDenialHelp() {
+            showGuideModal('⚖️ Your Application Was Denied — Here\'s Exactly What to Do', `<div style="font-size:.95rem;line-height:1.7">
+                <div style="background:#fee2e2;padding:1em;border-radius:8px;margin-bottom:1.5em">
+                    <strong>⏰ IMPORTANT:</strong> You must appeal within <strong>60 days</strong> of the date on your denial letter. Do not wait — start today.
+                </div>
+                <div style="background:#e0f2fe;padding:1em;border-radius:8px;margin-bottom:1.5em">
+                    <strong>Don't give up.</strong> 65–70% of first SSDI applications are denied. Most people who appeal — especially with a lawyer — eventually win. A denial is a normal part of the process, not the end.
+                </div>
+                <h3>Step 1 — Read Your Denial Letter Carefully</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em">Find the exact reason for denial. Common reasons: "insufficient medical evidence," "condition not severe enough," "able to perform past work," or "technical ineligibility."</li>
+                  <li style="margin-bottom:.6em">Note the <strong>claim number</strong> (starts with your SSN) — you'll need it for every appeal document.</li>
+                  <li style="margin-bottom:.6em">Note the <strong>denial date</strong> — your 60-day clock starts from this date.</li>
+                </ol>
+                <h3>Step 2 — File Form SSA-561 (Request for Reconsideration)</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em">Go to the Document Library on this page and click "📋 View Instructions" next to SSA-561 for a complete field-by-field guide.</li>
+                  <li style="margin-bottom:.6em">Use the "Generate Appeal Letter" tool on this page to create a professional letter to submit alongside the SSA-561.</li>
+                  <li style="margin-bottom:.6em">Submit at your local SSA office in person (get a receipt) or mail certified with return receipt. Call <strong>1-800-772-1213</strong> to find your nearest office.</li>
+                </ol>
+                <h3>Step 3 — Strengthen Your Evidence</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em">Get an RFC (Residual Functional Capacity) form completed by your doctor — download the template from the Document Library.</li>
+                  <li style="margin-bottom:.6em">Upload any new medical records, test results, or hospital records using the Document Upload tool at the top of this page.</li>
+                  <li style="margin-bottom:.6em">Ask your doctor to write a detailed letter describing exactly how your condition limits you — specifically what you cannot do and for how long.</li>
+                </ol>
+                <h3>Step 4 — Consider a Disability Lawyer (Free)</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em">Disability lawyers work on <strong>contingency</strong> — they are paid only if you win (a percentage of back pay, capped by law). You pay nothing upfront.</li>
+                  <li style="margin-bottom:.6em">Call <strong>1-800-772-1213</strong> and ask for referrals, or search "disability attorney free consultation [your state]."</li>
+                  <li style="margin-bottom:.6em">Having a lawyer at the hearing stage increases approval rates significantly.</li>
+                </ol>
+                <div style="margin-top:1.5em;text-align:center;display:flex;gap:1em;justify-content:center;flex-wrap:wrap">
+                    <button onclick="openAITool('appeal-generator');document.getElementById('guide-modal')?.remove();" class="btn-primary">✍️ Generate My Appeal Letter Now</button>
+                    <button onclick="document.getElementById('guide-modal')?.remove();document.getElementById('document-library')?.scrollIntoView({behavior:'smooth'});" class="btn-secondary">📚 Go to Document Library</button>
+                </div>
+            </div>`);
+        }
+
+        // ── Action handler: Uninsured Pathway ────────────────────────────────
+        function showUninsuredPathway() {
+            showGuideModal('🏥 No Insurance? Here\'s Every Free & Low-Cost Option', `<div style="font-size:.95rem;line-height:1.7">
+                <div style="background:#e0f2fe;padding:1em;border-radius:8px;margin-bottom:1.5em">
+                    <strong>You have more options than you think.</strong> Even with no insurance and no money, you can get medical care. Here is every option, from fastest to get to harder to access.
+                </div>
+                <h3>Option 1 — Community Health Centers (Free Clinics)</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em">Call <strong>1-877-464-4772</strong> (HRSA helpline) and give your ZIP code. They'll find the nearest federally-funded health center that must see you regardless of ability to pay.</li>
+                  <li style="margin-bottom:.6em">Bring any ID. Income doesn't matter — care is free or on a sliding scale (as low as $0).</li>
+                  <li style="margin-bottom:.6em">They provide: primary care, mental health, dental, prescriptions, specialist referrals, lab work.</li>
+                </ol>
+                <h3>Option 2 — 211 Social Services (24/7)</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em">Dial <strong>211</strong> from any phone, any time. Tell them you need medical care and have no insurance. They maintain a live database of every free clinic, charity care program, and low-cost resource in your county.</li>
+                  <li style="margin-bottom:.6em">Ask specifically for: free clinics, prescription assistance, specialist care, mental health services.</li>
+                </ol>
+                <h3>Option 3 — Apply for Medicaid (May Be Free)</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em">Many people who think they don't qualify actually do. Call <strong>1-800-318-2596</strong> to check eligibility and apply over the phone in minutes.</li>
+                  <li style="margin-bottom:.6em">If approved, Medicaid covers doctor visits, hospital stays, prescriptions, mental health, dental, and more — often at $0 cost to you.</li>
+                  <li style="margin-bottom:.6em">Approval can sometimes be retroactive, covering bills from up to 3 months before your application.</li>
+                </ol>
+                <h3>Option 4 — Hospital Charity Care</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em">Every non-profit hospital is legally required to have a charity care program. When you receive a bill or need care, call the hospital's billing department and say: "I need to apply for financial assistance or charity care."</li>
+                  <li style="margin-bottom:.6em">Many hospitals forgive 100% of bills for low-income patients. This applies to past bills too.</li>
+                </ol>
+                <h3>Option 5 — Free Prescription Programs</h3>
+                <ol style="padding-left:1.5em">
+                  <li style="margin-bottom:.6em"><strong>GoodRx:</strong> Free card/app that reduces drug prices 80%+ at most pharmacies. Download at GoodRx.com or call your pharmacy and ask them to check GoodRx pricing.</li>
+                  <li style="margin-bottom:.6em"><strong>NeedyMeds.org:</strong> Free service that finds manufacturer patient assistance programs — many drugs are free directly from the pharmaceutical company for low-income patients.</li>
+                  <li style="margin-bottom:.6em"><strong>RxAssist:</strong> Another free resource to find patient assistance programs. Call <strong>1-888-477-2669</strong>.</li>
+                </ol>
+                <div style="background:#fef3c7;padding:1em;border-radius:8px;margin-top:1em">
+                    <strong>📞 Key Numbers:</strong><br>
+                    • Free Clinic Finder: <strong>1-877-464-4772</strong><br>
+                    • 24/7 Social Services: <strong>211</strong><br>
+                    • Medicaid Application: <strong>1-800-318-2596</strong>
+                </div>
+            </div>`);
+        }
+
+        // ── Action handler: Limitation Documentation Tool ─────────────────────
+        function showLimitationTool() {
+            showGuideModal('📋 Document Your Limitations — Step by Step', `<div style="font-size:.95rem;line-height:1.7">
+                <div style="background:#e0f2fe;padding:1em;border-radius:8px;margin-bottom:1.5em">
+                    <strong>Why this matters:</strong> SSA approves disability based on what you <em>cannot</em> do, not just your diagnosis. The more specifically you document your limitations, the stronger your claim. Use this tool to build your personal limitations statement.
+                </div>
+                <h3>Step 1 — Physical Limitations</h3>
+                <div style="display:grid;gap:.75em;margin-bottom:1em">
+                  <div><label style="font-weight:bold;display:block;margin-bottom:.25em">How long can you sit before pain forces you to move or lie down?</label><select id="lim-sit" style="width:100%;padding:.4em;border:1px solid #cbd5e1;border-radius:6px"><option value="">Select...</option><option>Less than 5 minutes</option><option>5–15 minutes</option><option>15–30 minutes</option><option>30–60 minutes</option><option>More than 1 hour</option></select></div>
+                  <div><label style="font-weight:bold;display:block;margin-bottom:.25em">How long can you stand or walk at one time?</label><select id="lim-stand" style="width:100%;padding:.4em;border:1px solid #cbd5e1;border-radius:6px"><option value="">Select...</option><option>Less than 5 minutes</option><option>5–15 minutes</option><option>15–30 minutes</option><option>30–60 minutes</option><option>More than 1 hour</option></select></div>
+                  <div><label style="font-weight:bold;display:block;margin-bottom:.25em">Maximum weight you can lift or carry?</label><select id="lim-lift" style="width:100%;padding:.4em;border:1px solid #cbd5e1;border-radius:6px"><option value="">Select...</option><option>Nothing — I cannot lift safely</option><option>Less than 5 lbs (a small purse)</option><option>5–10 lbs (a small bag of groceries)</option><option>10–20 lbs</option><option>More than 20 lbs</option></select></div>
+                </div>
+                <h3>Step 2 — Daily Life Impact</h3>
+                <div style="display:grid;gap:.75em;margin-bottom:1em">
+                  <div><label style="font-weight:bold;display:block;margin-bottom:.25em">How many days per week are your symptoms severe enough to prevent you from leaving home?</label><select id="lim-homebound" style="width:100%;padding:.4em;border:1px solid #cbd5e1;border-radius:6px"><option value="">Select...</option><option>Every day</option><option>5–6 days</option><option>3–4 days</option><option>1–2 days</option><option>Rarely</option></select></div>
+                  <div><label style="font-weight:bold;display:block;margin-bottom:.25em">Do you need to lie down during the day due to pain, fatigue, or symptoms?</label><select id="lim-laydown" style="width:100%;padding:.4em;border:1px solid #cbd5e1;border-radius:6px"><option value="">Select...</option><option>Multiple times every day</option><option>Once a day</option><option>A few times a week</option><option>Occasionally</option><option>Rarely</option></select></div>
+                  <div><label style="font-weight:bold;display:block;margin-bottom:.25em">How long can you concentrate on a task before losing focus?</label><select id="lim-concentrate" style="width:100%;padding:.4em;border:1px solid #cbd5e1;border-radius:6px"><option value="">Select...</option><option>Less than 5 minutes</option><option>5–15 minutes</option><option>15–30 minutes</option><option>30–60 minutes</option><option>More than 1 hour</option></select></div>
+                </div>
+                <h3>Step 3 — Additional Details</h3>
+                <div style="margin-bottom:1em">
+                  <label style="font-weight:bold;display:block;margin-bottom:.25em">Describe any other ways your condition affects your ability to work or care for yourself:</label>
+                  <textarea id="lim-other" rows="4" style="width:100%;padding:.5em;border:1px solid #cbd5e1;border-radius:6px" placeholder="Example: I drop things frequently due to hand weakness. I cannot drive because of medication side effects. I need help bathing on bad days..."></textarea>
+                </div>
+                <div style="text-align:center">
+                    <button onclick="downloadLimitationStatement()" class="btn-primary">📥 Download My Limitations Statement</button>
+                </div>
+            </div>`);
+        }
+
+        // Download the limitation statement built by the tool
+        function downloadLimitationStatement() {
+            const sit = (document.getElementById('lim-sit') || {}).value || '(not answered)';
+            const stand = (document.getElementById('lim-stand') || {}).value || '(not answered)';
+            const lift = (document.getElementById('lim-lift') || {}).value || '(not answered)';
+            const homebound = (document.getElementById('lim-homebound') || {}).value || '(not answered)';
+            const laydown = (document.getElementById('lim-laydown') || {}).value || '(not answered)';
+            const concentrate = (document.getElementById('lim-concentrate') || {}).value || '(not answered)';
+            const other = (document.getElementById('lim-other') || {}).value || '(none provided)';
+            const date = new Date().toLocaleDateString();
+            const content = `PERSONAL LIMITATIONS STATEMENT
+Generated: ${date}
+${'='.repeat(50)}
+
+This statement describes how my medical condition(s) affect my ability to function and work on a daily basis.
+
+PHYSICAL LIMITATIONS
+--------------------
+Sitting tolerance: ${sit}
+Standing/walking tolerance: ${stand}
+Lifting/carrying capacity: ${lift}
+
+DAILY LIFE IMPACT
+-----------------
+Days per week symptoms prevent leaving home: ${homebound}
+Need to lie down during the day: ${laydown}
+Concentration/focus duration: ${concentrate}
+
+ADDITIONAL LIMITATIONS
+----------------------
+${other}
+
+${'='.repeat(50)}
+NOTE: This statement is based on my typical limitations on an average or bad day.
+It is intended to accompany my Social Security Disability (SSDI/SSI) application
+or appeal, along with supporting medical records and RFC forms from my treating physicians.
+`;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Limitations-Statement-' + new Date().toISOString().split('T')[0] + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ── Inline guide modal ──────────────────────────────────────────────
+        function showGuideModal(title, htmlContent) {
+            const existing = document.getElementById('guide-modal');
+            if (existing) existing.remove();
+            const modal = document.createElement('div');
+            modal.id = 'guide-modal';
+            modal.className = 'modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `<div class="modal-content" style="max-width:800px;max-height:85vh;overflow:auto;">
+                <span class="close" onclick="document.getElementById('guide-modal').remove()">&times;</span>
+                <h2 style="margin-bottom:1rem;">${title}</h2>
+                <div>${htmlContent}</div>
+            </div>`;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+        }
+
+        // ── SSA form step-by-step guides ────────────────────────────────────
+        function showSSAFormGuide(formId) {
+            const guides = {
+                'ssa-16': {
+                    title: '📋 How to Complete Form SSA-16 (Disability Application)',
+                    content: `<div style="font-size:.95rem;line-height:1.7">
+                        <div style="background:#e0f2fe;padding:1em;border-radius:8px;margin-bottom:1em"><strong>What this form is:</strong> The main form to start your SSDI claim. It collects your personal information and work history.</div>
+                        <h3>Step-by-Step Instructions:</h3>
+                        <ol style="padding-left:1.5em">
+                          <li style="margin-bottom:.7em"><strong>Section 1 — Personal Information:</strong> Enter your full legal name (as on your Social Security card), SSN, date of birth, and current contact info.</li>
+                          <li style="margin-bottom:.7em"><strong>Section 2 — Your Disability:</strong> Describe every medical condition clearly using the exact diagnosis name your doctor gave you. Include the date you became unable to work.</li>
+                          <li style="margin-bottom:.7em"><strong>Section 3 — Work History:</strong> List every job held in the last 15 years — job title, duties, hours per day, and dates. SSA uses this to decide what work you can still do.</li>
+                          <li style="margin-bottom:.7em"><strong>Section 4 — Medical Treatment:</strong> List ALL doctors, hospitals, and clinics with their addresses and phone numbers. The more records, the stronger your case.</li>
+                          <li style="margin-bottom:.7em"><strong>Section 5 — Education:</strong> Highest level of education and any vocational training.</li>
+                          <li style="margin-bottom:.7em"><strong>Section 6 — Signature:</strong> Sign and date. Unsigned forms will be rejected.</li>
+                        </ol>
+                        <div style="background:#fef3c7;padding:1em;border-radius:8px;margin-top:1em"><strong>💡 How to submit:</strong> Call SSA at <strong>1-800-772-1213</strong> (Mon–Fri 8am–7pm) to apply by phone with an agent, or bring completed forms to your local SSA office. Keep copies of everything.</div>
+                        <div style="margin-top:1.5em;text-align:center"><button onclick="generateAutoFilledDocument('doctor-request');document.getElementById('guide-modal')?.remove();" class="btn-primary">📥 Generate Pre-Filled Reference Letter</button></div>
+                    </div>`
+                },
+                'ssa-3368': {
+                    title: '📋 How to Complete Form SSA-3368 (Adult Disability Report)',
+                    content: `<div style="font-size:.95rem;line-height:1.7">
+                        <div style="background:#e0f2fe;padding:1em;border-radius:8px;margin-bottom:1em"><strong>What this form is:</strong> Detailed report on how your disability affects your daily life and ability to work. One of the most important forms — be very specific.</div>
+                        <h3>Step-by-Step Instructions:</h3>
+                        <ol style="padding-left:1.5em">
+                          <li style="margin-bottom:.7em"><strong>Section A — Medical Conditions:</strong> List every condition, illness, or injury including mental health. Use the exact names your doctors use. Do not leave anything out.</li>
+                          <li style="margin-bottom:.7em"><strong>Section B — How Conditions Affect You:</strong> Describe your worst days honestly. How far can you walk? How long can you sit or stand? Can you lift things? Memory or concentration problems? SSA needs specifics, not generalities.</li>
+                          <li style="margin-bottom:.7em"><strong>Section C — Medications:</strong> List ALL prescriptions — dose, frequency, and any side effects (drowsiness, dizziness, nausea). Side effects that impair functioning are very important.</li>
+                          <li style="margin-bottom:.7em"><strong>Section D — Medical Visits:</strong> Every doctor, specialist, hospital, clinic, lab, and therapy provider from the past year with dates and what was treated.</li>
+                          <li style="margin-bottom:.7em"><strong>Section E — Work History:</strong> For each job in the last 15 years, describe specific duties, physical requirements, and why your condition now prevents you from doing it.</li>
+                          <li style="margin-bottom:.7em"><strong>Section F — Education and Training:</strong> All education, job training, and special skills.</li>
+                        </ol>
+                        <div style="background:#fef3c7;padding:1em;border-radius:8px;margin-top:1em"><strong>💡 Critical tip:</strong> Describe your WORST days, not your best. If you have good and bad days, explain the ratio — e.g., "3 out of 5 days I cannot get out of bed." Never just say you "can't do anything" — be specific.</div>
+                    </div>`
+                },
+                'ssa-827': {
+                    title: '⚠️ How to Complete Form SSA-827 (Authorization to Release Information)',
+                    content: `<div style="font-size:.95rem;line-height:1.7">
+                        <div style="background:#fee2e2;padding:1em;border-radius:8px;margin-bottom:1em"><strong>CRITICAL:</strong> SSA cannot get your medical records without this form. You must complete one copy for EACH doctor, hospital, or clinic that has treated you.</div>
+                        <h3>Step-by-Step Instructions:</h3>
+                        <ol style="padding-left:1.5em">
+                          <li style="margin-bottom:.7em"><strong>Your Information (top):</strong> Full legal name, Social Security Number, date of birth, and address — must match your SSA records exactly.</li>
+                          <li style="margin-bottom:.7em"><strong>Provider Information (middle):</strong> Name and full address of the doctor, hospital, or clinic you are authorizing. Complete a SEPARATE form for each provider.</li>
+                          <li style="margin-bottom:.7em"><strong>Date Range:</strong> Enter the date your condition began (or 2 years ago if unsure) through today's date.</li>
+                          <li style="margin-bottom:.7em"><strong>Signature:</strong> Sign and date at the bottom. Print and sign one for every provider you listed on your disability report.</li>
+                          <li style="margin-bottom:.7em"><strong>How many?</strong> Count every doctor and hospital on your SSA-3368. If you had 6 providers, you need 6 signed copies of this form.</li>
+                        </ol>
+                        <div style="background:#fef3c7;padding:1em;border-radius:8px;margin-top:1em"><strong>💡 Tip:</strong> Print 10 copies and sign them all at once. Keep extras — you'll need them for new providers or re-applications. Submit with your SSA-16 and SSA-3368.</div>
+                    </div>`
+                },
+                'ssa-561': {
+                    title: '⚖️ How to Complete Form SSA-561 (Request for Reconsideration)',
+                    content: `<div style="font-size:.95rem;line-height:1.7">
+                        <div style="background:#fef3c7;padding:1em;border-radius:8px;margin-bottom:1em"><strong>⏰ TIME SENSITIVE:</strong> You have only <strong>60 days</strong> from the date of your denial letter to file this appeal. Do not wait.</div>
+                        <h3>Step-by-Step Instructions:</h3>
+                        <ol style="padding-left:1.5em">
+                          <li style="margin-bottom:.7em"><strong>Section 1 — Your Information:</strong> Full name, SSN, address, phone. Include your SSA claim number from the denial letter (starts with your SSN).</li>
+                          <li style="margin-bottom:.7em"><strong>Section 2 — The Decision:</strong> Write the date of the denial letter. Check "I disagree because…" and write a clear reason — e.g., "My condition has worsened and additional medical evidence was not reviewed."</li>
+                          <li style="margin-bottom:.7em"><strong>Section 3 — New Evidence:</strong> List any new medical records, test results, or doctor statements you are adding. New evidence greatly strengthens your appeal.</li>
+                          <li style="margin-bottom:.7em"><strong>Section 4 — Request Type:</strong> Check "Case Review" for a standard appeal or "Informal Conference" to meet with an SSA representative in person.</li>
+                          <li style="margin-bottom:.7em"><strong>Submission:</strong> Take it to your local SSA office in person or mail it certified mail. Keep your receipt. Call 1-800-772-1213 to find your local office.</li>
+                        </ol>
+                        <div style="background:#e0f2fe;padding:1em;border-radius:8px;margin-top:1em"><strong>💡 After filing:</strong> Use the "Generate Appeal Letter" button in the Document Library to create a professional letter to submit alongside this form. The combination significantly improves your chances.</div>
+                        <div style="margin-top:1.5em;text-align:center"><button onclick="generateAutoFilledDocument('appeal-letter');document.getElementById('guide-modal')?.remove();" class="btn-primary">📝 Generate Your Appeal Letter Now</button></div>
+                    </div>`
+                }
+            };
+            const g = guides[formId];
+            if (g) showGuideModal(g.title, g.content);
+        }
+
+        // ── RFC questionnaire download ───────────────────────────────────────
+        function downloadRFCTemplate(type) {
+            const isPhysical = type === 'physical';
+            const title = isPhysical
+                ? 'Physical Residual Functional Capacity (RFC) Questionnaire'
+                : 'Mental Residual Functional Capacity (RFC) Questionnaire';
+            let content = title + '\n' + '='.repeat(title.length) + '\n';
+            content += 'Doctor: ________________________  Patient: ________________________  Date: ________________\n\n';
+            content += 'INSTRUCTIONS FOR DOCTOR: Please answer these questions based on your patient\'s condition over the past 12 months. This form supports a Social Security Disability claim.\n\n';
+            content += 'DIAGNOSIS / CONDITIONS:\n___________________________________________________________________________\n\n';
+            if (isPhysical) {
+                content += '1. SITTING\nHow long can the patient sit at one time before needing to get up?\n[ ] <15 min  [ ] 15–30 min  [ ] 30–45 min  [ ] 1 hour  [ ] >1 hour\nTotal hours per 8-hour workday the patient can sit: ______\n\n';
+                content += '2. STANDING & WALKING\nHow long can the patient stand at one time?\n[ ] <15 min  [ ] 15–30 min  [ ] 30–45 min  [ ] 1 hour  [ ] >1 hour\nTotal hours per 8-hour workday patient can stand/walk: ______\n\n';
+                content += '3. LIFTING & CARRYING\nMaximum weight the patient can lift/carry:\n[ ] <5 lbs  [ ] 5–10 lbs  [ ] 10–20 lbs  [ ] 20–50 lbs  [ ] >50 lbs\nFrequently (>1/3 of the day): ______  Occasionally (<1/3 of the day): ______\n\n';
+                content += '4. REACHING, HANDLING, FINGERING\n[ ] No restriction\n[ ] Limited — describe: ___________________________________________\n\n';
+                content += '5. POSTURAL LIMITATIONS  (Never / Occasionally / Frequently / Continuously)\nClimbing stairs: ______  Climbing ladders: ______  Bending/stooping: ______\nCrouching: ______  Kneeling: ______  Crawling: ______\n\n';
+                content += '6. ENVIRONMENTAL LIMITATIONS\nShould avoid: [ ] Heights  [ ] Moving machinery  [ ] Humidity  [ ] Temperature extremes  [ ] Fumes/dust  [ ] Noise\nOther: ______________________________\n\n';
+                content += '7. PAIN\nDoes pain affect ability to work? [ ] No  [ ] Yes — Severity (1–10): ______\nHow does pain affect attention/concentration? ___________________________________________\n\n';
+                content += '8. MEDICATION SIDE EFFECTS\nList medications and side effects that affect functioning:\n___________________________________________________________________________\n\n';
+                content += '9. ABSENCES\nDays per month patient would likely miss work due to condition: ______\n\n';
+                content += '10. ADDITIONAL COMMENTS\n___________________________________________________________________________\n\n';
+            } else {
+                content += '1. UNDERSTANDING & MEMORY\nSimple instructions: [ ] Not limited  [ ] Slightly  [ ] Moderately  [ ] Markedly\nComplex instructions: [ ] Not limited  [ ] Slightly  [ ] Moderately  [ ] Markedly\n\n';
+                content += '2. CONCENTRATION & PERSISTENCE\nMaintain concentration for extended periods: [ ] Not limited  [ ] Slightly  [ ] Moderately  [ ] Markedly\nHow long can the patient focus before losing concentration? ______\nComplete a full workday without symptom interruptions: [ ] Not limited  [ ] Slightly  [ ] Moderately  [ ] Markedly\n\n';
+                content += '3. SOCIAL INTERACTION\nWith coworkers: [ ] Not limited  [ ] Slightly  [ ] Moderately  [ ] Markedly\nWith the public: [ ] Not limited  [ ] Slightly  [ ] Moderately  [ ] Markedly\nAccepting supervision: [ ] Not limited  [ ] Slightly  [ ] Moderately  [ ] Markedly\n\n';
+                content += '4. ADAPTATION\nResponding to workplace changes: [ ] Not limited  [ ] Slightly  [ ] Moderately  [ ] Markedly\nSetting realistic goals independently: [ ] Not limited  [ ] Slightly  [ ] Moderately  [ ] Markedly\n\n';
+                content += '5. EPISODES (panic attacks, depression episodes, etc.)\nFrequency per month: ______  Typical duration: ______\nTriggers: ___________________________________________\n\n';
+                content += '6. MEDICATION SIDE EFFECTS\nList psychiatric medications and side effects affecting functioning:\n___________________________________________________________________________\n\n';
+                content += '7. ABSENCES\nDays per month patient would miss work due to mental health condition: ______\n\n';
+                content += '8. ADDITIONAL CLINICAL OBSERVATIONS\n___________________________________________________________________________\n\n';
+            }
+            content += 'Doctor\'s Signature: _________________________  License #: _______________  Date: ____________\n';
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = (isPhysical ? 'Physical-RFC-Questionnaire' : 'Mental-RFC-Questionnaire') + '-' + new Date().toISOString().split('T')[0] + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ── Quick-link resource info (in-app) ───────────────────────────────
+        function showResourceInfo(site) {
+            const resources = {
+                'healthcare.gov': {
+                    title: '🏥 Health Insurance Marketplace — How to Apply',
+                    content: `<div style="font-size:.95rem;line-height:1.7">
+                        <p>Healthcare.gov is where you find and enroll in health insurance if you don't have employer coverage or qualify for Medicaid/Medicare.</p>
+                        <h3>Step-by-Step How to Apply:</h3>
+                        <ol style="padding-left:1.5em">
+                          <li style="margin-bottom:.7em"><strong>Check enrollment dates:</strong> Open Enrollment runs Nov 1 – Jan 15 each year. You can enroll any time if you have a Special Enrollment Period (job loss, marriage, birth, or loss of other coverage).</li>
+                          <li style="margin-bottom:.7em"><strong>Gather what you need:</strong> Social Security numbers for everyone enrolling, income information (pay stubs or tax return), and current insurance policy number if applicable.</li>
+                          <li style="margin-bottom:.7em"><strong>Call for free help:</strong> Call <strong>1-800-318-2596</strong> (TTY: 1-855-889-4325) — 24/7, available in 150+ languages. An agent will guide you through the application for free.</li>
+                          <li style="margin-bottom:.7em"><strong>Find a local Navigator:</strong> Search "healthcare navigator near me" — these are free certified helpers in your community who can sit with you and complete the application.</li>
+                          <li style="margin-bottom:.7em"><strong>Based on your income,</strong> you may qualify for reduced monthly costs (tax credits) or free Medicaid instead of a marketplace plan.</li>
+                        </ol>
+                        <div style="background:#e0f2fe;padding:1em;border-radius:8px;margin-top:1em"><strong>📞 Free Help: 1-800-318-2596</strong> — Available 24/7 in 150+ languages</div>
+                    </div>`
+                },
+                'ssa.gov': {
+                    title: '🏛️ Social Security Disability — How to Apply',
+                    content: `<div style="font-size:.95rem;line-height:1.7">
+                        <p>The SSA manages two disability programs: SSDI (for people who have worked and paid Social Security taxes) and SSI (for people with limited income regardless of work history).</p>
+                        <h3>Step-by-Step Application Process:</h3>
+                        <ol style="padding-left:1.5em">
+                          <li style="margin-bottom:.7em"><strong>Step 1 — Upload your documents:</strong> Use the Document Upload tool on this page to auto-extract your medical information.</li>
+                          <li style="margin-bottom:.7em"><strong>Step 2 — Complete your forms:</strong> Use the Document Library on this page to get pre-filled versions of SSA-16, SSA-3368, and SSA-827 with your information already filled in.</li>
+                          <li style="margin-bottom:.7em"><strong>Step 3 — Apply by phone:</strong> Call <strong>1-800-772-1213</strong> (TTY: 1-800-325-0778) Mon–Fri 8am–7pm. Tell them you want to start a disability application. Have your completed forms ready.</li>
+                          <li style="margin-bottom:.7em"><strong>Step 4 — Local office visit:</strong> Bring all forms and documents to your local SSA office for in-person submission. Call the number above to find your nearest office address.</li>
+                          <li style="margin-bottom:.7em"><strong>Step 5 — Track your claim:</strong> After applying, SSA sends a receipt with your claim number. Save it. Processing takes 3–6 months.</li>
+                          <li style="margin-bottom:.7em"><strong>Step 6 — If denied:</strong> Use the SSA-561 instructions in the Document Library and generate an Appeal Letter within 60 days of your denial letter date.</li>
+                        </ol>
+                        <div style="background:#e0f2fe;padding:1em;border-radius:8px;margin-top:1em"><strong>📞 SSA Helpline: 1-800-772-1213</strong> — Mon–Fri 8am–7pm | TTY: 1-800-325-0778</div>
+                    </div>`
+                },
+                'medicaid.gov': {
+                    title: '💊 Medicaid — Free or Low-Cost State Health Coverage',
+                    content: `<div style="font-size:.95rem;line-height:1.7">
+                        <p>Medicaid provides free or very low-cost health coverage for people with limited income. Each state runs its own program, but all cover doctor visits, hospital care, and prescriptions.</p>
+                        <h3>Step-by-Step How to Apply:</h3>
+                        <ol style="padding-left:1.5em">
+                          <li style="margin-bottom:.7em"><strong>Check if you qualify:</strong> Generally available to low-income adults, children, pregnant women, elderly, and people with disabilities. Income limits vary by state — many states cover adults earning up to 138% of the federal poverty level.</li>
+                          <li style="margin-bottom:.7em"><strong>Gather documents:</strong> Photo ID (driver's license or state ID), proof of income (pay stubs or tax return), proof of residency (utility bill or lease), and your Social Security Number.</li>
+                          <li style="margin-bottom:.7em"><strong>Apply by phone:</strong> Call <strong>1-800-318-2596</strong> to be connected to your state Medicaid office, or call your state's health department directly.</li>
+                          <li style="margin-bottom:.7em"><strong>Apply in person:</strong> Go to your local Department of Social Services or Community Health Center. Staff can help you complete the application at no charge.</li>
+                          <li style="margin-bottom:.7em"><strong>After applying:</strong> You'll receive a letter within 30–45 days. If approved, coverage often starts the month you applied — even retroactively in some states.</li>
+                        </ol>
+                        <div style="background:#e0f2fe;padding:1em;border-radius:8px;margin-top:1em"><strong>📞 Help: 1-800-318-2596</strong> — Connects you to your state Medicaid office</div>
+                    </div>`
+                },
+                'medicare.gov': {
+                    title: '🏥 Medicare — Federal Health Insurance Guide',
+                    content: `<div style="font-size:.95rem;line-height:1.7">
+                        <p>Medicare is federal health insurance for people 65+, and for younger people who have received SSDI benefits for 24 months, or who have ALS or End-Stage Renal Disease.</p>
+                        <h3>What Medicare Covers:</h3>
+                        <ul style="padding-left:1.5em;margin-bottom:1em">
+                          <li><strong>Part A (Hospital Insurance):</strong> Inpatient hospital stays, skilled nursing facility, hospice. Most people get this free.</li>
+                          <li><strong>Part B (Medical Insurance):</strong> Doctor visits, outpatient services, preventive care. Requires a monthly premium.</li>
+                          <li><strong>Part C (Medicare Advantage):</strong> Private plans that bundle Parts A, B, and usually D.</li>
+                          <li><strong>Part D (Drug Coverage):</strong> Prescription drug coverage — add this separately or get it bundled in Part C.</li>
+                        </ul>
+                        <h3>Step-by-Step Enrollment:</h3>
+                        <ol style="padding-left:1.5em">
+                          <li style="margin-bottom:.7em"><strong>If you have SSDI:</strong> You are automatically enrolled in Parts A and B after receiving SSDI for 24 months. Your Medicare card will arrive in the mail automatically — no action needed.</li>
+                          <li style="margin-bottom:.7em"><strong>If turning 65:</strong> Enroll during your Initial Enrollment Period — 3 months before your 65th birthday through 3 months after.</li>
+                          <li style="margin-bottom:.7em"><strong>Call for help:</strong> Call <strong>1-800-633-4227</strong> (TTY: 1-877-486-2048) 24/7 to enroll, compare plans, or ask questions.</li>
+                          <li style="margin-bottom:.7em"><strong>Extra Help (Low Income Subsidy):</strong> If your income is limited, you may qualify for Extra Help to pay Part D drug costs. Apply through SSA at 1-800-772-1213.</li>
+                        </ol>
+                        <div style="background:#e0f2fe;padding:1em;border-radius:8px;margin-top:1em"><strong>📞 Medicare Helpline: 1-800-633-4227</strong> — Available 24/7</div>
+                    </div>`
+                }
+            };
+            const r = resources[site];
+            if (r) showGuideModal(r.title, r.content);
+        }
+
+        // ── SSDI Application full walkthrough ───────────────────────────────
+        function showInlineGuide(guideId) {
+            if (guideId === 'ssdi-guide') {
+                showGuideModal('📚 Complete SSDI Application Guide — Step by Step', `<div style="font-size:.95rem;line-height:1.7">
+                    <div style="background:#e0f2fe;padding:1em;border-radius:8px;margin-bottom:1.5em"><strong>What is SSDI?</strong> Social Security Disability Insurance pays monthly benefits to people who have worked, paid Social Security taxes, and now cannot work due to a serious medical condition expected to last at least 12 months.</div>
+                    <h3>Phase 1 — Prepare Your Documents</h3>
+                    <ol style="padding-left:1.5em">
+                      <li style="margin-bottom:.7em">Upload your medical records, ID, and insurance cards using the <strong>Document Upload tool</strong> at the top of this page — it auto-extracts and auto-fills your information.</li>
+                      <li style="margin-bottom:.7em">Gather: Social Security card, birth certificate, medication list, names and addresses of all your doctors, your work history for the last 15 years, and recent tax returns or pay stubs.</li>
+                      <li style="margin-bottom:.7em">Use the Document Library on this page to generate pre-filled versions of SSA-16, SSA-3368, and SSA-827 with your data already filled in.</li>
+                    </ol>
+                    <h3>Phase 2 — Complete the Application Forms</h3>
+                    <ol style="padding-left:1.5em" start="4">
+                      <li style="margin-bottom:.7em"><strong>Form SSA-16</strong> (Main Application) — Personal info, disability start date, work history. Click "View Instructions" next to this form in the Document Library for a full field-by-field guide.</li>
+                      <li style="margin-bottom:.7em"><strong>Form SSA-3368</strong> (Disability Report) — Detailed info about conditions, medications, doctors, and how limitations affect work. Be very specific and describe your <em>worst</em> days.</li>
+                      <li style="margin-bottom:.7em"><strong>Form SSA-827</strong> (Release Authorization) — Print and sign one for EVERY doctor and hospital. SSA cannot access your records without these.</li>
+                    </ol>
+                    <h3>Phase 3 — Submit Your Application</h3>
+                    <ol style="padding-left:1.5em" start="7">
+                      <li style="margin-bottom:.7em">Call <strong>1-800-772-1213</strong> (Mon–Fri, 8am–7pm) to apply by phone with an SSA representative. Have your completed forms in front of you.</li>
+                      <li style="margin-bottom:.7em">OR visit your local SSA office with all forms and supporting documents. Bring photocopies of everything — SSA keeps them.</li>
+                      <li style="margin-bottom:.7em">You'll receive a confirmation letter with your claim number. Processing typically takes 3–6 months. SSA will contact your doctors directly using your SSA-827 forms.</li>
+                    </ol>
+                    <h3>Phase 4 — After You Apply</h3>
+                    <ol style="padding-left:1.5em" start="10">
+                      <li style="margin-bottom:.7em"><strong>If approved:</strong> You'll receive a letter with your monthly benefit amount and start date. Medicare begins automatically after 24 months of receiving SSDI.</li>
+                      <li style="margin-bottom:.7em"><strong>If denied — do NOT give up:</strong> Most first applications are denied. File Form SSA-561 (instructions in the Document Library) within 60 days AND generate an Appeal Letter using this page. Most successful claims require 1–2 appeals.</li>
+                      <li style="margin-bottom:.7em">Ask your doctor to complete a Physical or Mental RFC form (available in the Document Library) — these are among the strongest evidence you can provide.</li>
+                    </ol>
+                    <div style="background:#fef3c7;padding:1em;border-radius:8px;margin-top:1em">
+                        <strong>📞 SSA Helpline: 1-800-772-1213</strong> — Mon–Fri, 8am–7pm | TTY: 1-800-325-0778<br>
+                        <strong>💡 #1 Tip:</strong> The most common reason for denial is not providing enough detail about your limitations. More specific detail = stronger claim.
+                    </div>
+                </div>`);
+            }
+        }
     </script>
 
         <!-- Unified AI Document Upload & Auto-Fill Experience -->
@@ -1537,6 +2022,7 @@
             </div>
             <div id="ai-upload-status" style="margin-top:1.5em;"></div>
             <div id="ai-review-area" style="display:none;margin-top:2em;"></div>
+            <div id="ai-doctor-panel" style="display:none;margin-top:2em;"></div>
         </div>
             <script>
             // Unified AI Paperwork Flow Logic
@@ -1636,7 +2122,8 @@
               if (window.dualAIMedicalTeam && window.dualAIMedicalTeam.getTeamResponse) {
                 try {
                   const allText = Object.values(extractedData).join('\n');
-                  aiReport = await window.dualAIMedicalTeam.getTeamResponse('Analyze this medical document and extract personal info, conditions, and categorize eligibility: ' + allText);
+                  const jsonPrompt = 'Extract ONLY factual, real data from these medical documents. Do NOT use example, placeholder, or generic values. Respond ONLY in minified JSON (no explanation, no markdown, no extra text). If a field is not present, leave it blank.\n\nFields to extract:\n- Full Name\n- Date of Birth\n- SSN\n- Address\n- Phone Number\n- Email\n- Diagnosis\n- Medications\n- Allergies\n- Procedures\n- Insurance Policy Number\n- Provider Name\n- Medical Record Number\n- How conditions limit work\n\nDocument text:\n"""' + allText + '"""';
+                  aiReport = await window.dualAIMedicalTeam.getTeamResponse(jsonPrompt, { documentText: allText });
                 } catch (e) {
                   aiReport = { response: 'AI analysis failed: ' + e.message };
                 }
@@ -1657,93 +2144,291 @@
             }
 
             function renderReviewScreen() {
-              // Parse extracted data using AI if available
-              let personalInfo = {
-                fullName: 'Unknown',
-                ssn: '',
-                dateOfBirth: '',
-                address: '',
-                phone: '',
-                email: ''
-              };
-              let conditions = 'Not extracted';
-              let limitations = 'Not extracted';
-
+              // Parse JSON response from AI
+              let fields = {};
               if (aiReport && aiReport.response) {
-                // Simple parsing - in production, use structured AI response
-                const response = aiReport.response.toLowerCase();
-                // Extract name
-                const nameMatch = response.match(/name[:\s]*([^\n,]+)/i);
-                if (nameMatch) personalInfo.fullName = nameMatch[1].trim();
-                // Extract SSN
-                const ssnMatch = response.match(/ssn[:\s]*([^\n,]+)/i) || response.match(/social security[:\s]*([^\n,]+)/i);
-                if (ssnMatch) personalInfo.ssn = ssnMatch[1].trim();
-                // Extract DOB
-                const dobMatch = response.match(/date of birth[:\s]*([^\n,]+)/i) || response.match(/dob[:\s]*([^\n,]+)/i);
-                if (dobMatch) personalInfo.dateOfBirth = dobMatch[1].trim();
-                // Extract address
-                const addrMatch = response.match(/address[:\s]*([^\n]+)/i);
-                if (addrMatch) personalInfo.address = addrMatch[1].trim();
-                // Extract phone
-                const phoneMatch = response.match(/phone[:\s]*([^\n,]+)/i);
-                if (phoneMatch) personalInfo.phone = phoneMatch[1].trim();
-                // Extract email
-                const emailMatch = response.match(/email[:\s]*([^\n,]+)/i);
-                if (emailMatch) personalInfo.email = emailMatch[1].trim();
-                // Extract conditions
-                const condMatch = response.match(/conditions?[:\s]*([^\n]+)/i);
-                if (condMatch) conditions = condMatch[1].trim();
-                // Extract limitations
-                const limMatch = response.match(/limitations?[:\s]*([^\n]+)/i) || response.match(/work limitations?[:\s]*([^\n]+)/i);
-                if (limMatch) limitations = limMatch[1].trim();
+                const jsonStart = aiReport.response.indexOf('{');
+                const jsonEnd = aiReport.response.lastIndexOf('}');
+                if (jsonStart !== -1 && jsonEnd > jsonStart) {
+                  try { 
+                    fields = JSON.parse(aiReport.response.substring(jsonStart, jsonEnd + 1)); 
+                  } catch(e) {
+                    console.warn('Failed to parse AI response as JSON:', e);
+                  }
+                }
               }
+
+              const hasField = (f) => fields[f] && fields[f].toString().trim();
+              
+              // Extract personal info with confidence tracking
+              let personalInfo = {
+                fullName: fields['Full Name'] || '',
+                ssn: fields['SSN'] || '',
+                dateOfBirth: fields['Date of Birth'] || '',
+                address: fields['Address'] || '',
+                phone: fields['Phone Number'] || '',
+                email: fields['Email'] || ''
+              };
+              let conditions = fields['Diagnosis'] || '';
+              let limitations = fields['How conditions limit work'] || '';
+
+              // Helper to escape HTML to prevent XSS
+              const escapeHtml = (str) => {
+                if (!str) return '';
+                return String(str)
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/"/g, '&quot;')
+                  .replace(/'/g, '&#39;');
+              };
+
+              // Helper to generate field HTML with confidence coloring
+              const fieldHTML = (label, name, value, type = 'text', rows = 3) => {
+                const hasValue = value && value.toString().trim();
+                const borderColor = hasValue ? '#059669' : '#f59e42';
+                const confidence = hasValue ? '<span style="color:#059669;">✓ High Confidence</span>' : '<span style="color:#f59e42;">⚠ Review Needed</span>';
+                const escapedValue = escapeHtml(value);
+                const inputTag = type === 'textarea' 
+                  ? `<textarea name='${escapeHtml(name)}' rows='${rows}' style='width:100%;padding:0.5em;border:2px solid ${borderColor};border-radius:6px;'>${escapedValue}</textarea>`
+                  : `<input type='${escapeHtml(type)}' name='${escapeHtml(name)}' value='${escapedValue}' style='width:100%;padding:0.5em;border:2px solid ${borderColor};border-radius:6px;'>`;
+                return `<div><label>${escapeHtml(label)} ${confidence}</label>${inputTag}</div>`;
+              };
 
               reviewDiv.innerHTML = `
                 <h3 style='color:#2563eb;margin-bottom:1em;'>📝 Review & Edit Auto-Filled Forms</h3>
                 <p style='margin-bottom:1.5em;'>Check the information below. <span style='color:#059669;'>Green</span> fields are high confidence. <span style='color:#f59e42;'>Orange</span> means review or complete.</p>
                 <form id='review-form' style='background:#f0f9ff;padding:1.5em;border-radius:12px;margin-bottom:1.5em;'>
                   <div style='display:grid;grid-template-columns:1fr 1fr;gap:1em;'>
-                    <div><label>Full Legal Name <span style='color:#059669;'>✓ High Confidence</span></label><input type='text' name='fullName' value='${personalInfo.fullName}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
-                    <div><label>Social Security Number <span style='color:#059669;'>✓ High Confidence</span></label><input type='text' name='ssn' value='${personalInfo.ssn}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
-                    <div><label>Date of Birth <span style='color:#059669;'>✓ High Confidence</span></label><input type='date' name='dateOfBirth' value='${personalInfo.dateOfBirth}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
-                    <div><label>Mailing Address <span style='color:#059669;'>✓ High Confidence</span></label><input type='text' name='address' value='${personalInfo.address}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
-                    <div><label>Phone <span style='color:#059669;'>✓ High Confidence</span></label><input type='tel' name='phone' value='${personalInfo.phone}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
-                    <div><label>Email <span style='color:#059669;'>✓ High Confidence</span></label><input type='email' name='email' value='${personalInfo.email}' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'></div>
+                    ${fieldHTML('Full Legal Name', 'fullName', personalInfo.fullName)}
+                    ${fieldHTML('Social Security Number', 'ssn', personalInfo.ssn)}
+                    ${fieldHTML('Date of Birth', 'dateOfBirth', personalInfo.dateOfBirth, 'date')}
+                    ${fieldHTML('Mailing Address', 'address', personalInfo.address)}
+                    ${fieldHTML('Phone', 'phone', personalInfo.phone, 'tel')}
+                    ${fieldHTML('Email', 'email', personalInfo.email, 'email')}
                   </div>
-                  <div style='margin-top:1em;'><label>Primary Disabling Conditions <span style='color:#059669;'>✓ High Confidence</span></label><textarea name='conditions' rows='3' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'>${conditions}</textarea></div>
-                  <div style='margin-top:1em;'><label>How do your conditions limit your ability to work? <span style='color:#059669;'>✓ High Confidence</span></label><textarea name='limitations' rows='4' style='width:100%;padding:0.5em;border:2px solid #059669;border-radius:6px;'>${limitations}</textarea></div>
+                  <div style='margin-top:1em;'>${fieldHTML('Primary Disabling Conditions', 'conditions', conditions, 'textarea', 3)}</div>
+                  <div style='margin-top:1em;'>${fieldHTML('How do your conditions limit your ability to work?', 'limitations', limitations, 'textarea', 4)}</div>
                 </form>
                 <div style='text-align:center;'>
                   <button class='btn-primary' style='font-size:1.1em;padding:0.7em 2em;border-radius:8px;background:#2563eb;color:#fff;border:none;box-shadow:0 2px 8px #2563eb33;cursor:pointer;margin-right:1em;' onclick='downloadFilledForms()'>✅ Confirm & Download All Forms</button>
                   <button class='btn-secondary' style='font-size:1.1em;padding:0.7em 2em;border-radius:8px;background:#6b7280;color:#fff;border:none;box-shadow:0 2px 8px #6b728033;cursor:pointer;' onclick='emailForms()'>📧 Email Forms to Me</button>
                 </div>
               `;
+              // After the review form is rendered, show doctor recommendations
+              renderDoctorRecommendations(conditions, personalInfo.address);
             }
 
-            // Download filled forms as text file
+            // Map diagnosis text to specialist types for NPI Registry search
+            function getSpecialtiesForDiagnosis(diagnosisText) {
+              if (!diagnosisText) return ['Internal Medicine'];
+              const t = diagnosisText.toLowerCase();
+              const specialties = new Set();
+              if (/cancer|tumor|carcinoma|leukemia|lymphoma|melanoma|sarcoma|malignant|mesothelioma|oncol/.test(t))
+                specialties.add('Hematology & Oncology');
+              if (/brain|glio|glioblastoma/.test(t)) {
+                specialties.add('Neurology');
+                specialties.add('Neurological Surgery');
+              }
+              if (/\bneurol|multiple sclerosis|\bms\b|parkinson|epilep|seizure|\bals\b|amyotrophic|huntington|alzheimer|dementia|neuropath/.test(t))
+                specialties.add('Neurology');
+              if (/heart|cardiac|cardio|coronary|chf|congestive|ejection fraction|arrhythmia|atrial/.test(t))
+                specialties.add('Cardiovascular Disease (Cardiology)');
+              if (/arthritis|rheumatoid|lupus|fibromyalgia|autoimmune|sjogren|scleroderma|vasculitis/.test(t))
+                specialties.add('Rheumatology');
+              if (/copd|emphysema|\blung\b|pulmonary|asthma|respiratory|bronchitis|fibrosis/.test(t))
+                specialties.add('Pulmonary Disease');
+              if (/depress|anxiety|bipolar|schizophren|ptsd|post.traumatic|panic|psychiatric|ocd/.test(t))
+                specialties.add('Psychiatry');
+              if (/diabet|endocrin|thyroid|adrenal|hormone/.test(t))
+                specialties.add('Endocrinology, Diabetes & Metabolism');
+              if (/kidney|renal|nephro|dialysis|glomerulo/.test(t))
+                specialties.add('Nephrology');
+              if (/\bhiv\b|aids|hepatitis\s+c|infectious/.test(t))
+                specialties.add('Infectious Disease');
+              if (/spine|spinal|back pain|herniated disc|scoliosis|orthoped/.test(t))
+                specialties.add('Orthopedic Surgery');
+              if (/crohn|colitis|\bibs\b|gastrointestinal|gastro|\bliver\b|hepat|pancrea|celiac/.test(t))
+                specialties.add('Gastroenterology');
+              if (/chronic pain|pain syndrome|fibromyalgia|neuropath/.test(t))
+                specialties.add('Pain Medicine');
+              if (specialties.size === 0) specialties.add('Internal Medicine');
+              return [...specialties].slice(0, 3);
+            }
+
+            // Parse a ZIP or "City, ST" string into components
+            function parseDoctorLocation(raw) {
+              const s = (raw || '').trim();
+              const zipOnly = s.match(/^(\d{5})(-\d{4})?$/);
+              if (zipOnly) return { zip: zipOnly[1], city: '', state: '' };
+              const zipInAddr = s.match(/\b(\d{5})(-\d{4})?\b/);
+              if (zipInAddr) return { zip: zipInAddr[1], city: '', state: '' };
+              const cityState = s.match(/^([a-zA-Z\s]+),\s*([A-Z]{2})$/i);
+              if (cityState) return { zip: '', city: cityState[1].trim(), state: cityState[2].toUpperCase() };
+              return { zip: '', city: '', state: '' };
+            }
+
+            // Escape HTML for inline use inside template literals
+            function escDr(str) {
+              if (!str) return '';
+              return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+            }
+
+            // Render the doctor-finder panel below the review form
+            function renderDoctorRecommendations(conditionsText, addressText) {
+              const panel = document.getElementById('ai-doctor-panel');
+              if (!panel) return;
+              const specialties = getSpecialtiesForDiagnosis(conditionsText);
+              const loc = parseDoctorLocation(addressText);
+              const prefill = loc.zip || (loc.city ? loc.city + (loc.state ? ', ' + loc.state : '') : '');
+              panel.style.display = 'block';
+              panel.innerHTML = `
+                <div style="background:#f0f9ff;border:2px solid #2563eb;border-radius:12px;padding:1.5em;margin-top:0.5em;">
+                  <h3 style="color:#2563eb;margin-bottom:.5em;">👨‍⚕️ Find Specialists Near You</h3>
+                  <p style="margin-bottom:.75em;color:#374151;">Based on your extracted conditions, we found the right specialist types. Enter your ZIP code or city to find real doctors in your area.</p>
+                  ${specialties.length ? `<p style="margin-bottom:1em;color:#374151;"><strong>Specialists matched to your conditions:</strong> ${specialties.map(s=>`<span style="display:inline-block;background:#dbeafe;color:#1d4ed8;border-radius:4px;padding:.1em .5em;margin:.15em;">${escDr(s)}</span>`).join(' ')}</p>` : ''}
+                  <div style="display:flex;gap:.75em;flex-wrap:wrap;margin-bottom:1em;align-items:flex-end;">
+                    <div style="flex:1;min-width:180px;">
+                      <label for="dr-location-input" style="display:block;font-weight:bold;margin-bottom:.25em;">Your ZIP Code or City, State</label>
+                      <input type="text" id="dr-location-input" placeholder="e.g. 90210 or Boston, MA"
+                        value="${escDr(prefill)}"
+                        style="width:100%;padding:.5em;border:1px solid #cbd5e1;border-radius:6px;box-sizing:border-box;">
+                    </div>
+                    <button onclick="searchRecommendedDoctors()" class="btn-primary" style="padding:.5em 1.5em;white-space:nowrap;">🔍 Find Doctors</button>
+                  </div>
+                  <div id="doctor-results-panel"></div>
+                </div>`;
+            }
+
+            // Query NPI Registry and display results
+            async function searchRecommendedDoctors() {
+              const form = document.getElementById('review-form');
+              const conditionsVal = form ? (form.querySelector('[name="conditions"]') || {}).value || '' : '';
+              const locationInput = ((document.getElementById('dr-location-input') || {}).value || '').trim();
+              const resultsDiv = document.getElementById('doctor-results-panel');
+              if (!resultsDiv) return;
+
+              const specialties = getSpecialtiesForDiagnosis(conditionsVal);
+              if (!locationInput) {
+                resultsDiv.innerHTML = '<div class="message message-error">Please enter your ZIP code or city and state.</div>';
+                return;
+              }
+
+              const loc = parseDoctorLocation(locationInput);
+              const zip = loc.zip;
+              const city = loc.city;
+              const state = loc.state;
+
+              if (!zip && !(city && state)) {
+                resultsDiv.innerHTML = '<div class="message message-error">Please use format "90210" (ZIP) or "Boston, MA" (City, State).</div>';
+                return;
+              }
+
+              resultsDiv.innerHTML = '<div class="message message-info">🔍 Searching the NPI Registry for specialists near you…</div>';
+
+              let allDoctors = [];
+              for (const specialty of specialties) {
+                try {
+                  const params = new URLSearchParams({ version: '2.1', taxonomy_description: specialty, limit: '5' });
+                  if (zip) { params.set('postal_code', zip); }
+                  else { params.set('city', city); params.set('state', state); }
+                  const res = await fetch('https://npiregistry.cms.hhs.gov/api/?' + params.toString());
+                  const data = await res.json();
+                  const docs = (data.results || []).map(doc => ({
+                    name: doc.basic?.name || ((doc.basic?.first_name || '') + ' ' + (doc.basic?.last_name || '')).trim(),
+                    phone: (doc.addresses || []).map(a => a.telephone_number).filter(Boolean)[0] || '',
+                    address: (doc.addresses || []).find(a => a.address_purpose === 'LOCATION') || (doc.addresses || [])[0] || {},
+                    npi: doc.number || '',
+                    specialty: (doc.taxonomies || [])[0]?.desc || specialty
+                  }));
+                  allDoctors.push(...docs);
+                } catch (e) {
+                  console.error('NPI search error:', specialty, e);
+                }
+              }
+
+              // Deduplicate by NPI
+              const seen = new Set();
+              allDoctors = allDoctors.filter(d => { if (!d.npi || seen.has(d.npi)) return false; seen.add(d.npi); return true; });
+
+              if (!allDoctors.length) {
+                resultsDiv.innerHTML = `<div class="message message-info">No specialists found in that area. Try a nearby city or broader ZIP. You can also call <strong>211</strong> for local healthcare referrals or <strong>1-800-772-1213</strong> (SSA) for specialist recommendations.</div>`;
+                return;
+              }
+
+              let html = `<p style="margin:.5em 0 1em;color:#374151;"><strong>${allDoctors.length} specialist(s) found</strong> near ${escDr(locationInput)}</p>`;
+              html += '<ul style="list-style:none;padding:0;margin:0;display:grid;gap:.75em;">';
+              allDoctors.forEach(doc => {
+                const addr = doc.address;
+                const addrStr = [addr.address_1, addr.city, addr.state, addr.postal_code].filter(Boolean).join(', ');
+                html += `<li style="padding:1em;border:1px solid #e2e8f0;border-radius:8px;background:#fff;">
+                  <strong style="font-size:1.05em;">${escDr(doc.name)}</strong><br>
+                  <span style="color:#2563eb;">${escDr(doc.specialty)}</span><br>
+                  ${addrStr ? `<span style="color:#374151;">📍 ${escDr(addrStr)}</span><br>` : ''}
+                  ${doc.phone ? `<span style="color:#059669;">📞 ${escDr(doc.phone)}</span><br>` : ''}
+                  <span style="font-size:0.82em;color:#9ca3af;">NPI: ${escDr(String(doc.npi))}</span>
+                </li>`;
+              });
+              html += '</ul>';
+              html += `<p style="margin-top:1em;font-size:.9em;color:#6b7280;">💡 When calling, ask: <em>"Do you have experience with Social Security disability cases and will you complete RFC forms?"</em></p>`;
+              resultsDiv.innerHTML = html;
+            }
+
+            // Download all filled forms as separate files
             function downloadFilledForms() {
                 const form = document.getElementById('review-form');
-                let content = 'Medical Assistance Helper - Auto-Filled Forms\n';
-                content += '==============================================\n';
-                content += 'Generated: ' + new Date().toLocaleString() + '\n\n';
-                if (form) {
-                    const data = new FormData(form);
-                    for (const [key, value] of data.entries()) {
-                        const label = key.replace(/([_-])/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^\w/, c => c.toUpperCase()).trim();
-                        content += label + ':\n' + (value || '(not filled)') + '\n\n';
-                    }
-                } else {
-                    content += 'No form data available. Please complete the upload process first.';
+                if (!form) { 
+                    alert('Please complete the upload and review step first.'); 
+                    return; 
                 }
-                const blob = new Blob([content], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'filled-forms-' + new Date().toISOString().split('T')[0] + '.txt';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
+                
+                const data = new FormData(form);
+                const userData = {
+                    name: data.get('fullName') || '',
+                    ssn: data.get('ssn') || '',
+                    dob: data.get('dateOfBirth') || '',
+                    address: data.get('address') || '',
+                    phone: data.get('phone') || '',
+                    email: data.get('email') || '',
+                    conditions: data.get('conditions') || '',
+                    primaryCondition: data.get('conditions') || '',
+                    physicalLimitations: data.get('limitations') || '',
+                };
+                
+                // Ensure DocumentLibrary is available
+                const docLib = window.documentLibrary ?? (window.DocumentLibrary ? new window.DocumentLibrary() : null);
+                
+                const templateIds = ['appeal-letter', 'doctor-request', 'rfc-request', 'medical-records-request'];
+                const templateNames = {
+                    'appeal-letter': 'Appeal-Letter',
+                    'doctor-request': 'Doctor-Request',
+                    'rfc-request': 'RFC-Request',
+                    'medical-records-request': 'Medical-Records-Request'
+                };
+                
+                // Download filled text templates
+                templateIds.forEach(id => {
+                    let content = docLib ? docLib.fillTemplate(id, userData) : null;
+                    if (!content) {
+                        // Fallback: just include the user data
+                        content = `Medical Assistance Helper - ${templateNames[id]}\n${'='.repeat(50)}\nGenerated: ${new Date().toLocaleString()}\n\n`;
+                        for (const [k, v] of Object.entries(userData)) {
+                            content += k + ': ' + (v || '(not provided)') + '\n';
+                        }
+                    }
+                    const blob = new Blob([content], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = templateNames[id] + '-' + new Date().toISOString().split('T')[0] + '.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
+                
+                // Show in-app submission guide instead of opening external SSA links
+                showStatus(`✅ Downloaded ${templateIds.length} filled forms! Next step: call SSA at 1-800-772-1213 (Mon–Fri 8am–7pm) to submit your application by phone, or visit your local SSA office with these documents. Click "📚 SSDI Application Guide" in the Document Library for full step-by-step instructions.`, 'success');
             }
             function emailForms() {
                 const form = document.getElementById('review-form');
