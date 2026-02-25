@@ -865,7 +865,7 @@ async function sendChatMessage() {
         try {
             if (window.aiTeam && window.appConfig && window.appConfig.getStatus().anyConfigured) {
                 const result = await window.aiTeam.getTeamResponse(userMessage);
-                responseText = result.response || '';
+                responseText = (!result.error && result.response) ? result.response : '';
             }
             if (!responseText && window.aiAssistant) {
                 const result = await window.aiAssistant.getIntelligentGuidance(userMessage);
@@ -1120,7 +1120,7 @@ async function processDocumentFiles(files) {
                     const aiResult = await window.dualAIMedicalTeam.getTeamResponse(
                         'Briefly summarize this medical document and identify key information: ' + extractedContent.substring(0, 2000)
                     );
-                    aiSummary = aiResult.response || '';
+                    aiSummary = (!aiResult.error && aiResult.response) ? aiResult.response : '';
                 } catch (e) {
                     console.error('AI analysis error:', e);
                 }
@@ -1337,7 +1337,7 @@ Provide a clear, helpful response a patient can act on.`;
         let response = '';
         if (window.aiTeam && window.appConfig && window.appConfig.getStatus().anyConfigured) {
             const result = await window.aiTeam.getTeamResponse(prompt);
-            response = result.response || '';
+            response = (!result.error && result.response) ? result.response : '';
         }
         if (!response && window.aiAssistant) {
             const result = await window.aiAssistant.getIntelligentGuidance(prompt);
@@ -1386,7 +1386,7 @@ Write the complete letter ready to send.`;
         let letterText = '';
         if (window.aiTeam && window.appConfig && window.appConfig.getStatus().anyConfigured) {
             const result = await window.aiTeam.getTeamResponse(prompt);
-            letterText = result.response || '';
+            letterText = (!result.error && result.response) ? result.response : '';
         }
         if (!letterText && window.aiAssistant) {
             const result = await window.aiAssistant.getIntelligentGuidance(prompt);
@@ -1700,8 +1700,11 @@ async function sendToAI() {
             if (status.anyConfigured) {
                 response = await window.aiTeam.getTeamResponse(userMessage);
                 
-                // Add source indicator
-                if (response.source && response.source !== 'system') {
+                // Treat error responses as non-responses so we fall back gracefully
+                if (response && response.error) {
+                    response = null;
+                } else if (response && response.source && response.source !== 'system') {
+                    // Add source indicator
                     addAIMessage(`💡 Answered by: ${response.source}`, 'system-info');
                 }
             }
@@ -2187,7 +2190,7 @@ async function processUploadedDocuments(files, allExtracted) {
         try {
             const prompt = 'Extract the following from this medical document text and respond in JSON only (no explanation): fullName, dateOfBirth, ssn (if present), address, phone, email, conditions, medications. Document text:\n' + allText.substring(0, 3000);
             const aiResult = await window.dualAIMedicalTeam.getTeamResponse(prompt);
-            const raw = aiResult.response || '';
+            const raw = (!aiResult.error && aiResult.response) ? aiResult.response : '';
             const jsonStart = raw.indexOf('{');
             const jsonEnd = raw.lastIndexOf('}');
             if (jsonStart !== -1 && jsonEnd > jsonStart) {

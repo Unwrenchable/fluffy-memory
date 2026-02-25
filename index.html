@@ -853,6 +853,7 @@
     <script src="js/comprehensive-intake.js"></script>
     <script src="js/user-data-manager.js"></script>
     <script src="js/condition-categorizer.js"></script>
+    <script src="js/env.js"></script>
     <script src="js/config.js"></script>
     <script src="js/xai-huggingface-integration.js"></script>
     <script src="js/document-analyzer.js"></script>
@@ -989,6 +990,15 @@
         window.appConfig = new AppConfig();
         window.aiTeam = new DualAIMedicalTeam();
         window.dualAIMedicalTeam = window.aiTeam;
+
+        // Sync pre-configured developer key (from js/env.js) into appConfig so that
+        // anyConfigured() returns true and all AI-gated code paths are unlocked.
+        (function syncDevKey() {
+            const devKey = window.MEDHELPER_XAI_KEY;
+            if (devKey && window.appConfig && window.aiTeam) {
+                window.appConfig.setApiKeys(devKey, null);
+            }
+        })();
         
         // Update configuration status displays
         function updateConfigStatus() {
@@ -2137,11 +2147,12 @@ or appeal, along with supporting medical records and RFC forms from my treating 
                   const allText = Object.values(extractedData).join('\n');
                   const jsonPrompt = 'Extract ONLY factual, real data from these medical documents. Do NOT use example, placeholder, or generic values. Respond ONLY in minified JSON (no explanation, no markdown, no extra text). If a field is not present, leave it blank.\n\nFields to extract:\n- Full Name\n- Date of Birth\n- SSN\n- Address\n- Phone Number\n- Email\n- Diagnosis\n- Medications\n- Allergies\n- Procedures\n- Insurance Policy Number\n- Provider Name\n- Medical Record Number\n- How conditions limit work\n\nDocument text:\n"""' + allText + '"""';
                   aiReport = await window.dualAIMedicalTeam.getTeamResponse(jsonPrompt, { documentText: allText });
+                  if (aiReport && aiReport.error) aiReport = null;
                 } catch (e) {
                   aiReport = { response: 'AI analysis failed: ' + e.message };
                 }
               } else {
-                aiReport = { response: 'AI not configured. Please set up API keys.' };
+                aiReport = null;
               }
 
               setStep(3);

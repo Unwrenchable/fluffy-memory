@@ -3,9 +3,12 @@
 
 class DualAIMedicalTeam {
     constructor() {
+        // Use pre-configured developer key if available (set in js/env.js)
+        const devXaiKey = (typeof window !== 'undefined' && window.MEDHELPER_XAI_KEY) || null;
+
         // X.AI Configuration (Grok)
         this.xaiConfig = {
-            apiKey: null, // User will provide their API key
+            apiKey: devXaiKey, // Pre-configured by developer; users do not need to supply a key
             apiUrl: 'https://api.x.ai/v1/chat/completions',
             model: 'grok-4-latest',
             temperature: 0
@@ -13,7 +16,7 @@ class DualAIMedicalTeam {
         
         // HuggingFace Configuration
         this.huggingFaceConfig = {
-            apiKey: null, // User will provide their API key
+            apiKey: null, // Optional: set via setApiKeys() if a HuggingFace key is available
             apiUrl: 'https://api-inference.huggingface.co/models/',
             models: {
                 conversational: 'facebook/blenderbot-400M-distill',

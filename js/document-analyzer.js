@@ -213,7 +213,7 @@ class DocumentAnalyzer {
             const prompt =
               'Extract ONLY factual, real data from this medical document. Do NOT use example, placeholder, or generic values. Respond ONLY in minified JSON (no explanation, no markdown, no extra text). If a field is not present, leave it blank.\n\nFields to extract:\n- Full Name\n- Date of Birth\n- Medical Record Number\n- Document Date\n- Provider Name\n- Diagnosis\n- Medications\n- Allergies\n- Procedures\n- Insurance Policy Number\n- Address\n- Phone Number\n- Any other relevant patient info\n\nDocument text:\n"""' + text + '"""';
             const ai = await window.dualAIMedicalTeam.getTeamResponse(prompt, { documentText: text });
-            let aiText = ai.response;
+            let aiText = (!ai.error && ai.response) ? ai.response : '';
             // Try to extract JSON from AI response
             let jsonStart = aiText.indexOf('{');
             let jsonEnd = aiText.lastIndexOf('}');

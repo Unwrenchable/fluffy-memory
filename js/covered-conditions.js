@@ -661,6 +661,7 @@ Use professional, precise medical and legal language. Be thorough — this patie
 
         try {
             const result = await ai.getTeamResponse(prompt, userData);
+            if (!result || result.error) return null;
             return result.response || null;
         } catch (e) {
             console.error('[CoveredConditions] Rare condition AI error:', e);
