@@ -491,8 +491,7 @@
                     </div>
                 </div>
 
-                <!-- AI API Configuration Panel -->
-                <div id="ai-config-panel" style="margin-top: 2rem;"></div>
+
             </div>
         </section>
 
@@ -867,8 +866,7 @@
     <script src="js/smart-search.js"></script>
     <script src="js/crypto-payment.js"></script>
     <script src="js/pwa-install.js"></script>
-    <script src="js/ai-config-panel.js"></script>
-        <script src="js/script.js"></script>
+    <script src="js/script.js"></script>
     <script>
         // Initialize user authentication UI
         function initUserAuth() {
@@ -994,11 +992,6 @@
         window.appConfig = new AppConfig();
         window.aiTeam = new DualAIMedicalTeam();
         window.dualAIMedicalTeam = window.aiTeam;
-
-        // Instantiate the user-facing API key configuration panel
-        if (typeof AIConfigPanel !== 'undefined') {
-            window.aiConfigPanel = new AIConfigPanel();
-        }
 
         // Sync pre-configured developer keys (from js/env.js) into appConfig so that
         // anyConfigured() returns true and all AI-gated code paths are unlocked.

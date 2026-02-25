@@ -4,7 +4,7 @@
 class MedicalAIAssistant {
     constructor() {
         // Hugging Face API configuration
-        this.apiKey = null; // User will need to provide their own API key
+        this.apiKey = null; // Set via setApiKey() from server-provided config
         this.apiUrl = 'https://api-inference.huggingface.co/models/';
         
         // Models for different tasks

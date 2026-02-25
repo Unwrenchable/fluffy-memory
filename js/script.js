@@ -475,7 +475,7 @@ async function generateRareConditionPacketUI() {
                 <button onclick="document.getElementById('rare-ai-packet').innerHTML=''" class="btn-secondary">✕ Close</button>
             </div>`;
     } else {
-        packetArea.innerHTML = '<div class="message message-error">AI is not configured or unavailable. Please set up API keys in the AI Configuration section.</div>';
+        packetArea.innerHTML = '<div class="message message-error">AI is temporarily unavailable. Please try again in a moment.</div>';
     }
 }
 
@@ -1346,7 +1346,7 @@ Provide a clear, helpful response a patient can act on.`;
         if (response) {
             resultsDiv.innerHTML = `<div class="message message-success"><h4>📊 Coverage Analysis</h4><div style="white-space:pre-wrap;margin-top:0.5rem;">${escapeHtml(response)}</div></div>`;
         } else {
-            resultsDiv.innerHTML = `<div class="message message-info"><strong>AI not configured.</strong><p>Please set up your API keys in the AI Configuration section to get real coverage predictions. In the meantime, contact your insurance provider directly at the number on your insurance card.</p></div>`;
+            resultsDiv.innerHTML = `<div class="message message-info"><strong>AI temporarily unavailable.</strong><p>Please try again in a moment. In the meantime, contact your insurance provider directly at the number on your insurance card.</p></div>`;
         }
     } catch (e) {
         resultsDiv.innerHTML = `<div class="message message-error">Analysis failed: ${escapeHtml(e.message)}. Please try again.</div>`;
@@ -1404,7 +1404,7 @@ Write the complete letter ready to send.`;
                     <p style="margin-top:0.75rem;color:#718096;font-size:0.85rem;">✏️ You can click the letter text above to edit before downloading.</p>
                 </div>`;
         } else {
-            previewDiv.innerHTML = `<div class="message message-info"><strong>AI not configured.</strong><p>Please set up your API keys in the AI Configuration section to generate real appeal letters. You can also use our letter templates in the Document Library section.</p></div>`;
+            previewDiv.innerHTML = `<div class="message message-info"><strong>AI temporarily unavailable.</strong><p>Please try again in a moment. You can also use our letter templates in the Document Library section.</p></div>`;
         }
     } catch (e) {
         previewDiv.innerHTML = `<div class="message message-error">Letter generation failed: ${escapeHtml(e.message)}. Please try again.</div>`;

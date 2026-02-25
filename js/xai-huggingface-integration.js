@@ -76,7 +76,7 @@ class DualAIMedicalTeam {
         
         if (!hasXAI && !hasHuggingFace) {
             return {
-                response: "Please configure at least one API key (X.AI or HuggingFace) to use the AI assistant.",
+                response: "The AI assistant is temporarily unavailable. Please try again in a moment.",
                 source: 'system',
                 error: true
             };
