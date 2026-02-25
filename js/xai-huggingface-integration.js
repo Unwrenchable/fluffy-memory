@@ -20,8 +20,8 @@ class DualAIMedicalTeam {
             apiKey: devHfKey, // Optional: pre-configured or set via setApiKeys()
             apiUrl: 'https://api-inference.huggingface.co/models/',
             models: {
-                conversational: 'facebook/blenderbot-400M-distill',
-                medical: 'microsoft/BioGPT-Large',
+                conversational: 'microsoft/DialoGPT-medium',
+                medical: 'microsoft/DialoGPT-medium',
                 summarization: 'facebook/bart-large-cnn',
                 questionAnswering: 'deepset/roberta-base-squad2'
             }
@@ -280,9 +280,12 @@ Be empathetic, patient, and thorough. Many users are frustrated, confused, or ha
 
         let response;
         
-        if (taskType === 'conversational') {
-            // Use conversational model
-            response = await this.queryHuggingFaceConversational(modelId, userQuery);
+        if (taskType === 'conversational' || taskType === 'medical') {
+            // Use conversational model for both general chat and medical queries
+            response = await this.queryHuggingFaceConversational(
+                this.huggingFaceConfig.models.conversational, 
+                userQuery
+            );
         } else if (taskType === 'summarization') {
             // Use summarization model
             response = await this.queryHuggingFaceSummarization(modelId, userQuery);

@@ -490,6 +490,9 @@
                         <div id="ai-tool-container"></div>
                     </div>
                 </div>
+
+                <!-- AI API Configuration Panel -->
+                <div id="ai-config-panel" style="margin-top: 2rem;"></div>
             </div>
         </section>
 
@@ -864,6 +867,7 @@
     <script src="js/smart-search.js"></script>
     <script src="js/crypto-payment.js"></script>
     <script src="js/pwa-install.js"></script>
+    <script src="js/ai-config-panel.js"></script>
         <script src="js/script.js"></script>
     <script>
         // Initialize user authentication UI
@@ -991,6 +995,11 @@
         window.aiTeam = new DualAIMedicalTeam();
         window.dualAIMedicalTeam = window.aiTeam;
 
+        // Instantiate the user-facing API key configuration panel
+        if (typeof AIConfigPanel !== 'undefined') {
+            window.aiConfigPanel = new AIConfigPanel();
+        }
+
         // Sync pre-configured developer keys (from js/env.js) into appConfig so that
         // anyConfigured() returns true and all AI-gated code paths are unlocked.
         (function syncDevKey() {
@@ -998,6 +1007,8 @@
             const hfKey  = window.MEDHELPER_HF_KEY  || null;
             if ((xaiKey || hfKey) && window.appConfig && window.aiTeam) {
                 window.appConfig.setApiKeys(xaiKey, hfKey);
+                window.aiTeam.setApiKeys(xaiKey, hfKey);
+                // aiAssistant is created in DOMContentLoaded; the key is synced there.
             }
         })();
 
@@ -1018,6 +1029,7 @@
                 if (xaiKey || hfKey) {
                     window.appConfig.setApiKeys(xaiKey, hfKey);
                     window.aiTeam.setApiKeys(xaiKey, hfKey);
+                    if (window.aiAssistant && hfKey) window.aiAssistant.setApiKey(hfKey);
                     updateConfigStatus();
                 }
             } catch (_) {
@@ -1032,25 +1044,29 @@
             
             if (window.appConfig) {
                 // X.AI status
-                if (window.appConfig.isConfigured('xai')) {
-                    xaiStatus.innerHTML = '✅ Configured and ready';
-                    xaiStatus.style.background = '#d4edda';
-                    xaiStatus.style.color = '#155724';
-                } else {
-                    xaiStatus.innerHTML = '⚪ Not configured';
-                    xaiStatus.style.background = '#f8f9fa';
-                    xaiStatus.style.color = '#6c757d';
+                if (xaiStatus) {
+                    if (window.appConfig.isConfigured('xai')) {
+                        xaiStatus.innerHTML = '✅ Configured and ready';
+                        xaiStatus.style.background = '#d4edda';
+                        xaiStatus.style.color = '#155724';
+                    } else {
+                        xaiStatus.innerHTML = '⚪ Not configured';
+                        xaiStatus.style.background = '#f8f9fa';
+                        xaiStatus.style.color = '#6c757d';
+                    }
                 }
                 
                 // HuggingFace status
-                if (window.appConfig.isConfigured('huggingface')) {
-                    hfStatus.innerHTML = '✅ Configured and ready';
-                    hfStatus.style.background = '#d4edda';
-                    hfStatus.style.color = '#155724';
-                } else {
-                    hfStatus.innerHTML = '⚪ Not configured';
-                    hfStatus.style.background = '#f8f9fa';
-                    hfStatus.style.color = '#6c757d';
+                if (hfStatus) {
+                    if (window.appConfig.isConfigured('huggingface')) {
+                        hfStatus.innerHTML = '✅ Configured and ready';
+                        hfStatus.style.background = '#d4edda';
+                        hfStatus.style.color = '#155724';
+                    } else {
+                        hfStatus.innerHTML = '⚪ Not configured';
+                        hfStatus.style.background = '#f8f9fa';
+                        hfStatus.style.color = '#6c757d';
+                    }
                 }
             }
         }
@@ -1058,6 +1074,7 @@
         // Show configuration message
         function showConfigMessage(message, type) {
             const msgDiv = document.getElementById('config-message');
+            if (!msgDiv) return;
             msgDiv.style.display = 'block';
             msgDiv.textContent = message;
             
