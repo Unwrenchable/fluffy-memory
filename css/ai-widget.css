@@ -360,3 +360,69 @@
     box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
 }
 
+
+/* ── AI widget improvements (SSDI UX polish) ───────────────────────────── */
+
+/* AI widget toggle — larger, more prominent */
+.ai-widget-toggle {
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.9rem 1.4rem;
+}
+
+/* Formatted response paragraphs */
+.ai-message.assistant p {
+    margin: 0.3rem 0;
+    line-height: 1.6;
+}
+.ai-message.assistant ul,
+.ai-message.assistant ol {
+    margin: 0.4rem 0 0.4rem 1.2rem;
+    padding: 0;
+}
+.ai-message.assistant li {
+    margin-bottom: 0.25rem;
+    line-height: 1.5;
+}
+.ai-message.assistant strong {
+    color: #2d3748;
+}
+.ai-message.assistant a {
+    color: #4338ca;
+    text-decoration: underline;
+}
+
+/* Quick actions — scrollable row on mobile */
+.ai-quick-actions {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.5rem;
+}
+@media (min-width: 480px) {
+    .ai-quick-actions {
+        flex-wrap: wrap;
+    }
+}
+
+/* Notification badge on widget toggle */
+.ai-widget-toggle::after {
+    content: 'FREE';
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #10b981;
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+}
+.ai-widget-toggle {
+    position: relative;
+}
+
+/* Panel header improvement */
+.ai-panel-header {
+    padding: 1rem 1.25rem;
+}

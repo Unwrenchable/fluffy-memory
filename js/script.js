@@ -1658,6 +1658,19 @@ function toggleAIAssistant() {
     }
 }
 
+// Auto-open assistant on first visit
+(function initAssistantAutoOpen() {
+    if (!sessionStorage.getItem('assistantShown')) {
+        setTimeout(() => {
+            const panel = document.getElementById('ai-assistant-panel');
+            if (panel && (panel.style.display === 'none' || panel.style.display === '')) {
+                panel.style.display = 'flex';
+            }
+            sessionStorage.setItem('assistantShown', '1');
+        }, 1500);
+    }
+})();
+
 function handleAIEnter(event) {
     if (event.key === 'Enter') {
         sendToAI();
@@ -1706,6 +1719,9 @@ async function sendToAI() {
         if (response) {
             addAIMessage(response.response, 'assistant');
             
+            // Add SSDI follow-up prompts
+            addFollowUpPrompts(userMessage, response.response);
+            
             // Add suggestion buttons if available
             if (response.suggestions && response.suggestions.length > 0) {
                 addAISuggestions(response.suggestions);
@@ -1738,11 +1754,54 @@ function removeTypingIndicator() {
     }
 }
 
+function formatAIResponse(text) {
+    // Sanitize first
+    let html = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    // Bold: **text**
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    // Phone/URL patterns — make links clickable
+    html = html.replace(/(1-800-[\d-]+)/g, '<a href="tel:$1" style="color:inherit;text-decoration:underline;">$1</a>');
+    html = html.replace(/ssa\.gov/g, '<a href="https://www.ssa.gov" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">ssa.gov</a>');
+    // Bullet lines starting with - or •
+    const lines = html.split('\n');
+    let result = '';
+    let inList = false;
+    for (const line of lines) {
+        const bulletMatch = line.match(/^[-•]\s+(.+)/);
+        const numberedMatch = line.match(/^\d+\.\s+(.+)/);
+        if (bulletMatch) {
+            if (!inList) { result += '<ul style="margin:0.5rem 0 0.5rem 1.2rem;padding:0;">'; inList = true; }
+            result += `<li style="margin-bottom:0.3rem;">${bulletMatch[1]}</li>`;
+        } else if (numberedMatch) {
+            if (!inList) { result += '<ol style="margin:0.5rem 0 0.5rem 1.2rem;padding:0;">'; inList = true; }
+            result += `<li style="margin-bottom:0.3rem;">${numberedMatch[1]}</li>`;
+        } else {
+            if (inList) { result += inList === 'ol' ? '</ol>' : '</ul>'; inList = false; }
+            if (line.trim() === '') {
+                result += '<br>';
+            } else {
+                result += `<p style="margin:0.3rem 0;">${line}</p>`;
+            }
+        }
+    }
+    if (inList) result += '</ul>';
+    return result;
+}
+
 function addAIMessage(text, sender) {
     const messagesDiv = document.getElementById('ai-messages');
     const messageDiv = document.createElement('div');
     messageDiv.className = `ai-message ${sender}`;
-    messageDiv.textContent = text;
+    if (sender === 'user') {
+        messageDiv.textContent = text;
+    } else if (sender === 'assistant') {
+        messageDiv.innerHTML = formatAIResponse(text);
+    } else {
+        messageDiv.textContent = text;
+    }
     messagesDiv.appendChild(messageDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
@@ -1764,12 +1823,70 @@ function addAISuggestions(suggestions) {
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
+function addFollowUpPrompts(userMessage, aiResponse) {
+    const messagesDiv = document.getElementById('ai-messages');
+    const msg = (userMessage + ' ' + aiResponse).toLowerCase();
+
+    // Pick 3 contextual follow-ups
+    const allPrompts = [
+        { label: '📋 What documents do I need?', text: 'What documents and medical records do I need to apply for SSDI?' },
+        { label: '⏱️ How long does it take?', text: 'How long does the SSDI application and approval process take?' },
+        { label: '⚖️ How do I appeal?', text: 'How do I appeal an SSDI denial? What are the steps?' },
+        { label: '🤝 Do I need an attorney?', text: 'Do I need a disability attorney to apply for SSDI? How do they get paid?' },
+        { label: '🏥 What conditions qualify?', text: 'What medical conditions qualify for SSDI disability benefits?' },
+        { label: '💰 How much will I get?', text: 'How much money will I receive from SSDI monthly?' },
+        { label: '🔄 SSDI vs SSI?', text: 'What is the difference between SSDI and SSI?' },
+        { label: '⚡ Can I get faster approval?', text: 'Is there a way to get my SSDI approved faster? What is a Compassionate Allowance?' },
+        { label: '📝 How do I start my application?', text: 'How do I start my SSDI application? Can I apply online?' },
+        { label: '👨‍⚕️ What is an RFC?', text: 'What is a Residual Functional Capacity (RFC) and why does it matter for my case?' },
+    ];
+
+    // Exclude prompts already covered in context
+    const keywords = {
+        'document': '📋', 'how long': '⏱️', 'appeal': '⚖️', 'attorney': '🤝',
+        'condition': '🏥', 'how much': '💰', 'ssi': '🔄', 'faster': '⚡',
+        'start': '📝', 'rfc': '👨‍⚕️'
+    };
+
+    let selected = allPrompts.filter(p => {
+        const keyInMsg = Object.keys(keywords).some(k => msg.includes(k) && p.label.includes(keywords[k]));
+        return !keyInMsg;
+    }).slice(0, 3);
+
+    if (selected.length === 0) selected = allPrompts.slice(0, 3);
+
+    const container = document.createElement('div');
+    container.className = 'ai-followup-prompts';
+    container.style.cssText = 'margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.4rem;';
+
+    selected.forEach(prompt => {
+        const btn = document.createElement('button');
+        btn.className = 'ai-followup-btn';
+        btn.textContent = prompt.label;
+        btn.style.cssText = 'background:#f0f4ff;border:1px solid #c7d2fe;color:#4338ca;padding:0.4rem 0.75rem;border-radius:20px;font-size:0.8rem;cursor:pointer;transition:all 0.2s;';
+        btn.onmouseover = () => { btn.style.background = '#e0e7ff'; btn.style.borderColor = '#818cf8'; };
+        btn.onmouseout = () => { btn.style.background = '#f0f4ff'; btn.style.borderColor = '#c7d2fe'; };
+        btn.onclick = () => {
+            document.getElementById('ai-user-input').value = prompt.text;
+            sendToAI();
+            container.remove();
+        };
+        container.appendChild(btn);
+    });
+
+    messagesDiv.appendChild(container);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
 function handleQuickAction(action) {
     const messages = {
+        'start': "I want to apply for SSDI disability benefits but don't know where to begin. What are the first steps I should take?",
+        'denied': "My SSDI application was denied and I don't know what to do next. What are my options?",
+        'ssdi_vs_ssi': "What is the difference between SSDI and SSI? Which one should I apply for?",
+        'appeal': "I need to appeal my SSDI denial. What are the steps in the appeals process and how long do I have to file?",
+        'timeline': "How long does the SSDI application and approval process take from start to finish?",
+        'documents': "What medical records and documents do I need to apply for SSDI disability benefits?",
         'confused': "I'm feeling confused and overwhelmed by all of this. Where do I even start?",
-        'denied': "My application was denied and I don't know what to do next.",
-        'start': "I need help but don't know where to begin. What should I do first?",
-        'appeal': "I need to appeal a denial. How do I make my appeal successful?"
     };
     
     const input = document.getElementById('ai-user-input');
