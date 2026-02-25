@@ -3,8 +3,9 @@
 
 class DualAIMedicalTeam {
     constructor() {
-        // Use pre-configured developer key if available (set in js/env.js)
+        // Use pre-configured developer keys if available (set in js/env.js or via /api/config).
         const devXaiKey = (typeof window !== 'undefined' && window.MEDHELPER_XAI_KEY) || null;
+        const devHfKey  = (typeof window !== 'undefined' && window.MEDHELPER_HF_KEY)  || null;
 
         // X.AI Configuration (Grok)
         this.xaiConfig = {
@@ -16,7 +17,7 @@ class DualAIMedicalTeam {
         
         // HuggingFace Configuration
         this.huggingFaceConfig = {
-            apiKey: null, // Optional: set via setApiKeys() if a HuggingFace key is available
+            apiKey: devHfKey, // Optional: pre-configured or set via setApiKeys()
             apiUrl: 'https://api-inference.huggingface.co/models/',
             models: {
                 conversational: 'facebook/blenderbot-400M-distill',

@@ -2,6 +2,17 @@ services:
   - type: web
     name: medhelper
     env: static
+    buildCommand: >
+      node -e "
+        const fs = require('fs');
+        const xai = process.env.XAI_API_KEY || '';
+        const hf  = process.env.HUGGINGFACE_API_KEY || '';
+        fs.writeFileSync('js/env.js',
+          '// Auto-generated from environment variables – do not commit.\n' +
+          'window.MEDHELPER_XAI_KEY = \'' + xai.replace(/'/g, '') + '\';\n' +
+          'window.MEDHELPER_HF_KEY  = \'' + hf.replace(/'/g, '')  + '\';\n'
+        );
+      "
     staticPublishPath: .
     headers:
       - path: /*
