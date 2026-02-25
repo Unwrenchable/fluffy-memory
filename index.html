@@ -991,12 +991,37 @@
         window.aiTeam = new DualAIMedicalTeam();
         window.dualAIMedicalTeam = window.aiTeam;
 
-        // Sync pre-configured developer key (from js/env.js) into appConfig so that
+        // Sync pre-configured developer keys (from js/env.js) into appConfig so that
         // anyConfigured() returns true and all AI-gated code paths are unlocked.
         (function syncDevKey() {
-            const devKey = window.MEDHELPER_XAI_KEY;
-            if (devKey && window.appConfig && window.aiTeam) {
-                window.appConfig.setApiKeys(devKey, null);
+            const xaiKey = window.MEDHELPER_XAI_KEY || null;
+            const hfKey  = window.MEDHELPER_HF_KEY  || null;
+            if ((xaiKey || hfKey) && window.appConfig && window.aiTeam) {
+                window.appConfig.setApiKeys(xaiKey, hfKey);
+            }
+        })();
+
+        // If no keys were found in env.js, try fetching them from the server-side
+        // /api/config endpoint (available on Vercel deployments with env vars set).
+        // This allows operators to set XAI_API_KEY / HUGGINGFACE_API_KEY in their
+        // hosting dashboard without touching source code.
+        (async function loadServerConfig() {
+            if (window.appConfig && window.appConfig.getStatus().anyConfigured) {
+                return; // Already configured via env.js – nothing to do.
+            }
+            try {
+                const res = await fetch('/api/config');
+                if (!res.ok) return;
+                const cfg = await res.json();
+                const xaiKey = cfg.xaiKey || null;
+                const hfKey  = cfg.huggingfaceKey || null;
+                if (xaiKey || hfKey) {
+                    window.appConfig.setApiKeys(xaiKey, hfKey);
+                    window.aiTeam.setApiKeys(xaiKey, hfKey);
+                    updateConfigStatus();
+                }
+            } catch (_) {
+                // No /api/config endpoint available – continue without it.
             }
         })();
         
