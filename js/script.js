@@ -1,14 +1,3 @@
-    // Load User Authentication Manager
-    if (window.UserAuthManager === undefined) {
-        const script7 = document.createElement('script');
-        script7.src = 'js/user-auth-manager.js';
-        script7.onload = () => {
-            window.userAuthManager = new UserAuthManager();
-        };
-        document.body.appendChild(script7);
-    } else {
-        window.userAuthManager = new UserAuthManager();
-    }
 // Medical Assistance Helper - JavaScript Functions
 
 // Sample data for demonstration purposes
@@ -2886,170 +2875,6 @@ function downloadLimitationDoc() {
 // UNIVERSAL HELP & LOCATION SERVICES
 // ========================================
 
-// Show pathway for uninsured people
-function showUninsuredPathway() {
-    const modal = document.getElementById('ai-tool-modal');
-    const container = document.getElementById('ai-tool-container');
-    
-    if (!window.locationServices) {
-        alert('Location services not loaded');
-        return;
-    }
-    
-    const pathway = window.locationServices.generateUninsuredPathway({ general: true });
-    
-    let html = '<div class="pathway-container">';
-    html += `<h2>${pathway.title}</h2>`;
-    html += `<p class="subtitle">${pathway.subtitle}</p>`;
-    
-    html += '<div class="alert alert-success">';
-    html += '<strong>✅ YOU CAN GET CARE - Even with NO Insurance!</strong><br>';
-    html += 'These programs exist specifically to help people without insurance. You have a RIGHT to healthcare.';
-    html += '</div>';
-    
-    // Urgent care section
-    html += '<div class="pathway-section">';
-    html += '<h3>🚨 If You Need Care RIGHT NOW:</h3>';
-    pathway.urgentCare.forEach(step => {
-        html += `<div class="pathway-step">`;
-        html += `<div class="step-number">${step.step}</div>`;
-        html += '<div class="step-content">';
-        html += `<h4>${step.action}</h4>`;
-        html += `<p>${step.details}</p>`;
-        html += `<p><strong>Cost:</strong> ${step.cost}</p>`;
-        if (step.services) html += `<p><strong>Services:</strong> ${step.services}</p>`;
-        html += '</div></div>';
-    });
-    html += '</div>';
-    
-    // Ongoing care
-    html += '<div class="pathway-section">';
-    html += '<h3>🏥 For Ongoing Medical Care:</h3>';
-    pathway.ongoingCare.forEach(step => {
-        html += `<div class="pathway-step">`;
-        html += `<div class="step-number">${step.step}</div>`;
-        html += '<div class="step-content">';
-        html += `<h4>${step.action}</h4>`;
-        html += `<p><strong>Why:</strong> ${step.why}</p>`;
-        if (step.howTo) html += `<p><strong>How:</strong> ${step.howTo}</p>`;
-        html += `<p><strong>Cost:</strong> ${step.cost}</p>`;
-        html += '</div></div>';
-    });
-    html += '</div>';
-    
-    // Prescriptions
-    html += '<div class="pathway-section">';
-    html += '<h3>💊 Getting Prescriptions Without Insurance:</h3>';
-    pathway.prescriptions.forEach(program => {
-        html += `<div class="program-card">`;
-        html += `<h4>${program.name}</h4>`;
-        html += `<p>${program.description}</p>`;
-        html += `<p><strong>Who qualifies:</strong> ${program.eligibility}</p>`;
-        html += `<p><strong>How to apply:</strong> ${program.howToApply}</p>`;
-        if (program.noQuestionsAsked) {
-            html += `<span class="badge badge-success">✅ No questions asked!</span>`;
-        }
-        html += `</div>`;
-    });
-    html += '</div>';
-    
-    html += '<div class="action-buttons">';
-    html += '<button onclick="requestLocation()" class="btn-primary">Find Care Near Me</button>';
-    html += '<button onclick="startComprehensiveIntake()" class="btn-secondary">Get Personalized Help</button>';
-    html += '</div>';
-    
-    html += '</div>';
-    
-    container.innerHTML = html;
-    modal.style.display = 'block';
-}
-
-// Show dental care pathway
-function showDentalPathway() {
-    const modal = document.getElementById('ai-tool-modal');
-    const container = document.getElementById('ai-tool-container');
-    
-    if (!window.locationServices) {
-        alert('Location services not loaded');
-        return;
-    }
-    
-    const pathway = window.locationServices.generateDentalPathway('general');
-    
-    let html = '<div class="pathway-container">';
-    html += `<h2>${pathway.title}</h2>`;
-    html += `<p class="subtitle">${pathway.subtitle}</p>`;
-    
-    html += '<div class="alert alert-success">';
-    html += '<strong>🦷 FREE DENTAL CARE EXISTS!</strong><br>';
-    html += 'Many programs give COMPLETELY FREE dental care - even dentures. Some ask NO questions at all.';
-    html += '</div>';
-    
-    // Immediate options
-    html += '<div class="pathway-section">';
-    html += '<h3>🚨 Get Dental Care THIS WEEK:</h3>';
-    pathway.immediate.forEach(option => {
-        html += `<div class="dental-option priority-${option.priority.toLowerCase()}">`;
-        html += `<div class="priority-badge">${option.priority} PRIORITY</div>`;
-        html += `<h4>${option.option}</h4>`;
-        html += `<p>${option.description}</p>`;
-        html += `<p><strong>Who can go:</strong> ${option.eligibility}</p>`;
-        html += `<p><strong>Cost:</strong> ${option.cost}</p>`;
-        html += '<div class="how-to-box">';
-        html += '<h5>How to do this:</h5>';
-        html += '<ol>';
-        option.howTo.forEach(step => {
-            html += `<li>${step}</li>`;
-        });
-        html += '</ol>';
-        html += '</div>';
-        if (option.websites) {
-            html += '<p><strong>Websites:</strong> ';
-            option.websites.forEach(site => {
-                html += `<a href="https://${site}" target="_blank">${site}</a> `;
-            });
-            html += '</p>';
-        }
-        html += `</div>`;
-    });
-    html += '</div>';
-    
-    // Comprehensive care
-    html += '<div class="pathway-section">';
-    html += '<h3>🏥 For Complete Dental Restoration (FREE):</h3>';
-    pathway.comprehensive.forEach(option => {
-        html += `<div class="program-card comprehensive">`;
-        html += `<h4>${option.option}</h4>`;
-        html += `<p>${option.description}</p>`;
-        html += `<p><strong>Who qualifies:</strong> ${option.eligibility}</p>`;
-        html += `<p><strong>What's covered:</strong> ${option.coverage}</p>`;
-        html += `<p class="cost-free"><strong>Cost: ${option.cost}</strong></p>`;
-        html += '<div class="how-to-box">';
-        html += '<h5>How to apply:</h5>';
-        html += '<ol>';
-        option.howTo.forEach(step => {
-            html += `<li>${step}</li>`;
-        });
-        html += '</ol>';
-        html += '</div>';
-        if (option.website) {
-            html += `<p><strong>Apply at:</strong> <a href="https://${option.website}" target="_blank">${option.website}</a></p>`;
-        }
-        html += `</div>`;
-    });
-    html += '</div>';
-    
-    html += '<div class="action-buttons">';
-    html += '<button onclick="findDentalNearMe()" class="btn-primary">Find Dental Care Near Me</button>';
-    html += '<button onclick="startComprehensiveIntake()" class="btn-secondary">Get Full Help</button>';
-    html += '</div>';
-    
-    html += '</div>';
-    
-    container.innerHTML = html;
-    modal.style.display = 'block';
-}
-
 // Show help for denials
 function startDenialHelp() {
     if (window.intakeSystem) {
@@ -3318,5 +3143,17 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(script6);
     } else {
         window.doctorProgramSearch = new DoctorProgramSearch();
+    }
+
+    // Load User Authentication Manager
+    if (window.UserAuthManager === undefined) {
+        const script7 = document.createElement('script');
+        script7.src = 'js/user-auth-manager.js';
+        script7.onload = () => {
+            window.userAuthManager = new UserAuthManager();
+        };
+        document.body.appendChild(script7);
+    } else {
+        window.userAuthManager = new UserAuthManager();
     }
 });

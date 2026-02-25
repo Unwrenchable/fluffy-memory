@@ -37,9 +37,7 @@ Six advanced AI tools to help with every step:
 6. **Appointment Coordinator** - Manage medical appointments
 
 ### 🤖 Dual AI Integration (X.AI + HuggingFace)
-**NEW:** Combine the power of two AI systems working as a medical expert team!
-
-![AI Configuration](https://github.com/user-attachments/assets/8cbfff2b-68b1-46b4-b995-497eeacd30c9)
+Intelligent AI support powered by two AI systems working as a medical expert team.
 
 **Features:**
 - **X.AI (Grok)** - Advanced conversational AI for complex medical guidance and reasoning
@@ -51,20 +49,11 @@ Six advanced AI tools to help with every step:
   - **HuggingFace Only**: Use only HuggingFace models
   - **Both**: Get responses from both AIs simultaneously
 
-**Secure API Key Management:**
-- API keys stored only in browser memory (never saved to disk)
-- Never sent to our servers
-- Re-enter each session for maximum security
-- See `.env.example` for server-side configuration
-
-**How to Configure:**
-1. Get your API keys:
-   - X.AI: [console.x.ai](https://console.x.ai/)
-   - HuggingFace: [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
-2. Scroll to the "⚙️ AI Configuration" section
-3. Enter your API keys (they stay in memory only)
-4. Choose your preferred team mode
-5. Click "Save Configuration" and test the connection!
+**API Key Configuration (Server-Side):**
+- AI API keys are configured via environment variables on the server — they are never exposed in the browser
+- See `.env.example` for all supported variables
+- On Vercel: set `XAI_API_KEY` and `HUGGINGFACE_API_KEY` in your project's Environment Variables settings
+- On Render: set these in the Environment section of your service dashboard
 
 ### 🔐 User Authentication & Progress Tracking
 **NEW:** Create an account to save your progress and access your documents:
@@ -96,8 +85,8 @@ Six advanced AI tools to help with every step:
 ### 🤖 Enable AI Features (Optional)
 
 1. Get API keys from [X.AI](https://console.x.ai/) and/or [HuggingFace](https://huggingface.co/settings/tokens)
-2. Scroll to "⚙️ AI Configuration" section
-3. Enter your keys and click "Save Configuration"
+2. Set `XAI_API_KEY` and/or `HUGGINGFACE_API_KEY` as environment variables on your hosting platform
+3. The app auto-discovers keys via the `/api/config` endpoint (Vercel) or `js/env.js` (Render)
 
 **Need help?** See our [**Complete Setup Guide**](SETUP_GUIDE.md) for detailed installation instructions, troubleshooting, and deployment options.
 
@@ -153,8 +142,8 @@ Works on all modern browsers:
 
 ### AI Features Not Working?
 - Verify you're using a local server (http://localhost:8080)
-- Check API keys are entered correctly in AI Configuration section
-- Use the "🧪 Test AI Connection" button to verify
+- Check that `XAI_API_KEY` and/or `HUGGINGFACE_API_KEY` environment variables are set correctly on your hosting platform
+- For local development: set these in a `.env` file and ensure your server reads them
 
 ### Need More Help?
 See the [**Complete Setup Guide**](SETUP_GUIDE.md) for detailed troubleshooting, installation options, and configuration help.
