@@ -57,21 +57,33 @@ class AIConfigPanel {
     this.state.xaiKey = document.getElementById('xai-key').value.trim();
     this.state.huggingFaceKey = document.getElementById('hf-key').value.trim();
     this.state.teamMode = document.getElementById('team-mode').value;
-    // Set keys in AI modules (assumes global DualAIMedicalTeam instance)
+    // Sync keys into the unified config store so anyConfigured() returns true
+    if (window.appConfig) {
+      window.appConfig.setApiKeys(this.state.xaiKey, this.state.huggingFaceKey);
+      window.appConfig.setTeamMode(this.state.teamMode);
+    }
+    // Also push keys to the AI executor
     if (window.dualAIMedicalTeam) {
       window.dualAIMedicalTeam.setApiKeys(this.state.xaiKey, this.state.huggingFaceKey);
       window.dualAIMedicalTeam.setTeamMode(this.state.teamMode);
     }
-    this.showStatus('Configuration saved (in memory only).');
+    // Sync to MedicalAIAssistant as well
+    if (window.aiAssistant && this.state.huggingFaceKey) {
+      window.aiAssistant.setApiKey(this.state.huggingFaceKey);
+    }
+    this.showStatus('✅ Configuration saved.');
   }
 
   async testConnection() {
-    this.showStatus('Testing connections...');
+    this.showStatus('Testing connections…');
+    // Persist current form values before testing
+    this.saveConfig();
     let xaiStatus = 'Not tested', hfStatus = 'Not tested';
     if (window.dualAIMedicalTeam) {
       try {
-        await window.dualAIMedicalTeam.setApiKeys(this.state.xaiKey, this.state.huggingFaceKey);
-        await window.dualAIMedicalTeam.setTeamMode(this.state.teamMode);
+        // setApiKeys / setTeamMode are synchronous — no await needed
+        window.dualAIMedicalTeam.setApiKeys(this.state.xaiKey, this.state.huggingFaceKey);
+        window.dualAIMedicalTeam.setTeamMode(this.state.teamMode);
         // Test X.AI
         if (this.state.xaiKey) {
           const res = await window.dualAIMedicalTeam.getXAIResponse('Test connection');

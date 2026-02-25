@@ -37,7 +37,11 @@ class AppConfig {
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
-                    this.config = { ...this.config, ...parsed };
+                    // Deep-merge nested objects so apiKey fields are preserved
+                    this.config.xai = { ...this.config.xai, ...(parsed.xai || {}) };
+                    this.config.huggingface = { ...this.config.huggingface, ...(parsed.huggingface || {}) };
+                    if (parsed.teamMode !== undefined) this.config.teamMode = parsed.teamMode;
+                    if (parsed.debugMode !== undefined) this.config.debugMode = parsed.debugMode;
                 } catch (error) {
                     console.error('Failed to parse saved config:', error);
                 }

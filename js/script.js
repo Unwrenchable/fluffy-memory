@@ -1613,6 +1613,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize AI Assistant, Condition Categorizer, and Intake System
     if (typeof MedicalAIAssistant !== 'undefined') {
         window.aiAssistant = new MedicalAIAssistant();
+        // Sync HuggingFace key if it was already set via env.js or /api/config
+        if (window.appConfig) {
+            const hfKey = window.appConfig.getApiKey('huggingface');
+            if (hfKey) window.aiAssistant.setApiKey(hfKey);
+        }
     }
     if (typeof DocumentAnalyzer !== 'undefined') {
         window.documentAnalyzer = new DocumentAnalyzer();

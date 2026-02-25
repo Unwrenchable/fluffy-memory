@@ -9,7 +9,7 @@ class MedicalAIAssistant {
         
         // Models for different tasks
         this.models = {
-            conversational: 'facebook/blenderbot-400M-distill', // Conversational AI
+            conversational: 'microsoft/DialoGPT-medium', // Conversational AI
             textGeneration: 'gpt2', // Text generation for appeals
             questionAnswering: 'deepset/roberta-base-squad2', // Q&A for medical questions
             sentiment: 'distilbert-base-uncased-finetuned-sst-2-english', // Analyze user frustration
