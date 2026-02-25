@@ -24,36 +24,49 @@
 <body>
     <!-- AI-Powered Smart Assistant Widget -->
     <div id="ai-assistant-widget" class="ai-widget">
-        <button id="ai-widget-toggle" class="ai-widget-toggle" onclick="toggleAIAssistant()">
-            <span class="ai-icon">🤖</span>
-            <span class="ai-text">Need Help? Ask AI</span>
+        <button id="ai-widget-toggle" class="ai-widget-toggle" onclick="toggleAIAssistant()" aria-label="Open SSDI Benefits Assistant">
+            <span class="ai-icon">🏛️</span>
+            <span class="ai-text">Free SSDI Help</span>
+            <span style="display:block;font-size:0.65rem;opacity:0.9;line-height:1;">Ask me anything</span>
         </button>
         <div id="ai-assistant-panel" class="ai-assistant-panel" style="display: none;">
             <div class="ai-panel-header">
-                <h3>🤖 Your AI Medical Navigator</h3>
-                <p>I'll help you cut through the confusion and get the help you need</p>
-                <button class="ai-close" onclick="toggleAIAssistant()">×</button>
+                <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.4rem;">
+                    <span style="font-size:1.8rem;">🏛️</span>
+                    <div>
+                        <h3 style="margin:0;font-size:1.1rem;">SSDI &amp; SSI Benefits Guide</h3>
+                        <p style="margin:0;font-size:0.78rem;opacity:0.9;">Free • Confidential • Step-by-Step Help</p>
+                    </div>
+                </div>
+                <p style="margin:0.2rem 0 0;font-size:0.85rem;opacity:0.95;">Get clear answers about Social Security disability benefits — what you qualify for, how to apply, and how to appeal denials.</p>
+                <button class="ai-close" onclick="toggleAIAssistant()" aria-label="Close assistant">×</button>
             </div>
             <div id="ai-chat-container" class="ai-chat-container">
                 <div class="ai-welcome-message">
-                    <p><strong>Hi! I'm your AI assistant.</strong></p>
-                    <p>I understand navigating medical assistance can be confusing and frustrating. I'm here to:</p>
-                    <ul>
-                        <li>✅ Understand exactly what you need</li>
-                        <li>✅ Cut through red tape and bureaucracy</li>
-                        <li>✅ Help with denials and appeals</li>
-                        <li>✅ Find the right doctors and programs</li>
-                        <li>✅ Simplify the entire process</li>
-                    </ul>
-                    <p><strong>What's your situation? Tell me what you're struggling with:</strong></p>
+                    <p style="font-size:1rem;"><strong>👋 Hi! I'm your free SSDI &amp; SSI guide.</strong></p>
+                    <p style="font-size:0.9rem;color:#4a5568;">I can help you with the entire Social Security disability process — in plain language, step by step.</p>
+                    <div style="background:#f0f4ff;border-radius:8px;padding:0.75rem;margin:0.5rem 0;font-size:0.85rem;">
+                        <strong>I can help you:</strong>
+                        <ul style="margin:0.4rem 0 0 1rem;padding:0;">
+                            <li>Understand SSDI vs SSI eligibility</li>
+                            <li>Know what documents you need</li>
+                            <li>Navigate denials &amp; file appeals</li>
+                            <li>Understand the 5-step evaluation process</li>
+                            <li>Speed up approval with Compassionate Allowances</li>
+                        </ul>
+                    </div>
+                    <p style="font-size:0.85rem;color:#718096;">📞 SSA Main Line: <strong>1-800-772-1213</strong> (Mon–Fri 8am–7pm)</p>
+                    <p style="font-size:0.9rem;margin-top:0.5rem;"><strong>What would you like to know?</strong></p>
                 </div>
                 <div id="ai-messages" class="ai-messages"></div>
             </div>
             <div class="ai-quick-actions" id="ai-quick-actions">
-                <button onclick="handleQuickAction('confused')" class="quick-action-btn">😵 I'm Confused</button>
+                <button onclick="handleQuickAction('start')" class="quick-action-btn">🆕 Just Starting</button>
                 <button onclick="handleQuickAction('denied')" class="quick-action-btn">❌ I Was Denied</button>
-                <button onclick="handleQuickAction('start')" class="quick-action-btn">🎯 Where to Start?</button>
-                <button onclick="handleQuickAction('appeal')" class="quick-action-btn">⚖️ Need to Appeal</button>
+                <button onclick="handleQuickAction('ssdi_vs_ssi')" class="quick-action-btn">🔄 SSDI vs SSI</button>
+                <button onclick="handleQuickAction('appeal')" class="quick-action-btn">⚖️ File Appeal</button>
+                <button onclick="handleQuickAction('timeline')" class="quick-action-btn">⏱️ How Long?</button>
+                <button onclick="handleQuickAction('documents')" class="quick-action-btn">📋 Documents</button>
             </div>
             <div class="ai-input-area">
                 <input type="text" id="ai-user-input" placeholder="Type your question or concern..." onkeypress="handleAIEnter(event)">
