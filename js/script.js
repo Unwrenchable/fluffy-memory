@@ -1795,14 +1795,15 @@ function formatAIResponse(text) {
     const lines = html.split('\n');
     let result = '';
     let inList = false;
+    const LIST_STYLE = 'margin:0.5rem 0 0.5rem 1.2rem;padding:0;';
     for (const line of lines) {
         const bulletMatch = line.match(/^[-•]\s+(.+)/);
         const numberedMatch = line.match(/^\d+\.\s+(.+)/);
         if (bulletMatch) {
-            if (!inList) { result += '<ul style="margin:0.5rem 0 0.5rem 1.2rem;padding:0;">'; inList = 'ul'; }
+            if (!inList) { result += `<ul style="${LIST_STYLE}">`; inList = 'ul'; }
             result += `<li style="margin-bottom:0.3rem;">${bulletMatch[1]}</li>`;
         } else if (numberedMatch) {
-            if (!inList) { result += '<ol style="margin:0.5rem 0 0.5rem 1.2rem;padding:0;">'; inList = 'ol'; }
+            if (!inList) { result += `<ol style="${LIST_STYLE}">`; inList = 'ol'; }
             result += `<li style="margin-bottom:0.3rem;">${numberedMatch[1]}</li>`;
         } else {
             if (inList) { result += inList === 'ol' ? '</ol>' : '</ul>'; inList = false; }

@@ -98,15 +98,17 @@ main() {
     test_endpoint "http://localhost:8080/donation.html" "Donation page"
     
     # Test static assets
-    test_endpoint "http://localhost:8080/styles.css" "CSS stylesheet"
-    test_endpoint "http://localhost:8080/script.js" "Main JavaScript"
+    test_endpoint "http://localhost:8080/css/styles.css" "CSS stylesheet (modular)"
+    test_endpoint "http://localhost:8080/js/script.js" "Main JavaScript"
     test_endpoint "http://localhost:8080/manifest.json" "PWA manifest"
     test_endpoint "http://localhost:8080/service-worker.js" "Service worker"
     
     # Test JavaScript modules
-    test_endpoint "http://localhost:8080/ai-assistant.js" "AI assistant module"
-    test_endpoint "http://localhost:8080/location-services.js" "Location services module"
-    test_endpoint "http://localhost:8080/smart-search.js" "Smart search module"
+    test_endpoint "http://localhost:8080/js/ai-assistant.js" "AI assistant module"
+    test_endpoint "http://localhost:8080/js/location-services.js" "Location services module"
+    test_endpoint "http://localhost:8080/js/smart-search.js" "Smart search module"
+    test_endpoint "http://localhost:8080/js/config.js" "App config module"
+    test_endpoint "http://localhost:8080/js/xai-huggingface-integration.js" "AI integration module"
     
     echo ""
     echo "======================================"

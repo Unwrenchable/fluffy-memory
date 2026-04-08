@@ -491,6 +491,11 @@
                     </div>
                 </div>
 
+                <!-- AI Configuration Panel -->
+                <details style="margin-top:2rem;" id="ai-config-details">
+                    <summary style="cursor:pointer;font-weight:600;color:#8b5cf6;padding:0.75rem 0;">⚙️ Configure AI Settings (API Keys)</summary>
+                    <div id="ai-config-panel" style="margin-top:1rem;"></div>
+                </details>
 
             </div>
         </section>
@@ -867,6 +872,7 @@
     <script src="js/smart-search.js"></script>
     <script src="js/crypto-payment.js"></script>
     <script src="js/pwa-install.js"></script>
+    <script src="js/ai-config-panel.js"></script>
     <script src="js/script.js"></script>
     <script>
         // Initialize user authentication UI
@@ -1617,6 +1623,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             initAutoFillSystem();
             initSmartSearch();
+            // Mount AI configuration panel
+            if (typeof AIConfigPanel !== 'undefined') {
+                window.aiConfigPanel = new AIConfigPanel('ai-config-panel');
+            }
         });
 
         // ── Action handler: Dental Care Pathway ─────────────────────────────
