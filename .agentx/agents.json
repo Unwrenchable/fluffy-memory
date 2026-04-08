@@ -1127,5 +1127,199 @@
     ],
     "preferred_profile": "safe",
     "risk_level": "low"
+  },
+  {
+    "id": "crisis-support-agent",
+    "role": "Crisis Support Agent",
+    "description": "Specialized safety agent for MedHelper that detects mental health crises and connects users with immediate resources. Handles 988 lifeline integration, crisis text line (741741), veteran-specific crisis support, and emergency escalation. Ensures zero-latency safety responses before any AI processing.",
+    "tags": [
+      "medhelper",
+      "safety",
+      "mental-health",
+      "public-use"
+    ],
+    "capabilities": [
+      "crisis-keyword-detection",
+      "safety-resource-routing",
+      "banner-alerts",
+      "veteran-crisis-support"
+    ],
+    "required_tools": [
+      "read_file",
+      "apply_patch",
+      "create_file",
+      "grep_search"
+    ],
+    "preferred_profile": "balanced",
+    "risk_level": "low"
+  },
+  {
+    "id": "benefits-navigator",
+    "role": "Benefits Navigator Agent",
+    "description": "Expert agent for MedHelper that guides users through SSDI, SSI, VA disability, SNAP, WIC, TANF, Medicaid, Medicare, and ACA marketplace programs. Calculates eligibility estimates, identifies dual-benefit opportunities, and creates personalized step-by-step application plans. Specializes in concurrent benefits and rare disease claims.",
+    "tags": [
+      "medhelper",
+      "disability",
+      "benefits",
+      "ssdi",
+      "ssi",
+      "public-use"
+    ],
+    "capabilities": [
+      "ssdi-ssi-eligibility",
+      "benefit-amount-estimation",
+      "va-disability-guidance",
+      "snap-wic-tanf-routing",
+      "concurrent-benefits-analysis",
+      "rare-disease-claim-strategy"
+    ],
+    "required_tools": [
+      "read_file",
+      "apply_patch",
+      "create_file",
+      "grep_search",
+      "semantic_search"
+    ],
+    "preferred_profile": "balanced",
+    "risk_level": "low"
+  },
+  {
+    "id": "insurance-advocate",
+    "role": "Insurance Advocate Agent",
+    "description": "Insurance denial appeals specialist for MedHelper. Generates professional appeal letters, identifies prior authorization strategies, helps users navigate insurance bureaucracy, explains EOBs and coverage disputes, and connects users with patient advocates and legal aid for complex denials.",
+    "tags": [
+      "medhelper",
+      "insurance",
+      "appeals",
+      "healthcare",
+      "public-use"
+    ],
+    "capabilities": [
+      "appeal-letter-generation",
+      "prior-auth-guidance",
+      "eob-explanation",
+      "insurance-denial-analysis",
+      "patient-advocate-referral"
+    ],
+    "required_tools": [
+      "read_file",
+      "apply_patch",
+      "create_file",
+      "grep_search"
+    ],
+    "preferred_profile": "balanced",
+    "risk_level": "low"
+  },
+  {
+    "id": "medical-document-ai",
+    "role": "Medical Document AI Agent",
+    "description": "Document intelligence agent for MedHelper that analyzes uploaded medical records, extracts key information for disability applications, identifies missing documentation, generates RFC summaries, and creates structured reports for SSA submissions. Handles PDFs, images, and medical text.",
+    "tags": [
+      "medhelper",
+      "document-analysis",
+      "medical-records",
+      "ai",
+      "public-use"
+    ],
+    "capabilities": [
+      "medical-record-extraction",
+      "rfc-summary-generation",
+      "missing-doc-identification",
+      "ssa-submission-formatting",
+      "pdf-image-analysis"
+    ],
+    "required_tools": [
+      "read_file",
+      "apply_patch",
+      "create_file",
+      "grep_search",
+      "semantic_search"
+    ],
+    "preferred_profile": "balanced",
+    "risk_level": "low"
+  },
+  {
+    "id": "local-resources-finder",
+    "role": "Local Resources Finder Agent",
+    "description": "Community resources agent for MedHelper that connects users to local food banks, emergency shelters, utility assistance, free/low-cost clinics, legal aid, and social services. Integrates with 211.org, HRSA clinic finder, Feeding America, and NeedyMeds to surface real-world help in the user's area.",
+    "tags": [
+      "medhelper",
+      "community-resources",
+      "food-assistance",
+      "housing",
+      "public-use"
+    ],
+    "capabilities": [
+      "211-integration",
+      "food-bank-finder",
+      "shelter-locator",
+      "fqhc-clinic-finder",
+      "utility-assistance",
+      "legal-aid-routing"
+    ],
+    "required_tools": [
+      "read_file",
+      "apply_patch",
+      "grep_search"
+    ],
+    "preferred_profile": "safe",
+    "risk_level": "low"
+  },
+  {
+    "id": "medhelper-qa-tester",
+    "role": "MedHelper QA Tester Agent",
+    "description": "Full end-to-end QA agent for the MedHelper PWA. Tests all chat flows, AI fallback behavior, crisis detection, form submissions, document uploads, doctor finder, benefits calculator, and payment flows. Reports broken features and regression issues for the fluffy-memory repository.",
+    "tags": [
+      "medhelper",
+      "testing",
+      "qa",
+      "playwright",
+      "public-use"
+    ],
+    "capabilities": [
+      "playwright-browser-tests",
+      "crisis-flow-testing",
+      "ai-fallback-validation",
+      "form-submission-testing",
+      "api-endpoint-checks",
+      "mobile-responsive-testing"
+    ],
+    "required_tools": [
+      "run_in_terminal",
+      "read_file",
+      "apply_patch",
+      "create_file",
+      "grep_search"
+    ],
+    "preferred_profile": "balanced",
+    "risk_level": "medium"
+  },
+  {
+    "id": "medhelper-accessibility",
+    "role": "MedHelper Accessibility Agent",
+    "description": "Accessibility specialist for MedHelper ensuring the app is usable by people with disabilities, low literacy, and limited English proficiency. Checks WCAG 2.1 AA compliance, screen reader compatibility, color contrast, form labeling, keyboard navigation, and plain-language content standards.",
+    "tags": [
+      "medhelper",
+      "accessibility",
+      "wcag",
+      "a11y",
+      "public-use"
+    ],
+    "capabilities": [
+      "wcag-audit",
+      "screen-reader-testing",
+      "color-contrast-check",
+      "keyboard-nav-testing",
+      "plain-language-review",
+      "aria-labeling"
+    ],
+    "required_tools": [
+      "read_file",
+      "apply_patch",
+      "grep_search",
+      "semantic_search"
+    ],
+    "preferred_profile": "safe",
+    "risk_level": "low"
   }
 ]
