@@ -1,19 +1,21 @@
 // Service Worker for Medical Assistance Helper PWA
-const CACHE_NAME = 'medical-helper-v1';
+const CACHE_NAME = 'medical-helper-v2';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/styles.css',
-  '/script.js',
-  '/ai-assistant.js',
-  '/comprehensive-intake.js',
-  '/condition-categorizer.js',
-  '/crypto-payment.js',
-  '/disability-doctor-finder.js',
-  '/document-library.js',
-  '/location-services.js',
-  '/smart-search.js',
-  '/manifest.json'
+  '/css/styles.css',
+  '/manifest.json',
+  '/js/env.js',
+  '/js/config.js',
+  '/js/xai-huggingface-integration.js',
+  '/js/ai-assistant.js',
+  '/js/comprehensive-intake.js',
+  '/js/condition-categorizer.js',
+  '/js/location-services.js',
+  '/js/smart-search.js',
+  '/js/script.js',
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
 // Install service worker and cache resources

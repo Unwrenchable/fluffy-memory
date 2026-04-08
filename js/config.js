@@ -13,8 +13,8 @@ class AppConfig {
         this.config = {
             xai: {
                 apiKey: null,
-                model: 'grok-4-latest',
-                temperature: 0,
+                model: 'grok-3-beta',
+                temperature: 0.5,
                 enabled: true
             },
             huggingface: {
