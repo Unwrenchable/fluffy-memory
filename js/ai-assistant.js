@@ -79,8 +79,227 @@ class MedicalAIAssistant {
         let response = '';
         let suggestions = [];
 
+        // ── CRISIS / SAFETY — always check first ─────────────────────────────
+        const crisisKeywords = [
+            'suicide', 'suicidal', 'kill myself', 'end my life', 'don\'t want to live',
+            'want to die', 'no reason to live', 'better off dead', 'can\'t go on',
+            'take my own life', 'ending it', 'self harm', 'self-harm', 'hurt myself',
+            'cutting myself', 'overdose', 'harm myself', 'not worth living'
+        ];
+        const isCrisis = crisisKeywords.some(kw => input.includes(kw));
+
+        if (isCrisis) {
+            return {
+                response: `**🆘 You are not alone — help is available right now.**
+
+I hear you, and what you're going through sounds incredibly painful. Please reach out to a crisis counselor immediately — it's free, confidential, and available 24/7.
+
+**📞 988 Suicide & Crisis Lifeline**
+Call or text **988** (US — free, 24/7)
+Chat online at: 988lifeline.org
+
+**📱 Crisis Text Line**
+Text **HOME** to **741741** (free, 24/7)
+
+**🚨 If you are in immediate danger, call 911 or go to your nearest emergency room.**
+
+**For veterans:** Dial **988** then press **1**, or text **838255**
+
+---
+
+You reached out here, which means part of you is looking for a way through. The healthcare and benefits system can feel impossibly overwhelming — but there are people who will help you navigate it, and you deserve that support.
+
+Please call or text 988 right now. Stay with me.`,
+                suggestions: [
+                    { action: 'crisis_resources', text: '🆘 Crisis Resources', icon: '🆘', description: 'Immediate help — 988 & more' },
+                    { action: 'find_advocate', text: 'Find Local Support', icon: '🤝', description: 'Local mental health services near you' }
+                ],
+                confidence: 1.0,
+                isCrisis: true,
+                userContext: this.userContext
+            };
+        }
+
+        // ── HOMELESSNESS / HOUSING CRISIS ─────────────────────────────────────
+        if (input.includes('homeless') || input.includes('evict') || input.includes('no place to live') ||
+            input.includes('sleeping in my car') || input.includes('lost my home') || input.includes('shelter')) {
+            response = `**Housing Crisis Help — Immediate Resources**
+
+**211 — Your First Call**
+📞 Dial **211** (free, 24/7 in most of the US) for:
+- Emergency shelter referrals
+- Rental/utility assistance
+- Food pantries near you
+- All local social services
+
+**Online:** 211.org
+
+**Emergency Shelter:**
+- **National Homeless Shelter Directory:** shelterlistings.org
+- **Salvation Army:** 1-800-728-7825
+- **Catholic Charities:** catholiccharitiesusa.org
+
+**Eviction Prevention:**
+- **Emergency Rental Assistance:** consumerfinance.gov/renthelp
+- **HUD Housing Counselors:** 1-800-569-4287 (free)
+- Many areas have Legal Aid societies that can stop evictions — search "legal aid [your city]"
+
+**SNAP (Food Assistance):** If you're housing insecure, you likely qualify. Apply at benefitsfinder.gov or your state SNAP office.
+
+**HUD Public Housing:** hud.gov/topics/rental_assistance — apply at your local housing authority.
+
+**Also:** If your housing crisis is caused by a medical condition, mention this in your SSDI/SSI application — SSA can expedite cases involving homelessness.`;
+            suggestions = [
+                { action: 'financial_programs', text: 'Find Emergency Help', icon: '🏠', description: '211 and local shelter finder' },
+                { action: 'snap_wic', text: 'Apply for SNAP', icon: '🍎', description: 'Food assistance while getting housing' }
+            ];
+
+        // ── FOOD INSECURITY ────────────────────────────────────────────────────
+        } else if (input.includes('food') || input.includes('hungry') || input.includes('snap') ||
+                   input.includes('food stamp') || input.includes('wic') || input.includes('can\'t afford food') ||
+                   input.includes('starving') || input.includes('no money for food')) {
+            response = `**Food Assistance Programs**
+
+**SNAP (Supplemental Nutrition Assistance Program)**
+- Formerly "food stamps" — debit card for groceries
+- Apply at benefitsfinder.gov or your state's SNAP office
+- Eligibility: Based on income (generally up to 130% of poverty line)
+- A family of 3 can receive up to ~$766/month (2026)
+- **Apply the same day if facing immediate need** — many states offer expedited (7-day) processing
+
+**WIC (Women, Infants & Children)**
+- For pregnant women, new mothers, and children under 5
+- Provides food vouchers, formula, produce
+- Find your local WIC office: wic.fns.usda.gov
+
+**Free Food / Food Banks:**
+- **Feeding America:** feedingamerica.org — 60,000+ food pantries nationwide
+- **Food Finder:** food.findhelp.com
+- **No paperwork, no income check** at most food banks
+
+**SNAP for People with Disabilities:**
+- If you receive SSDI/SSI, you may automatically qualify for SNAP
+- SSI recipients often qualify for categorical eligibility
+
+📞 Call **211** for immediate food assistance near you.`;
+            suggestions = [
+                { action: 'financial_programs', text: 'Apply for SNAP', icon: '🍎', description: 'Food assistance application' },
+                { action: 'find_local_resources', text: 'Find a Food Bank', icon: '🏪', description: 'Free food pantries near you' }
+            ];
+
+        // ── VETERANS BENEFITS ─────────────────────────────────────────────────
+        } else if (input.includes('veteran') || input.includes('va benefit') || input.includes('military') ||
+                   input.includes('service member') || input.includes('va disability')) {
+            response = `**Veterans Benefits — You've Earned These**
+
+**VA Disability Compensation**
+- For veterans with service-connected conditions
+- Monthly tax-free payments based on disability rating (10%–100%)
+- Apply at va.gov/disability or call **1-800-827-1000**
+- **No work credits required** — separate from SSDI
+
+**VA Health Care**
+- Free or low-cost health care for eligible veterans
+- Priority groups based on disability rating and income
+- Enroll at va.gov/health-care/apply or call **1-877-222-8387**
+
+**Veterans Pension (for non-service-connected conditions)**
+- For wartime veterans with limited income and a disabling condition
+- Does NOT require the condition to be service-connected
+
+**SSDI + VA Disability: You can receive BOTH**
+- VA disability and SSDI are separate programs — having one doesn't disqualify you from the other
+- Many veterans qualify for both
+
+**VSOs (Veteran Service Organizations) — Free Claim Help:**
+- **DAV (Disabled American Veterans):** dav.org — free claim assistance
+- **VFW:** vfw.org
+- **American Legion:** legion.org
+- **VSO locator:** va.gov/vso
+
+📞 **Veterans Crisis Line:** Dial **988** then press **1** (24/7, free, confidential)`;
+            suggestions = [
+                { action: 'disability_strategy', text: 'VA vs SSDI — Which to Apply For', icon: '🎖️', description: 'Understand both veteran benefit paths' },
+                { action: 'find_advocate', text: 'Find a VSO Near Me', icon: '🤝', description: 'Free veteran claims assistance' }
+            ];
+
+        // ── CHILDREN / FAMILY BENEFITS ────────────────────────────────────────
+        } else if (input.includes('child') || input.includes('kid') || input.includes('daughter') ||
+                   input.includes('son') || input.includes('family') || input.includes('tanf') ||
+                   input.includes('welfare') || input.includes('single parent') || input.includes('single mom')) {
+            response = `**Family & Children's Benefits**
+
+**SSI for Children with Disabilities**
+- Children under 18 can qualify for SSI if they have a severe disability and limited household income
+- No work credits required — income and disability-based
+- Apply at ssa.gov or call **1-800-772-1213**
+
+**TANF (Temporary Assistance for Needy Families)**
+- Cash assistance for low-income families with children
+- Apply at your state's social services office
+- Time-limited (usually 60 months lifetime)
+- Benefits vary by state
+
+**CHIP (Children's Health Insurance Program)**
+- Low-cost health insurance for children whose families earn too much for Medicaid
+- Find your state's CHIP program: insurekidsnow.gov or call **1-877-543-7669**
+
+**Medicaid for Pregnant Women**
+- Most states provide Medicaid at higher income limits during pregnancy
+- Apply at healthcare.gov or your state Medicaid office
+
+**Head Start / Early Intervention**
+- Free preschool programs for low-income families: headstart.gov
+- Early Intervention for children with developmental delays (birth–3): Contact your state
+
+**School Meal Programs**
+- Free/reduced school lunches and breakfasts for qualifying families
+- Apply through your school district
+
+📞 **211** for local family resource referrals.`;
+            suggestions = [
+                { action: 'start_questionnaire', text: 'Check Family Eligibility', icon: '👨‍👩‍👧', description: 'Find programs your family qualifies for' },
+                { action: 'insurance_wizard', text: 'CHIP / Children\'s Insurance', icon: '🏥', description: 'Health coverage for your kids' }
+            ];
+
+        // ── MENTAL HEALTH ─────────────────────────────────────────────────────
+        } else if (input.includes('mental health') || input.includes('depression') || input.includes('anxiety') ||
+                   input.includes('ptsd') || input.includes('trauma') || input.includes('schizophrenia') ||
+                   input.includes('bipolar') || input.includes('psychiatric') || input.includes('psycholog')) {
+            response = `**Mental Health — Benefits & Resources**
+
+**SSDI/SSI for Mental Health Conditions**
+Mental health conditions are fully covered by SSDI and SSI. The SSA Blue Book includes:
+- Major depressive disorder
+- Bipolar disorder
+- Schizophrenia / schizoaffective disorder
+- PTSD and anxiety disorders
+- Autism spectrum disorder
+- Intellectual disability
+
+**Key evidence SSA looks for:**
+- Consistent treatment records (therapy, psychiatry, medication management)
+- How your condition affects concentration, staying on task, completing tasks
+- How many "bad days" per month prevent you from working
+- A Mental RFC from your psychiatrist or psychologist
+
+**Free/Low-Cost Mental Health Care:**
+- **SAMHSA Helpline:** 1-800-662-4357 (treatment referrals, 24/7, free)
+- **Open Path Collective:** openpath.help — therapy starting at $30/session
+- **NAMI Helpline:** 1-800-950-6264 or text "NAMI" to 741741
+- **Community Mental Health Centers** — sliding scale fees based on income
+- **Federally Qualified Health Centers** — findahealthcenter.hrsa.gov
+
+**If you're in crisis:** Call or text **988** (free, 24/7)
+
+**Important:** Never stop treatment to "strengthen your disability case" — consistent, documented treatment is what wins cases.`;
+            suggestions = [
+                { action: 'disability_strategy', text: 'Mental Health & SSDI', icon: '🧠', description: 'How mental health conditions qualify' },
+                { action: 'find_specialist', text: 'Find Affordable Therapy', icon: '💚', description: 'Low-cost mental health options' }
+            ];
+
         // ── SSDI vs SSI ──────────────────────────────────────────────────────
-        if (input.includes('ssdi vs ssi') || input.includes('difference between ssdi') || input.includes('which one') || (input.includes('ssdi') && input.includes('ssi'))) {
+        } else if (input.includes('ssdi vs ssi') || input.includes('difference between ssdi') || input.includes('which one') || (input.includes('ssdi') && input.includes('ssi'))) {
             response = `**SSDI vs SSI — Key Differences**
 
 **SSDI (Social Security Disability Insurance)**

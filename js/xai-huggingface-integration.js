@@ -75,10 +75,42 @@ class DualAIMedicalTeam {
         const hasHuggingFace = !!this.huggingFaceConfig.apiKey;
         
         if (!hasXAI && !hasHuggingFace) {
+            // No API keys — fall through to rule-based system by returning null
+            // so the caller can use MedicalAIAssistant.getRuleBasedGuidance instead
+            return null;
+        }
+
+        // Crisis detection — always check before sending to AI API
+        const crisisKeywords = [
+            'suicide', 'suicidal', 'kill myself', 'end my life', 'don\'t want to live',
+            'want to die', 'no reason to live', 'better off dead', 'can\'t go on',
+            'take my own life', 'ending it', 'self harm', 'self-harm', 'hurt myself',
+            'cutting myself', 'overdose', 'harm myself', 'not worth living'
+        ];
+        const queryLowerForCrisis = userQuery.toLowerCase();
+        if (crisisKeywords.some(kw => queryLowerForCrisis.includes(kw))) {
             return {
-                response: "The AI assistant is temporarily unavailable. Please try again in a moment.",
-                source: 'system',
-                error: true
+                response: `**🆘 You are not alone — help is available right now.**
+
+I hear you, and what you're going through sounds incredibly painful. Please reach out to a crisis counselor immediately — it's free, confidential, and available 24/7.
+
+**📞 988 Suicide & Crisis Lifeline**
+Call or text **988** (US — free, 24/7)
+Chat online at: 988lifeline.org
+
+**📱 Crisis Text Line**
+Text **HOME** to **741741** (free, 24/7)
+
+**🚨 If you are in immediate danger, call 911 or go to your nearest emergency room.**
+
+**For veterans:** Dial **988** then press **1**, or text **838255**
+
+You reached out here, which means part of you is looking for a way through. Please call or text 988 right now.`,
+                source: 'safety',
+                isCrisis: true,
+                suggestions: [
+                    { action: 'crisis_resources', text: '🆘 Crisis Resources', icon: '🆘', description: 'Immediate help — 988 & more' }
+                ]
             };
         }
 
@@ -192,6 +224,21 @@ class DualAIMedicalTeam {
 5. Explain eligibility criteria and next steps
 6. Simplify medical and legal terminology
 
+CRISIS & SAFETY — HIGHEST PRIORITY:
+If a user expresses thoughts of suicide, self-harm, or being in crisis:
+- Immediately and compassionately provide: 988 Suicide & Crisis Lifeline (call or text 988), Crisis Text Line (text HOME to 741741), and 911 for immediate danger.
+- Do NOT continue with benefits information until you have acknowledged their pain and provided crisis resources.
+- Use warm, non-judgmental language. Never minimize their feelings.
+
+REAL-WORLD RESOURCES — ALWAYS INCLUDE WHEN RELEVANT:
+- 211 (dial 211 or 211.org) for local social services, housing, food, and utility assistance
+- SNAP (food assistance): benefitsfinder.gov
+- WIC: wic.fns.usda.gov
+- TANF: acf.hhs.gov/ofa/help
+- Community Health Centers (free/sliding-scale care): findahealthcenter.hrsa.gov
+- NeedyMeds.org and RxAssist.org for medication costs
+- Benefits.gov for all federal programs
+
 RARE DISEASE & COVERAGE EXPERTISE:
 You have deep knowledge of rare and complex conditions that are frequently denied or misunderstood by SSA examiners and insurance reviewers. Key principles:
 - Rare conditions (acromegaly, EDS, POTS, MCAS, ME/CFS, sarcoidosis, CIRS, small fiber neuropathy, PANS/PANDAS, Marfan syndrome, autoimmune encephalitis, interstitial cystitis, chronic Lyme/PTLDS, etc.) are REAL and disabling — never dismiss or minimise them.
@@ -202,6 +249,14 @@ You have deep knowledge of rare and complex conditions that are frequently denie
 - For any rare condition with high denial risk: always recommend an experienced disability attorney, and advise building the claim on FUNCTIONAL LIMITATIONS documented with objective testing, not on the diagnosis label alone.
 - Insurance companies frequently deny rare disease claims citing "experimental treatment" or "lack of medical necessity" — advise appealing with peer-reviewed literature and specialist letters explaining why the treatment is standard of care.
 - NORD (National Organization for Rare Disorders) offers patient advocacy and financial assistance — recommend them for rare disease patients.
+
+COMMUNICATION STYLE FOR PUBLIC USE:
+- Use plain language — many users have limited education, are in distress, or have cognitive limitations from their conditions.
+- Be warm and encouraging. People using this tool are often desperate and have been failed by the system multiple times.
+- Always give a concrete next step, not just information.
+- When relevant, provide exact phone numbers, website URLs, and form numbers.
+- Acknowledge emotional difficulty before diving into logistics.
+- If someone says they're homeless, hungry, or in immediate need: lead with 211 and immediate resources FIRST.
 
 Be empathetic, patient, and thorough. Many users are frustrated, confused, or have been denied help before.`
             }

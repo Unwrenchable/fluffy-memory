@@ -843,6 +843,21 @@ async function sendChatMessage() {
         userMsgDiv.style.cssText = 'margin-top:1rem;padding:0.75rem;background:white;border-radius:8px;border-left:3px solid #8b5cf6;';
         messagesDiv.appendChild(userMsgDiv);
 
+        // Crisis check — ALWAYS runs first
+        if (window.checkCrisisBeforeChat) {
+            const crisisResult = window.checkCrisisBeforeChat(userMessage);
+            if (crisisResult) {
+                const crisisDiv = document.createElement('div');
+                crisisDiv.className = 'chat-message assistant';
+                crisisDiv.innerHTML = crisisResult.html;
+                crisisDiv.style.cssText = 'margin-top:1rem;';
+                messagesDiv.appendChild(crisisDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                // Stop processing for active crisis; continue to AI for warning-level concerns
+                if (!crisisResult.isWarning) return;
+            }
+        }
+
         const typingDiv = document.createElement('div');
         typingDiv.id = 'chat-typing-indicator';
         typingDiv.innerHTML = '<strong>🤖 Assistant:</strong> <em>Typing…</em>';
@@ -854,7 +869,7 @@ async function sendChatMessage() {
         try {
             if (window.aiTeam && window.appConfig && window.appConfig.getStatus().anyConfigured) {
                 const result = await window.aiTeam.getTeamResponse(userMessage);
-                responseText = (!result.error && result.response) ? result.response : '';
+                responseText = (result && !result.error && result.response) ? result.response : '';
             }
             if (!responseText && window.aiAssistant) {
                 const result = await window.aiAssistant.getIntelligentGuidance(userMessage);
@@ -872,7 +887,7 @@ async function sendChatMessage() {
 
         const aiMsgDiv = document.createElement('div');
         aiMsgDiv.className = 'chat-message assistant';
-        aiMsgDiv.innerHTML = `<strong>🤖 Assistant:</strong> ${responseText}`;
+        aiMsgDiv.innerHTML = `<strong>🤖 Assistant:</strong> ${formatAIResponse(responseText)}`;
         aiMsgDiv.style.cssText = 'margin-top:1rem;padding:0.75rem;background:#e6f7ff;border-radius:8px;border-left:3px solid #48bb78;';
         messagesDiv.appendChild(aiMsgDiv);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -1682,6 +1697,20 @@ async function sendToAI() {
     addAIMessage(userMessage, 'user');
     input.value = '';
     
+    // Crisis check — ALWAYS runs before any AI call
+    if (window.checkCrisisBeforeChat) {
+        const crisisResult = window.checkCrisisBeforeChat(userMessage);
+        if (crisisResult) {
+            const crisisDiv = document.createElement('div');
+            crisisDiv.className = 'ai-message assistant';
+            crisisDiv.innerHTML = crisisResult.html;
+            messagesDiv.appendChild(crisisDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            // Stop processing for active crisis; continue to AI for warning-level concerns
+            if (!crisisResult.isWarning) return;
+        }
+    }
+
     // Show typing indicator
     addTypingIndicator();
     
