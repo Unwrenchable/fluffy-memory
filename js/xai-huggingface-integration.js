@@ -11,8 +11,8 @@ class DualAIMedicalTeam {
         this.xaiConfig = {
             apiKey: devXaiKey, // Pre-configured by developer; users do not need to supply a key
             apiUrl: 'https://api.x.ai/v1/chat/completions',
-            model: 'grok-4-latest',
-            temperature: 0
+            model: 'grok-3-beta',
+            temperature: 0.5
         };
         
         // HuggingFace Configuration

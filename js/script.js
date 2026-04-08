@@ -156,7 +156,7 @@ function generateInsuranceWizard() {
             <h4>Step 1: Personal Information</h4>
             <input type="text" placeholder="Full Legal Name">
             <input type="date" placeholder="Date of Birth">
-            <input type="text" placeholder="Social Security Number">
+            <input type="password" placeholder="Social Security Number" autocomplete="off">
             <input type="text" placeholder="Current Address">
             <input type="tel" placeholder="Phone Number">
             <input type="email" placeholder="Email Address">
@@ -568,7 +568,7 @@ function generateFormFillerTool() {
             <h4>Personal Information</h4>
             <input type="text" placeholder="Full Name">
             <input type="date" placeholder="Date of Birth">
-            <input type="text" placeholder="SSN">
+            <input type="password" placeholder="SSN" autocomplete="off">
             <textarea placeholder="Address"></textarea>
         </div>
         
@@ -1597,11 +1597,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Close modal when clicking outside of it
     const modal = document.getElementById('ai-tool-modal');
-    window.onclick = function(event) {
+    window.addEventListener('click', function(event) {
         if (event.target === modal) {
             modal.style.display = 'none';
         }
-    };
+    });
 
     // Hamburger menu toggle
     const navToggle = document.getElementById('nav-toggle');
@@ -1799,10 +1799,10 @@ function formatAIResponse(text) {
         const bulletMatch = line.match(/^[-•]\s+(.+)/);
         const numberedMatch = line.match(/^\d+\.\s+(.+)/);
         if (bulletMatch) {
-            if (!inList) { result += '<ul style="margin:0.5rem 0 0.5rem 1.2rem;padding:0;">'; inList = true; }
+            if (!inList) { result += '<ul style="margin:0.5rem 0 0.5rem 1.2rem;padding:0;">'; inList = 'ul'; }
             result += `<li style="margin-bottom:0.3rem;">${bulletMatch[1]}</li>`;
         } else if (numberedMatch) {
-            if (!inList) { result += '<ol style="margin:0.5rem 0 0.5rem 1.2rem;padding:0;">'; inList = true; }
+            if (!inList) { result += '<ol style="margin:0.5rem 0 0.5rem 1.2rem;padding:0;">'; inList = 'ol'; }
             result += `<li style="margin-bottom:0.3rem;">${numberedMatch[1]}</li>`;
         } else {
             if (inList) { result += inList === 'ol' ? '</ol>' : '</ul>'; inList = false; }
@@ -1813,7 +1813,7 @@ function formatAIResponse(text) {
             }
         }
     }
-    if (inList) result += '</ul>';
+    if (inList) result += inList === 'ol' ? '</ol>' : '</ul>';
     return result;
 }
 
@@ -2475,7 +2475,9 @@ function startComprehensiveIntake() {
     const container = document.getElementById('ai-tool-container');
     
     if (!window.intakeSystem) {
-        alert('Intake system not loaded');
+        // Fallback: open AI assistant widget instead
+        closeAITool();
+        toggleAIAssistant();
         return;
     }
     
